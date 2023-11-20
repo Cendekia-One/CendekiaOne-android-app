@@ -52,7 +52,6 @@ fun BaseInputField(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showSystemUi = true)
 @Composable
 fun BaseInputPrev(
