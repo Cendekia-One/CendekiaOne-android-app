@@ -1,4 +1,4 @@
-package com.capstone.cendekiaone.ui.screen.login
+package com.capstone.cendekiaone.ui.screen.register
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -37,8 +37,9 @@ import com.capstone.cendekiaone.ui.theme.myFont
 import com.capstone.cendekiaone.ui.theme.myFont2
 
 @Composable
-fun LoginScreen(
-    navController: NavController, modifier: Modifier = Modifier
+fun RegisterScreen(
+    navController: NavController,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
@@ -49,46 +50,63 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = stringResource(R.string.welcome_back),
+            text = stringResource(R.string.create_account),
             style = TextStyle(
-                fontSize = 28.sp, textAlign = TextAlign.Center, fontFamily = myFont2
+                fontSize = 28.sp,
+                textAlign = TextAlign.Center,
+                fontFamily = myFont2
             ),
         )
         Text(
-            text = stringResource(R.string.login_desc), style = TextStyle(
-                textAlign = TextAlign.Center, fontFamily = myFont
-            ), modifier = Modifier.padding(top = 16.dp)
+            text = stringResource(R.string.regis_desc),
+            style = TextStyle(
+                textAlign = TextAlign.Center,
+                fontFamily = myFont
+            ),
+            modifier = Modifier.padding(top = 16.dp)
         )
         Image(
-            painter = painterResource(R.drawable.img_login),
+            painter = painterResource(R.drawable.img_regis),
             contentDescription = "image_login",
             modifier = Modifier
                 .size(350.dp)
                 .align(Alignment.CenterHorizontally)
         )
         OutlinedTextFieldComponent(
+            provideText = stringResource(R.string.enter_name),
+            icon = painterResource(R.drawable.ic_name_filled),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Email
+            )
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        OutlinedTextFieldComponent(
             provideText = stringResource(R.string.enter_email),
             icon = painterResource(R.drawable.ic_email_filled),
             keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Email
+                keyboardType = KeyboardType.Text
             )
         )
         Spacer(modifier = Modifier.height(8.dp))
         PasswordTextFieldComponent(icon = painterResource(R.drawable.ic_password_filled))
         Spacer(modifier = Modifier.height(24.dp))
         ButtonComponent(
-            provideText = stringResource(R.string.signIn),
+            provideText = stringResource(R.string.signUp),
             onClick = {  }
         )
         Row {
             Text(
-                text = stringResource(R.string.dont_have_account), style = TextStyle(
+                text = stringResource(R.string.have_account),
+                style = TextStyle(
                     textAlign = TextAlign.Center,
                     fontFamily = myFont,
-                ), modifier = Modifier.align(CenterVertically)
+                ),
+                modifier = Modifier.align(CenterVertically)
             )
-            TextButtonComponent(provideText = stringResource(R.string.signUp),
-                onClick = { navController.navigate(Screen.Register.route) })
+            TextButtonComponent(
+                provideText = stringResource(R.string.signIn),
+                onClick = { navController.navigate(Screen.Login.route) }
+            )
         }
     }
 }
@@ -96,5 +114,5 @@ fun LoginScreen(
 @Preview(showBackground = true, device = "id:pixel_4")
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen(navController = rememberNavController())
+    RegisterScreen(navController = rememberNavController())
 }

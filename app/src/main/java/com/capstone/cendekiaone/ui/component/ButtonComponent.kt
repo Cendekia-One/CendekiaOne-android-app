@@ -10,10 +10,11 @@ import com.capstone.cendekiaone.ui.theme.myFont
 
 @Composable
 fun ButtonComponent(
-    provideText: String
+    provideText: String,
+    onClick: () -> Unit
 ) {
     Button(
-        onClick = { /* Do something! */ },
+        onClick = { onClick() },
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(provideText, fontFamily = myFont)
@@ -22,10 +23,11 @@ fun ButtonComponent(
 
 @Composable
 fun TextButtonComponent(
-    provideText: String
+    provideText: String,
+    onClick: () -> Unit
 ) {
     TextButton(
-        onClick = { /* Do something! */ }
+        onClick = { onClick() }
     ) {
         Text(provideText, fontFamily = myFont)
     }

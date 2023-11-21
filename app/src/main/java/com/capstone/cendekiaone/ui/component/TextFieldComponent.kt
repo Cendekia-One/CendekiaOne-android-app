@@ -53,7 +53,7 @@ fun PasswordTextFieldComponent(
         value = password,
         onValueChange = { password = it },
         singleLine = true,
-        label = { Text("Enter password", fontFamily = myFont) },
+        label = { Text("Enter password", fontFamily = myFont    ) },
         visualTransformation =
         if (passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
