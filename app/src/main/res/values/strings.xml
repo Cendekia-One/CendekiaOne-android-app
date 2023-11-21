@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">CendekiaOne</string>
+    <string name="welcome_back">Welcome Back</string>
+    <string name="login_desc">Sign In  to Access CendikiaOne and Get Real-Time Updates</string>
+    <string name="enter_email">Enter your email</string>
+    <string name="signIn">Sign In</string>
+    <string name="dont_have_account">Don\'t have an account?</string>
+    <string name="signUp">Sign Up</string>
 </resources>
