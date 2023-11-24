@@ -78,7 +78,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(24.dp))
         ButtonComponent(
             provideText = stringResource(R.string.signIn),
-            onClick = {  }
+            onClick = { navController.navigate(Screen.Home.route) }
         )
         Row {
             Text(

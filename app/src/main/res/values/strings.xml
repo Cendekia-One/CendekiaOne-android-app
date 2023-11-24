@@ -13,4 +13,7 @@
     <string name="have_account">Already have an account?</string>
     <string name="intro_desc_short">Transforming Scrolling into Learning</string>
     <string name="get_started">Get Started</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_profile">Profile</string>
+    <string name="menu_create">Create</string>
 </resources>
