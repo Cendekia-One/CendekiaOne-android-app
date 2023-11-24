@@ -13,6 +13,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.capstone.cendekiaone.ui.component.NavigationBarComponent
 import com.capstone.cendekiaone.ui.navigation.Screen
+import com.capstone.cendekiaone.ui.screen.create.CreateScreen
 import com.capstone.cendekiaone.ui.screen.home.HomeScreen
 import com.capstone.cendekiaone.ui.screen.intro.IntroScreen
 import com.capstone.cendekiaone.ui.screen.login.LoginScreen
@@ -50,6 +51,9 @@ fun CendekiaOneApp(
             }
             composable(Screen.Home.route) {
                 HomeScreen()
+            }
+            composable(Screen.Create.route) {
+                CreateScreen()
             }
         }
     }
