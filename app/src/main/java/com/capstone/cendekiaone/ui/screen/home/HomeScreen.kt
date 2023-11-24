@@ -1,5 +1,6 @@
 package com.capstone.cendekiaone.ui.screen.home
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -19,6 +20,10 @@ fun HomeScreen(
         contentAlignment = Alignment.Center,
     ) {
         Text(stringResource(R.string.menu_home))
+
+        BackHandler {
+            // Perform any custom actions here, if necessary
+        }
     }
 }
 
