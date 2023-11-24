@@ -24,6 +24,6 @@ fun CreateScreen(
 
 @Preview(showBackground = true, device = "id:pixel_4")
 @Composable
-fun HomeScreenPreview() {
+fun CreateScreenPreview() {
     CreateScreen()
 }

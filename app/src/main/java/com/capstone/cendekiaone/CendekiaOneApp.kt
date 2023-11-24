@@ -17,6 +17,7 @@ import com.capstone.cendekiaone.ui.screen.create.CreateScreen
 import com.capstone.cendekiaone.ui.screen.home.HomeScreen
 import com.capstone.cendekiaone.ui.screen.intro.IntroScreen
 import com.capstone.cendekiaone.ui.screen.login.LoginScreen
+import com.capstone.cendekiaone.ui.screen.profile.ProfileScreen
 import com.capstone.cendekiaone.ui.screen.register.RegisterScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,6 +55,9 @@ fun CendekiaOneApp(
             }
             composable(Screen.Create.route) {
                 CreateScreen()
+            }
+            composable(Screen.Profile.route) {
+                ProfileScreen()
             }
         }
     }
