@@ -12,10 +12,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.capstone.cendekiaone.ui.component.NavigationBarComponent
 import com.capstone.cendekiaone.ui.navigation.Screen
+import com.capstone.cendekiaone.ui.screen.chat.ChatScreen
 import com.capstone.cendekiaone.ui.screen.create.CreateScreen
 import com.capstone.cendekiaone.ui.screen.home.HomeScreen
 import com.capstone.cendekiaone.ui.screen.intro.IntroScreen
 import com.capstone.cendekiaone.ui.screen.login.LoginScreen
+import com.capstone.cendekiaone.ui.screen.notification.NotificationScreen
 import com.capstone.cendekiaone.ui.screen.profile.ProfileScreen
 import com.capstone.cendekiaone.ui.screen.register.RegisterScreen
 
@@ -28,7 +30,7 @@ fun CendekiaOneApp(
 
     Scaffold(
         bottomBar = {
-            if (currentRoute != Screen.Intro.route && currentRoute != Screen.Login.route && currentRoute != Screen.Register.route) {
+            if (currentRoute == Screen.Home.route || currentRoute == Screen.Create.route || currentRoute == Screen.Profile.route) {
                 NavigationBarComponent(navController)
             }
         },
@@ -56,6 +58,12 @@ fun CendekiaOneApp(
             }
             composable(Screen.Profile.route) {
                 ProfileScreen()
+            }
+            composable(Screen.Notification.route) {
+                NotificationScreen(navController = navController)
+            }
+            composable(Screen.Chat.route) {
+                ChatScreen(navController = navController)
             }
         }
     }

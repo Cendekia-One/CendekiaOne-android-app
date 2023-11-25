@@ -21,4 +21,8 @@
     <string name="many_like">1029 Likes</string>
     <string name="validation_cek">Validation Cek</string>
     <string name="summary_cek">Summary Cek</string>
+    <string name="menu_chat">Chat</string>
+    <string name="menu_notification">Notification</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="share_profile">Share Profile</string>
 </resources>

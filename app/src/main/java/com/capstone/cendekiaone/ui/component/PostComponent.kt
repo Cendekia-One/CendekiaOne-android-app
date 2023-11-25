@@ -1,7 +1,6 @@
 package com.capstone.cendekiaone.ui.component
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,7 +33,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.capstone.cendekiaone.R
-import com.capstone.cendekiaone.ui.navigation.Screen
 import com.capstone.cendekiaone.ui.theme.myFont
 
 @Composable
@@ -51,7 +48,6 @@ fun PostComponent(
                 color = MaterialTheme.colorScheme.onBackground,
                 shape = RoundedCornerShape(16.dp)
             )
-//            .background(MaterialTheme.colorScheme.primaryContainer)
     ) {
         HeaderPost(
             username = "CendikiaOne",
@@ -81,7 +77,7 @@ fun HeaderPost(
                 .align(Alignment.CenterVertically)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.img_profile),
+                painter = painterResource(id = R.drawable.ic_launcher_background),
                 contentDescription = "Image Profile",
                 modifier = Modifier
                     .size(40.dp)
@@ -236,11 +232,17 @@ fun BottomPost(
         ) {
             Button(
                 onClick = {  },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 4.dp)
             ) {
                 Text(stringResource(R.string.validation_cek), fontFamily = myFont)
             }
             Button(
                 onClick = {  },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 4.dp)
             ) {
                 Text(stringResource(R.string.summary_cek), fontFamily = myFont)
             }

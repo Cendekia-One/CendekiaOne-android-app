@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.capstone.cendekiaone.R
+import com.capstone.cendekiaone.ui.navigation.Screen
 import com.capstone.cendekiaone.ui.theme.myFont
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,7 +87,7 @@ fun TopAppComponent(
             Spacer(modifier = Modifier.width(4.dp))
 
             IconButton(
-                onClick = {  },
+                onClick = { navController.navigate(Screen.Notification.route) },
                 modifier = Modifier
                     .align(Alignment.Bottom)
                     .size(40.dp)
@@ -102,7 +103,7 @@ fun TopAppComponent(
             Spacer(modifier = Modifier.width(4.dp))
 
             IconButton(
-                onClick = {  },
+                onClick = { navController.navigate(Screen.Chat.route) },
                 modifier = Modifier
                     .align(Alignment.Bottom)
                     .size(40.dp)
