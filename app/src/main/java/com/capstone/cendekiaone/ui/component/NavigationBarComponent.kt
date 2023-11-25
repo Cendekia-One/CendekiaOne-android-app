@@ -36,23 +36,26 @@ fun NavigationBarComponent(
             NavigationItem(
                 title = stringResource(R.string.menu_home),
                 icon = R.drawable.ic_home_outline,
+                selectedIcon = R.drawable.ic_home_filled,
                 screen = Screen.Home,
             ),
             NavigationItem(
                 title = stringResource(R.string.menu_create),
                 icon = R.drawable.ic_create_outline,
+                selectedIcon = R.drawable.ic_create_filled,
                 screen = Screen.Create
             ),
             NavigationItem(
                 title = stringResource(R.string.menu_profile),
                 icon = R.drawable.ic_profile_outline,
+                selectedIcon = R.drawable.ic_profile_filled,
                 screen = Screen.Profile,
             ),
         )
         navigationItems.map { item ->
             NavigationBarItem(
                 icon = {
-                    val iconPainter: Painter = painterResource(id = item.icon)
+                    val iconPainter: Painter = painterResource(id = if (currentRoute == item.screen.route) item.selectedIcon else item.icon)
                     Icon(
                         painter = iconPainter,
                         contentDescription = item.title,

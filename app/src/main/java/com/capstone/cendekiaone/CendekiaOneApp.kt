@@ -1,7 +1,6 @@
 package com.capstone.cendekiaone
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,7 +19,6 @@ import com.capstone.cendekiaone.ui.screen.login.LoginScreen
 import com.capstone.cendekiaone.ui.screen.profile.ProfileScreen
 import com.capstone.cendekiaone.ui.screen.register.RegisterScreen
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CendekiaOneApp(
     navController: NavHostController = rememberNavController(),

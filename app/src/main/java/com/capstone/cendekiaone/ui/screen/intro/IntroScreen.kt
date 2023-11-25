@@ -79,7 +79,7 @@ fun IntroScreen(
         Spacer(modifier = Modifier.height(24.dp))
         ButtonComponent(
             provideText = stringResource(R.string.get_started),
-            onClick = { navController.navigate(Screen.Login.route) }
+            onClick = { navController.navigate(Screen.Login.route) },
         )
     }
 }

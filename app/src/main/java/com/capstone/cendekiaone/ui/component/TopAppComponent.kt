@@ -63,7 +63,7 @@ fun TopAppComponent(
                     Icon(
                         painter = painterResource(id = R.drawable.ic_search_outline),
                         contentDescription = null,
-                        tint = Color.Black
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 },
                 placeholder = {
@@ -74,8 +74,8 @@ fun TopAppComponent(
                     )
                 },
                 colors = SearchBarDefaults.colors(
-                    Color.LightGray,
-                    inputFieldColors = SearchBarDefaults.inputFieldColors(Color.Black)
+                    MaterialTheme.colorScheme.secondaryContainer,
+                    inputFieldColors = SearchBarDefaults.inputFieldColors(Color.Black),
                 ),
                 modifier = Modifier
                     .weight(1f)
