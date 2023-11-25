@@ -24,7 +24,9 @@ import com.capstone.cendekiaone.ui.component.TopAppComponent
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    navController: NavController
+    navController: NavController,
+//    searchQuery: String,
+//    onSearchQueryChanged: (String) -> Unit,
 ) {
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -49,7 +51,7 @@ fun HomeScreen(
             modifier = modifier.fillMaxSize().padding(innerPadding),
             contentAlignment = Alignment.Center,
         ) {
-            Text(stringResource(R.string.menu_profile))
+            Text(stringResource(R.string.menu_home))
             BackHandler {
                 // Perform any custom actions here, if necessary
             }
