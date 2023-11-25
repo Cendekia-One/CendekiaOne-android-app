@@ -51,7 +51,7 @@ fun CendekiaOneApp(
                 RegisterScreen(navController = navController)
             }
             composable(Screen.Home.route) {
-                HomeScreen()
+                HomeScreen(navController = navController)
             }
             composable(Screen.Create.route) {
                 CreateScreen()
