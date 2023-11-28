@@ -26,7 +26,7 @@ fun OutlinedButtonComponent(
 ) {
     OutlinedButton(
         onClick = { onClick() },
-        modifier = modifier.padding(horizontal = 16.dp, vertical = 10.dp) ,
+        modifier = modifier
     ) {
         if (icon != null) {
             icon()

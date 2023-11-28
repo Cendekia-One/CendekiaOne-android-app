@@ -31,4 +31,7 @@
     <string name="text_placeholder_example">cth:Fisika,Kimia,Teknolog</string>
     <string name="posting">posting</string>
     <string name="text__pilih_sumber">Pilih Sumber</string>
+    <string name="btn_text_galeri">Galeri</string>
+    <string name="btn_text_kamera">Kamera</string>
+    <string name="btn_textselesai">Selesai</string>
 </resources>
