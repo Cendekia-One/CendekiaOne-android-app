@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -208,45 +207,43 @@ fun BottomPost(
                 )
             }
         }
-        Text(
-            text = stringResource(R.string.many_like),
-            style = TextStyle(
-                textAlign = TextAlign.Center,
-                fontFamily = myFont,
-            ),
-            modifier = Modifier.padding(start = 16.dp)
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = stringResource(R.string.many_like),
+                style = TextStyle(
+                    textAlign = TextAlign.Center,
+                    fontFamily = myFont,
+                ),
+                modifier = Modifier.padding(start = 16.dp).align(Alignment.CenterVertically)
+            )
+            val icon: Painter = painterResource(id = R.drawable.ic_verified)
+            Icon(
+                painter = icon,
+                contentDescription = "Icon Share",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+            Text(
+                text = stringResource(R.string.verified),
+                style = TextStyle(
+                    textAlign = TextAlign.Center,
+                    fontFamily = myFont,
+                    color = MaterialTheme.colorScheme.primary,
+                ),
+                modifier = Modifier.padding(start = 4.dp).align(Alignment.CenterVertically)
+            )
+        }
         Text(
             text = stringResource(R.string.description_post),
             style = TextStyle(
                 textAlign = TextAlign.Justify,
                 fontFamily = myFont,
             ),
-            modifier = Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp)
+            modifier = Modifier.padding(16.dp)
         )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Button(
-                onClick = {  },
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 4.dp)
-            ) {
-                Text(stringResource(R.string.validation_cek), fontFamily = myFont)
-            }
-            Button(
-                onClick = {  },
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 4.dp)
-            ) {
-                Text(stringResource(R.string.summary_cek), fontFamily = myFont)
-            }
-        }
     }
 }
 
