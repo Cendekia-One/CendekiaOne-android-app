@@ -45,7 +45,7 @@ fun PostComponent(
             .clip(RoundedCornerShape(16.dp))
             .border(
                 width = 1.dp,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = MaterialTheme.colorScheme.secondaryContainer,
                 shape = RoundedCornerShape(16.dp)
             )
     ) {
