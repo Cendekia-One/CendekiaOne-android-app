@@ -3,10 +3,10 @@ package com.capstone.cendekiaone.ui.component
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.capstone.cendekiaone.ui.theme.myFont
+import androidx.compose.material3.IconButton as IconButton1
 
 @Composable
 fun OutlinedTextFieldComponent(
@@ -34,6 +35,16 @@ fun OutlinedTextFieldComponent(
         onValueChange = { text = it },
         label = { Text(provideText, fontFamily = myFont) },
         leadingIcon = { Icon(icon, contentDescription = "Icon Text") },
+        trailingIcon =
+        if (text.isNotEmpty()) {
+            {
+                IconButton1(onClick = { text = "" }) {
+                    Icon(imageVector = Icons.Default.Clear, contentDescription = null )
+                }
+            }
+        } else {
+            null
+        },
         keyboardOptions = keyboardOptions,
         modifier = Modifier.fillMaxWidth()
     )
@@ -56,7 +67,7 @@ fun PasswordTextFieldComponent(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         leadingIcon = { Icon(icon, contentDescription = "Icon Text") },
         trailingIcon = {
-            IconButton(onClick = { passwordHidden = !passwordHidden }) {
+            IconButton1(onClick = { passwordHidden = !passwordHidden }) {
                 val visibilityIcon =
                     if (passwordHidden) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
                 // Please provide localized description for accessibility services
