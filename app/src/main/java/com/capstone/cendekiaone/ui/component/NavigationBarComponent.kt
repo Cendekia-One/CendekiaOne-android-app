@@ -40,10 +40,16 @@ fun NavigationBarComponent(
                 screen = Screen.Home,
             ),
             NavigationItem(
+                title = stringResource(R.string.menu_explore),
+                icon = R.drawable.ic_explore_outline,
+                selectedIcon = R.drawable.ic_exlore_filled,
+                screen = Screen.Explore,
+            ),
+            NavigationItem(
                 title = stringResource(R.string.menu_create),
                 icon = R.drawable.ic_create_outline,
                 selectedIcon = R.drawable.ic_create_filled,
-                screen = Screen.Create
+                screen = Screen.Create,
             ),
             NavigationItem(
                 title = stringResource(R.string.menu_profile),
