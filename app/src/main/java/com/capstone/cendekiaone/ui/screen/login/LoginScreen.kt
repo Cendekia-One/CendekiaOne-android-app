@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -78,6 +79,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(24.dp))
         ButtonComponent(
             provideText = stringResource(R.string.signIn),
+            modifier = Modifier.fillMaxWidth(),
             onClick = { navController.navigate(Screen.Home.route) }
         )
         Row {
