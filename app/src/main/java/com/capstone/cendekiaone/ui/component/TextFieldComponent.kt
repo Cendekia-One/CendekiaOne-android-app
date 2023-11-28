@@ -16,6 +16,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -24,8 +25,8 @@ import androidx.compose.material3.IconButton as IconButton1
 
 @Composable
 fun OutlinedTextFieldComponent(
-    provideText: String,
-    icon: Painter,
+    provideText: String = "",
+    icon: Painter? =null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     var text by rememberSaveable { mutableStateOf("") }
@@ -34,7 +35,11 @@ fun OutlinedTextFieldComponent(
         value = text,
         onValueChange = { text = it },
         label = { Text(provideText, fontFamily = myFont) },
-        leadingIcon = { Icon(icon, contentDescription = "Icon Text") },
+        leadingIcon = {
+            if (icon != null) {
+                Icon(icon, contentDescription = "Icon Text")
+            }
+        },
         trailingIcon =
         if (text.isNotEmpty()) {
             {
