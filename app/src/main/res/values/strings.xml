@@ -30,4 +30,5 @@
     <string name="tulis_deskripsi">Tulis Deskripsi</string>
     <string name="text_placeholder_example">cth:Fisika,Kimia,Teknolog</string>
     <string name="posting">posting</string>
+    <string name="text__pilih_sumber">Pilih Sumber</string>
 </resources>
