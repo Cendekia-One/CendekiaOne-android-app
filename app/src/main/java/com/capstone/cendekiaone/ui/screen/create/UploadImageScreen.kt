@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AddCircleOutline
+import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.capstone.cendekiaone.R
 import com.capstone.cendekiaone.ui.component.ButtonComponent
+import com.capstone.cendekiaone.ui.component.OutlinedButtonComponent
 
 @Composable
 fun UploadImageScreen(
@@ -54,18 +58,17 @@ fun UploadImageScreen(
             ) {
                 ButtonComponent(
                     provideText = "kamera",
-                    colors = ButtonDefaults.filledTonalButtonColors(
-                        containerColor = Color.White,
-                        contentColor = Color.Black,
-                        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        disabledContentColor = MaterialTheme.colorScheme.onPrimary
-                    ),
-
                 ) {
 
                 }
-                ButtonComponent(
-                    provideText = "galery"
+                OutlinedButtonComponent(
+                    provideText = "galery",
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Outlined.CameraAlt,
+                            contentDescription = "add circle",
+                        )
+                    }
                 ) {
 
                 }

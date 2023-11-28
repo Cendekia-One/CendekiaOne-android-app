@@ -1,6 +1,7 @@
 package com.capstone.cendekiaone.ui.component
 
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -9,9 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.capstone.cendekiaone.ui.theme.myFont
-
 
 
 @Composable
@@ -24,6 +24,7 @@ fun ButtonComponent(
         disabledContentColor = MaterialTheme.colorScheme.onPrimary
     ),
     modifier: Modifier = Modifier,
+    icon: @Composable (() -> Unit)? = null,
     onClick: () -> Unit,
 ) {
     Button(
@@ -31,6 +32,12 @@ fun ButtonComponent(
         modifier = modifier,
         colors = colors
     ) {
+        if (icon != null) {
+            icon()
+            Spacer(modifier = Modifier.padding(8.dp))
+        } else {
+            null
+        }
         Text(provideText, fontFamily = myFont)
     }
 }
