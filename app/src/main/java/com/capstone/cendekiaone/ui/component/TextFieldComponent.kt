@@ -35,12 +35,12 @@ fun OutlinedTextFieldComponent(
         value = text,
         onValueChange = { text = it },
         label = { Text(provideText, fontFamily = myFont) },
-        leadingIcon = {
-            if (icon != null) {
+        leadingIcon = if (icon != null) {
+            {
                 Icon(icon, contentDescription = "Icon Text")
-            } else {
-                null
             }
+        } else {
+            null
         },
         trailingIcon =
         if (text.isNotEmpty()) {
