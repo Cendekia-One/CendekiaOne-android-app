@@ -15,6 +15,7 @@ import com.capstone.cendekiaone.ui.component.NavigationBarComponent
 import com.capstone.cendekiaone.ui.navigation.Screen
 import com.capstone.cendekiaone.ui.screen.chat.ChatScreen
 import com.capstone.cendekiaone.ui.screen.create.CreateScreen
+import com.capstone.cendekiaone.ui.screen.create.UploadImageScreen
 import com.capstone.cendekiaone.ui.screen.explore.ExploreScreen
 import com.capstone.cendekiaone.ui.screen.home.HomeScreen
 import com.capstone.cendekiaone.ui.screen.intro.IntroScreen
@@ -61,6 +62,9 @@ fun CendekiaOneApp(
             }
             composable(Screen.Create.route) {
                 CreateScreen(navController = navController)
+            }
+            composable(Screen.UploadImage.route) {
+                UploadImageScreen(navController = navController)
             }
             composable(Screen.Profile.route) {
                 ProfileScreen()

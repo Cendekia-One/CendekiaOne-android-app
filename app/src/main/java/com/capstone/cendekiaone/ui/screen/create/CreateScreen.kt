@@ -1,6 +1,7 @@
 package com.capstone.cendekiaone.ui.screen.create
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,7 +38,9 @@ fun CreateScreen(
         verticalArrangement = Arrangement.spacedBy(23.dp, Alignment.CenterVertically),
     ) {
         Image(
-            modifier = modifier.fillMaxWidth(),
+            modifier = modifier
+                .fillMaxWidth()
+                .clickable { navController.navigate(Screen.UploadImage.route) },
             contentScale = ContentScale.Crop,
             painter = painterResource(id = R.drawable.placholder_image),
             contentDescription = ""
