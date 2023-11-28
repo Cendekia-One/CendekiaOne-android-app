@@ -6,7 +6,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,15 +15,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import com.capstone.cendekiaone.R
 import com.capstone.cendekiaone.ui.theme.myFont
+import androidx.compose.material3.IconButton as IconButton1
 
 @Composable
 fun OutlinedTextFieldComponent(
-    provideText: String,
-    icon: Painter,
+    provideText: String = "",
+    icon: Painter? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     var text by rememberSaveable { mutableStateOf("") }
@@ -33,7 +35,26 @@ fun OutlinedTextFieldComponent(
         value = text,
         onValueChange = { text = it },
         label = { Text(provideText, fontFamily = myFont) },
-        leadingIcon = { Icon(icon, contentDescription = "Icon Text") },
+        leadingIcon = if (icon != null) {
+            {
+                Icon(icon, contentDescription = "Icon Text")
+            }
+        } else {
+            null
+        },
+        trailingIcon =
+        if (text.isNotEmpty()) {
+            {
+                IconButton1(onClick = { text = "" }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_close),
+                        contentDescription = null
+                    )
+                }
+            }
+        } else {
+            null
+        },
         keyboardOptions = keyboardOptions,
         modifier = Modifier.fillMaxWidth()
     )
@@ -50,13 +71,13 @@ fun PasswordTextFieldComponent(
         value = password,
         onValueChange = { password = it },
         singleLine = true,
-        label = { Text("Enter password", fontFamily = myFont    ) },
+        label = { Text("Enter password", fontFamily = myFont) },
         visualTransformation =
         if (passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         leadingIcon = { Icon(icon, contentDescription = "Icon Text") },
         trailingIcon = {
-            IconButton(onClick = { passwordHidden = !passwordHidden }) {
+            IconButton1(onClick = { passwordHidden = !passwordHidden }) {
                 val visibilityIcon =
                     if (passwordHidden) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
                 // Please provide localized description for accessibility services

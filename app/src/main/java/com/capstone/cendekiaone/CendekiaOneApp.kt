@@ -5,6 +5,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,6 +15,7 @@ import com.capstone.cendekiaone.ui.component.NavigationBarComponent
 import com.capstone.cendekiaone.ui.navigation.Screen
 import com.capstone.cendekiaone.ui.screen.chat.ChatScreen
 import com.capstone.cendekiaone.ui.screen.create.CreateScreen
+import com.capstone.cendekiaone.ui.screen.create.UploadImageScreen
 import com.capstone.cendekiaone.ui.screen.explore.ExploreScreen
 import com.capstone.cendekiaone.ui.screen.home.HomeScreen
 import com.capstone.cendekiaone.ui.screen.intro.IntroScreen
@@ -59,7 +61,10 @@ fun CendekiaOneApp(
                 ExploreScreen()
             }
             composable(Screen.Create.route) {
-                CreateScreen()
+                CreateScreen(navController = navController)
+            }
+            composable(Screen.UploadImage.route) {
+                UploadImageScreen(navController = navController)
             }
             composable(Screen.Profile.route) {
                 ProfileScreen()

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -92,6 +93,7 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(24.dp))
         ButtonComponent(
             provideText = stringResource(R.string.signUp),
+            modifier = Modifier.fillMaxWidth(),
             onClick = {  }
         )
         Row {

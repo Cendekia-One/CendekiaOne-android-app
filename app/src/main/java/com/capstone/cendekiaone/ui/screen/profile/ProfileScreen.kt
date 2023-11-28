@@ -41,6 +41,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.capstone.cendekiaone.R
+import com.capstone.cendekiaone.ui.component.ButtonComponent
+import com.capstone.cendekiaone.ui.component.OutlinedButtonComponent
 import com.capstone.cendekiaone.ui.theme.myFont
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -203,22 +205,20 @@ fun DescriptionProfile() {
                 .padding(top = 8.dp, bottom = 8.dp),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            Button(
+            ButtonComponent(
+                provideText = stringResource(R.string.edit_profile),
                 onClick = { },
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = 4.dp)
-            ) {
-                Text(stringResource(R.string.edit_profile), fontFamily = myFont)
-            }
-            Button(
+                    .padding(end = 4.dp),
+            )
+            OutlinedButtonComponent(
+                provideText = stringResource(R.string.share_profile),
                 onClick = { },
                 modifier = Modifier
                     .weight(1f)
-                    .padding(start = 4.dp)
-            ) {
-                Text(stringResource(R.string.share_profile), fontFamily = myFont)
-            }
+                    .padding(start = 4.dp),
+            )
         }
     }
 }
