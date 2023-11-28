@@ -3,7 +3,6 @@ package com.capstone.cendekiaone.ui.component
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
@@ -20,13 +19,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import com.capstone.cendekiaone.R
 import com.capstone.cendekiaone.ui.theme.myFont
 import androidx.compose.material3.IconButton as IconButton1
 
 @Composable
 fun OutlinedTextFieldComponent(
     provideText: String = "",
-    icon: Painter? =null,
+    icon: Painter? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     var text by rememberSaveable { mutableStateOf("") }
@@ -38,13 +38,18 @@ fun OutlinedTextFieldComponent(
         leadingIcon = {
             if (icon != null) {
                 Icon(icon, contentDescription = "Icon Text")
+            } else {
+                null
             }
         },
         trailingIcon =
         if (text.isNotEmpty()) {
             {
                 IconButton1(onClick = { text = "" }) {
-                    Icon(imageVector = Icons.Default.Clear, contentDescription = null )
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_close),
+                        contentDescription = null
+                    )
                 }
             }
         } else {
@@ -66,7 +71,7 @@ fun PasswordTextFieldComponent(
         value = password,
         onValueChange = { password = it },
         singleLine = true,
-        label = { Text("Enter password", fontFamily = myFont    ) },
+        label = { Text("Enter password", fontFamily = myFont) },
         visualTransformation =
         if (passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
