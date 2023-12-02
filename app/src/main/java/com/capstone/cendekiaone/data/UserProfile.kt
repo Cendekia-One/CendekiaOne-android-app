@@ -1,4 +1,4 @@
-package com.capstone.cendekiaone.ui.data
+package com.capstone.cendekiaone.data
 
 data class UserProfile(
     val name: String,
