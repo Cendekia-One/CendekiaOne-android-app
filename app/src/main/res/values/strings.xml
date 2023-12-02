@@ -31,11 +31,12 @@
     <string name="text_placeholder_example">e.g:Fisika,Kimia,Teknolog</string>
     <string name="posting">posting</string>
     <string name="text__pilih_sumber">Pilih Sumber</string>
-    <string name="btn_text_galeri">Galeri</string>
-    <string name="btn_text_kamera">Kamera</string>
-    <string name="btn_textselesai">Selesai</string>
+    <string name="btn_text_galeri">Gallery</string>
+    <string name="btn_text_kamera">Camera</string>
+    <string name="btn_textselesai">Finish</string>
     <string name="btn_text_submit">Submit</string>
     <string name="text_placeholder_username">username</string>
     <string name="text_placeholder_name">name</string>
     <string name="text_placeholder_bio">bio</string>
+    <string name="toast_choose_from_gallery">choose from gallery</string>
 </resources>

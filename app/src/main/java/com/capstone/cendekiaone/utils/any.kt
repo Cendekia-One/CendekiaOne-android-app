@@ -8,7 +8,25 @@ import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 
+private const val MAXIMAL_SIZE = 1000000 // max 1mb
+fun reduceFileImage(file: File): File {
+    val bitmap = BitmapFactory.decodeFile(file.path)
+    var compressQuality = 100
+    var streamLength: Int
+    do {
+        val bmpStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, bmpStream)
+        val bmpPicByteArray = bmpStream.toByteArray()
+        streamLength = bmpPicByteArray.size
+        compressQuality -= 5
+    } while (streamLength > MAXIMAL_SIZE)
+    bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, FileOutputStream(file))
+    return file
+}
 @Composable
 fun Int.toBitmap(context: Context): ImageBitmap {
     val drawableBitmap: Bitmap = BitmapFactory.decodeResource(context.resources, this)

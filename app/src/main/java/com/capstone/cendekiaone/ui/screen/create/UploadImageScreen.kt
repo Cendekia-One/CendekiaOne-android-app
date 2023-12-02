@@ -1,5 +1,8 @@
 package com.capstone.cendekiaone.ui.screen.create
 
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,6 +37,30 @@ fun UploadImageScreen(
     modifier: Modifier = Modifier,
     navController: NavController
 ) {
+    val context = LocalContext.current
+    val pickImageLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
+            Toast.makeText(
+                context,
+                R.string.toast_choose_from_gallery,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    val takePictureLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { isSuccess ->
+        if (isSuccess) {
+            Toast.makeText(
+                context,
+                "Foto diambil dari kamera",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            Toast.makeText(
+                context,
+                "Gagal mengambil foto dari kamera",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -79,7 +107,7 @@ fun UploadImageScreen(
                     },
                     modifier = Modifier.weight(1f)
                 ) {
-
+                    pickImageLauncher.launch("image/*")
                 }
                 OutlinedButtonComponent(
                     provideText = stringResource(R.string.btn_text_kamera),
@@ -91,7 +119,6 @@ fun UploadImageScreen(
                     },
                     modifier = Modifier.weight(1f)
                 ) {
-
                 }
             }
         }
