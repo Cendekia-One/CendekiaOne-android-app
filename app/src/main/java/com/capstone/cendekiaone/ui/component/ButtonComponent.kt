@@ -10,27 +10,30 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import com.capstone.cendekiaone.ui.theme.myFont
 
 
 @Composable
 fun ButtonComponent(
+    modifier: Modifier = Modifier,
     provideText: String,
     colors: ButtonColors = ButtonDefaults.filledTonalButtonColors(
         containerColor = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.onPrimary,
+        disabledContentColor = MaterialTheme.colorScheme.onPrimary,
         disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-        disabledContentColor = MaterialTheme.colorScheme.onPrimary
     ),
-    modifier: Modifier = Modifier,
     icon: @Composable (() -> Unit)? = null,
+    shape: Shape = ButtonDefaults.shape,
     onClick: () -> Unit,
 ) {
     Button(
         onClick = { onClick() },
         modifier = modifier,
-        colors = colors
+        colors = colors,
+        shape = shape
     ) {
         if (icon != null) {
             icon()

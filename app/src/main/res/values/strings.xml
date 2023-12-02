@@ -27,11 +27,15 @@
     <string name="share_profile">Share Profile</string>
     <string name="menu_explore">Explore</string>
     <string name="verified">Verified</string>
-    <string name="tulis_deskripsi">Tulis Deskripsi</string>
-    <string name="text_placeholder_example">cth:Fisika,Kimia,Teknolog</string>
+    <string name="tulis_deskripsi">Write Description</string>
+    <string name="text_placeholder_example">e.g:Fisika,Kimia,Teknolog</string>
     <string name="posting">posting</string>
     <string name="text__pilih_sumber">Pilih Sumber</string>
     <string name="btn_text_galeri">Galeri</string>
     <string name="btn_text_kamera">Kamera</string>
     <string name="btn_textselesai">Selesai</string>
+    <string name="btn_text_submit">Submit</string>
+    <string name="text_placeholder_username">username</string>
+    <string name="text_placeholder_name">name</string>
+    <string name="text_placeholder_bio">bio</string>
 </resources>
