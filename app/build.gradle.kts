@@ -77,4 +77,15 @@ dependencies {
     implementation("androidx.compose.material3:material3-window-size-class:1.1.2")
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation ("com.github.bumptech.glide:compose:1.0.0-beta01")
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
+
+    val cameraxVersion = "1.3.0"
+
+    implementation("androidx.camera:camera-core:$cameraxVersion")
+    implementation("androidx.camera:camera-camera2:$cameraxVersion")
+    implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
+    implementation("androidx.camera:camera-video:$cameraxVersion")
+
+    implementation("androidx.camera:camera-view:$cameraxVersion")
+    implementation("androidx.camera:camera-extensions:$cameraxVersion")
 }
