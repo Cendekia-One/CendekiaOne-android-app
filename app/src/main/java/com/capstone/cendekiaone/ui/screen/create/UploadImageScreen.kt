@@ -31,7 +31,6 @@ import com.capstone.cendekiaone.R
 import com.capstone.cendekiaone.ui.component.ButtonComponent
 import com.capstone.cendekiaone.ui.component.OutlinedButtonComponent
 import com.capstone.cendekiaone.ui.navigation.Screen
-
 @Composable
 fun UploadImageScreen(
     modifier: Modifier = Modifier,
@@ -53,6 +52,7 @@ fun UploadImageScreen(
                 "Foto diambil dari kamera",
                 Toast.LENGTH_SHORT
             ).show()
+
         } else {
             Toast.makeText(
                 context,
@@ -119,6 +119,7 @@ fun UploadImageScreen(
                     },
                     modifier = Modifier.weight(1f)
                 ) {
+
                 }
             }
         }
@@ -136,3 +137,6 @@ fun UploadImageScreen(
 fun UploadCameraPrev() {
     UploadImageScreen(navController = rememberNavController())
 }
+
+
+

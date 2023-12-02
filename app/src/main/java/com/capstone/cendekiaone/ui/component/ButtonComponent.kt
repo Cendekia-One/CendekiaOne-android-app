@@ -11,7 +11,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.capstone.cendekiaone.ui.theme.myFont
 
 
@@ -37,11 +39,14 @@ fun ButtonComponent(
     ) {
         if (icon != null) {
             icon()
-            Spacer(modifier = Modifier.padding(8.dp))
+            Spacer(modifier = Modifier.padding(2.dp))
         } else {
             null
         }
-        Text(provideText, fontFamily = myFont)
+        Text(provideText,
+            fontFamily = myFont,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis)
     }
 }
 
