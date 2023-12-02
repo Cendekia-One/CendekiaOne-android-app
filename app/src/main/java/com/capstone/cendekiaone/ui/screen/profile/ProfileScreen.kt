@@ -40,14 +40,20 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.capstone.cendekiaone.BuildConfig
 import com.capstone.cendekiaone.R
 import com.capstone.cendekiaone.ui.component.ButtonComponent
 import com.capstone.cendekiaone.ui.component.OutlinedButtonComponent
+import com.capstone.cendekiaone.ui.navigation.Screen
 import com.capstone.cendekiaone.ui.theme.myFont
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(
+    navController: NavController = rememberNavController()
+) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
@@ -86,7 +92,9 @@ fun ProfileScreen() {
         ) {
             item {
                 HeaderProfile()
-                DescriptionProfile()
+                DescriptionProfile(
+                    navController
+                )
                 TabLayout()
             }
         }
@@ -179,7 +187,9 @@ fun HeaderProfile(
 }
 
 @Composable
-fun DescriptionProfile() {
+fun DescriptionProfile(
+    navController: NavController = rememberNavController()
+) {
     Column(
         modifier = Modifier.padding(top = 16.dp)
     ) {
@@ -207,7 +217,9 @@ fun DescriptionProfile() {
         ) {
             ButtonComponent(
                 provideText = stringResource(R.string.edit_profile),
-                onClick = { },
+                onClick = {
+                    navController.navigate(Screen.EditProfile.route)
+                },
                 modifier = Modifier
                     .weight(1f)
                     .padding(end = 4.dp),
@@ -250,5 +262,7 @@ fun TabLayout() {
 @Preview(showBackground = true, device = "id:pixel_4")
 @Composable
 fun ProfileScreenPreview() {
-    ProfileScreen()
+    ProfileScreen(
+        navController = rememberNavController()
+    )
 }
