@@ -9,7 +9,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-// TODO : Data ga bisa masuk ke API :(
 class RegisterViewModel(private val apiService: ApiService) : ViewModel() {
     // LiveData to observe loading state
     private val _isLoading = MutableLiveData<Boolean>()
@@ -29,7 +28,13 @@ class RegisterViewModel(private val apiService: ApiService) : ViewModel() {
     // Function to initiate the registration process
     fun register(name: String, email: String, password: String) {
         _isLoading.value = true
-        apiService.register(name, email, password).enqueue(object : Callback<DataResponse> {
+//        apiService.register(name, email, password).enqueue(object : Callback<DataResponse> {
+
+        // Just For Testing (start)
+        val request = ApiService.RegisterRequest(name, email, password)
+        apiService.register(request).enqueue(object : Callback<DataResponse> {
+        // Just For Testing (end)
+
             override fun onResponse(call: Call<DataResponse>, response: Response<DataResponse>) {
                 _isLoading.value = false
                 val responseBody = response.body()

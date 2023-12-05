@@ -40,8 +40,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.capstone.cendekiaone.R
-import com.capstone.cendekiaone.data.helper.ViewModelFactory
-import com.capstone.cendekiaone.data.remote.retforit.ApiConfig
+import com.capstone.cendekiaone.data.helper.LocalViewModelFactory
 import com.capstone.cendekiaone.ui.component.ButtonComponent
 import com.capstone.cendekiaone.ui.component.OutlinedTextFieldComponent
 import com.capstone.cendekiaone.ui.component.PasswordTextFieldComponent
@@ -54,7 +53,7 @@ import com.capstone.cendekiaone.ui.theme.myFont2
 fun RegisterScreen(
     navController: NavController,
     registerViewModel: RegisterViewModel = viewModel(
-        factory = ViewModelFactory(ApiConfig.getApiService(), LocalContext.current)
+        factory = LocalViewModelFactory.provide()
     ),
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
@@ -195,5 +194,7 @@ private fun ShowToast(message: String) {
 @Preview(showBackground = true, device = "id:pixel_4")
 @Composable
 fun LoginScreenPreview() {
-    RegisterScreen(navController = rememberNavController())
+    RegisterScreen(
+        navController = rememberNavController()
+    )
 }
