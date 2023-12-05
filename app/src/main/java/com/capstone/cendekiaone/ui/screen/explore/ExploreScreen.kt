@@ -1,6 +1,5 @@
 package com.capstone.cendekiaone.ui.screen.explore
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -11,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
-import com.capstone.cendekiaone.ui.component.PostComponent
 import com.capstone.cendekiaone.ui.component.SearchComponent
 
 @OptIn(ExperimentalMaterial3Api::class)

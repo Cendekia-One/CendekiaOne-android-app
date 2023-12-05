@@ -27,13 +27,13 @@ import androidx.compose.material3.IconButton as IconButton1
 fun OutlinedTextFieldComponent(
     provideText: String = "",
     icon: Painter? = null,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    value: String,
+    onValueChange: (String) -> Unit
 ) {
-    var text by rememberSaveable { mutableStateOf("") }
-
     OutlinedTextField(
-        value = text,
-        onValueChange = { text = it },
+        value = value,
+        onValueChange = { onValueChange(it) },
         label = { Text(provideText, fontFamily = myFont) },
         leadingIcon = if (icon != null) {
             {
@@ -43,9 +43,9 @@ fun OutlinedTextFieldComponent(
             null
         },
         trailingIcon =
-        if (text.isNotEmpty()) {
+        if (value.isNotEmpty()) {
             {
-                IconButton1(onClick = { text = "" }) {
+                IconButton1(onClick = { onValueChange("") }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_close),
                         contentDescription = null
@@ -62,14 +62,15 @@ fun OutlinedTextFieldComponent(
 
 @Composable
 fun PasswordTextFieldComponent(
-    icon: Painter
+    icon: Painter,
+    value: String,
+    onValueChange: (String) -> Unit
 ) {
-    var password by rememberSaveable { mutableStateOf("") }
     var passwordHidden by rememberSaveable { mutableStateOf(true) }
 
     OutlinedTextField(
-        value = password,
-        onValueChange = { password = it },
+        value = value,
+        onValueChange = { onValueChange(it) },
         singleLine = true,
         label = { Text("Enter password", fontFamily = myFont) },
         visualTransformation =

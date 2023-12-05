@@ -47,9 +47,13 @@ fun CreateScreen(
         )
         OutlinedTextFieldComponent(
             provideText = stringResource(R.string.tulis_deskripsi),
+            value = "",
+            onValueChange = {  }
         )
         OutlinedTextFieldComponent(
             provideText = stringResource(R.string.text_placeholder_example),
+            value = "",
+            onValueChange = {  }
         )
         ButtonComponent(
             provideText = stringResource(R.string.posting),

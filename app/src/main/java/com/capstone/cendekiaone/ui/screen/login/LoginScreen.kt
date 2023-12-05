@@ -72,10 +72,16 @@ fun LoginScreen(
             icon = painterResource(R.drawable.ic_email_filled),
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Email
-            )
+            ),
+            value = "",
+            onValueChange = {  }
         )
         Spacer(modifier = Modifier.height(8.dp))
-        PasswordTextFieldComponent(icon = painterResource(R.drawable.ic_password_filled))
+        PasswordTextFieldComponent(
+            icon = painterResource(R.drawable.ic_password_filled),
+            value = "",
+            onValueChange = {  }
+        )
         Spacer(modifier = Modifier.height(24.dp))
         ButtonComponent(
             provideText = stringResource(R.string.signIn),
