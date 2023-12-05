@@ -63,7 +63,7 @@ fun RegisterScreen(
     var password by remember { mutableStateOf("") }
 
     // Observe the loading state from the ViewModel
-    val isLoading by registerViewModel.isLoading.observeAsState(false)
+    val isLoading by registerViewModel.isLoading.observeAsState(initial = false)
 
     // Observe the registration result from the ViewModel
     val registrationResult by registerViewModel.registrationResult.observeAsState()
@@ -152,31 +152,37 @@ fun RegisterScreen(
             }
         }
 
+        // Handle registration result
+        registrationResult?.let { result ->
+            when (result) {
+                is RegisterViewModel.RegistrationResult.Success -> {
+                    // Registration is successful, show Toast and navigate to LoginScreen
+                    ShowToast(result.message)
+                    navController.navigate(Screen.Login.route)
+                    // Reset the registration result to allow for future registrations
+                    registerViewModel.resetRegistrationResult()
+                }
+                is RegisterViewModel.RegistrationResult.Error -> {
+                    // Handle error if needed, show Toast
+                    ShowToast(result.errorMessage)
+                    // Reset the registration result to allow for future registrations
+                    registerViewModel.resetRegistrationResult()
+                }
+                is RegisterViewModel.RegistrationResult.NetworkError -> {
+                    // Handle network error if needed, show Toast
+                    ShowToast("Network Error")
+                    // Reset the registration result to allow for future registrations
+                    registerViewModel.resetRegistrationResult()
+                }
+            }
+        }
+
         // Loading indicator
         if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.size(50.dp),
                 strokeWidth = 5.dp
             )
-        }
-
-        // Handle registration result
-        registrationResult?.let { result ->
-            when (result) {
-                is RegisterViewModel.RegistrationResult.Success -> {
-                    // Registration is successful, navigate to LoginScreen
-                    ShowToast(result.message)
-                    navController.navigate(Screen.Login.route)
-                }
-                is RegisterViewModel.RegistrationResult.Error -> {
-                    // Handle error if needed
-                    ShowToast(result.errorMessage)
-                }
-                is RegisterViewModel.RegistrationResult.NetworkError -> {
-                    // Handle network error if needed
-                    ShowToast("Network Error")
-                }
-            }
         }
     }
 }

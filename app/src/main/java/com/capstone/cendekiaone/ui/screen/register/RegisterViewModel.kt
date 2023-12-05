@@ -16,8 +16,8 @@ class RegisterViewModel(private val apiService: ApiService) : ViewModel() {
     val isLoading: LiveData<Boolean> = _isLoading
 
     // LiveData to observe the registration result
-    private val _registrationResult = MutableLiveData<RegistrationResult>()
-    val registrationResult: LiveData<RegistrationResult> = _registrationResult
+    private val _registrationResult = MutableLiveData<RegistrationResult?>()
+    val registrationResult: MutableLiveData<RegistrationResult?> = _registrationResult
 
     // Sealed class to represent different registration results
     sealed class RegistrationResult {
@@ -49,4 +49,9 @@ class RegisterViewModel(private val apiService: ApiService) : ViewModel() {
             }
         })
     }
+
+    fun resetRegistrationResult() {
+        _registrationResult.value = null
+    }
 }
+
