@@ -106,7 +106,7 @@ fun RegisterScreen(
                 provideText = stringResource(R.string.enter_name),
                 icon = painterResource(R.drawable.ic_name_filled),
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Email
+                    keyboardType = KeyboardType.Text
                 ),
                 value = name,
                 onValueChange = { name = it }
@@ -116,7 +116,7 @@ fun RegisterScreen(
                 provideText = stringResource(R.string.enter_email),
                 icon = painterResource(R.drawable.ic_email_filled),
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Text
+                    keyboardType = KeyboardType.Email
                 ),
                 value = email,
                 onValueChange = { email = it }

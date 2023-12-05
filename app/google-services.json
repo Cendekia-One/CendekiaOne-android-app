@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "301319903455",
+    "project_id": "cendikiaone-6d58e",
+    "storage_bucket": "cendikiaone-6d58e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:301319903455:android:5857a2e287c2f0a307b16a",
+        "android_client_info": {
+          "package_name": "com.capstone.cendekiaone"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAELih0OWB-5Cgg8UCDOCyC2DUB-Jkd2LE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
