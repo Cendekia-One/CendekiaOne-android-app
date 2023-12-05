@@ -152,7 +152,7 @@ fun RegisterScreen(
             }
         }
 
-        // Handle registration result
+        // Handle registrations result
         registrationResult?.let { result ->
             when (result) {
                 is RegisterViewModel.RegistrationResult.Success -> {
