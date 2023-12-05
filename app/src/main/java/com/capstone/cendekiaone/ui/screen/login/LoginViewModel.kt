@@ -5,8 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.capstone.cendekiaone.data.helper.UserRepository
 import com.capstone.cendekiaone.data.pref.UserModel
+import com.capstone.cendekiaone.data.remote.response.DataResponse
 import com.capstone.cendekiaone.data.remote.response.LoginResponse
 import com.capstone.cendekiaone.data.remote.retforit.ApiService
+import com.capstone.cendekiaone.ui.screen.register.RegisterViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -20,8 +22,8 @@ class LoginViewModel(
     val isLoading: LiveData<Boolean> = _isLoading
 
     // LiveData to observe the login result
-    private val _loginResult = MutableLiveData<LoginResult>()
-    val loginResult: LiveData<LoginResult> = _loginResult
+    private val _loginResult = MutableLiveData<LoginResult?>()
+    val loginResult: LiveData<LoginResult?> = _loginResult
 
     // Sealed class to represent different login results
     sealed class LoginResult {
@@ -33,7 +35,13 @@ class LoginViewModel(
     // Function to initiate the login process
     fun login(email: String, password: String) {
         _isLoading.value = true
-        apiService.login(email, password).enqueue(object : Callback<LoginResponse> {
+//        apiService.login(email, password).enqueue(object : Callback<LoginResponse> {
+
+        // Just For Testing (start)
+        val request = ApiService.LoginRequest(email, password)
+        apiService.login(request).enqueue(object : Callback<LoginResponse> {
+            // Just For Testing (end)
+
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 _isLoading.value = false
                 val responseBody = response.body()
@@ -56,5 +64,9 @@ class LoginViewModel(
                 _loginResult.value = LoginResult.NetworkError
             }
         })
+    }
+
+    fun resetLoginResult() {
+        _loginResult.value = null
     }
 }
