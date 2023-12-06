@@ -13,8 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.capstone.cendekiaone.data.helper.LocalViewModelFactory
+import com.capstone.cendekiaone.data.helper.UserRepository
 import com.capstone.cendekiaone.ui.component.PostComponent
 import com.capstone.cendekiaone.ui.component.TopAppComponent
 
@@ -22,6 +25,9 @@ import com.capstone.cendekiaone.ui.component.TopAppComponent
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    userRepository: UserRepository = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
     navController: NavController,
 ) {
 

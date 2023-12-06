@@ -1,5 +1,7 @@
 package com.capstone.cendekiaone.ui.screen.profile
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,8 +24,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -40,10 +44,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.capstone.cendekiaone.BuildConfig
 import com.capstone.cendekiaone.R
+import com.capstone.cendekiaone.data.helper.LocalViewModelFactory
+import com.capstone.cendekiaone.data.helper.UserRepository
+import com.capstone.cendekiaone.ui.component.AlertDialogComponent
 import com.capstone.cendekiaone.ui.component.ButtonComponent
 import com.capstone.cendekiaone.ui.component.OutlinedButtonComponent
 import com.capstone.cendekiaone.ui.navigation.Screen
@@ -52,8 +60,13 @@ import com.capstone.cendekiaone.ui.theme.myFont
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    navController: NavController = rememberNavController()
+    navController: NavController = rememberNavController(),
+    userRepository: UserRepository = viewModel(
+        factory = LocalViewModelFactory.provide()
+    )
 ) {
+    var showDialog by remember { mutableStateOf(false) }
+
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
@@ -70,14 +83,16 @@ fun ProfileScreen(
                 },
                 actions = {
                     IconButton(
-                        onClick = { },
-                        modifier = Modifier
-                            .size(40.dp)
+                        onClick = {
+                            // Set showDialog to true when the logout icon is clicked
+                            showDialog = true
+                        },
+                        modifier = Modifier.size(40.dp)
                     ) {
-                        val icon: Painter = painterResource(id = R.drawable.ic_menu_outline)
+                        val icon: Painter = painterResource(id = R.drawable.ic_logout_outline)
                         Icon(
                             painter = icon,
-                            contentDescription = "Icon Menu",
+                            contentDescription = "Icon Logout",
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
@@ -98,6 +113,27 @@ fun ProfileScreen(
                 TabLayout()
             }
         }
+    }
+
+    // Logout Confirmation Dialog
+    if (showDialog) {
+        AlertDialogComponent(
+            onDismiss = {
+                // Reset the showDialog state when the dialog is dismissed
+                showDialog = false
+            },
+            onConfirm = {
+                // Log out the user and navigate to the Intro screen
+                userRepository.logout()
+                navController.navigate(Screen.Login.route) {
+                    // Clear the back stack
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                }
+                showDialog = false
+            }
+        )
     }
 }
 

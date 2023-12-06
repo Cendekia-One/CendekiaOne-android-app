@@ -7,15 +7,6 @@ import retrofit2.http.*
 
 interface ApiService {
     // Register a user with name, email, and password
-//    @FormUrlEncoded
-//    @POST("register")
-//    fun register(
-//        @Field("name") name: String,
-//        @Field("email") email: String,
-//        @Field("password") password: String
-//    ): Call<DataResponse>
-
-    // Just For Testing (start)
     @POST("register")
     fun register(@Body request: RegisterRequest): Call<DataResponse>
 
@@ -24,17 +15,8 @@ interface ApiService {
         val email: String,
         val password: String
     )
-    // Just For Testing (end)
 
-//    // Log in a user with email and password
-//    @FormUrlEncoded
-//    @POST("login")
-//    fun login(
-//        @Field("email") email: String,
-//        @Field("password") password: String
-//    ): Call<LoginResponse>
-
-    // Just For Testing (start)
+    // Log in a user with email and password
     @POST("login")
     fun login(@Body request: LoginRequest): Call<LoginResponse>
 
@@ -42,5 +24,4 @@ interface ApiService {
         val email: String,
         val password: String
     )
-    // Just For Testing (end)
 }

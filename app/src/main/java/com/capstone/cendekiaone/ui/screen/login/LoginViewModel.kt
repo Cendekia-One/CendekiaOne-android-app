@@ -35,13 +35,8 @@ class LoginViewModel(
     // Function to initiate the login process
     fun login(email: String, password: String) {
         _isLoading.value = true
-//        apiService.login(email, password).enqueue(object : Callback<LoginResponse> {
-
-        // Just For Testing (start)
         val request = ApiService.LoginRequest(email, password)
         apiService.login(request).enqueue(object : Callback<LoginResponse> {
-            // Just For Testing (end)
-
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 _isLoading.value = false
                 val responseBody = response.body()
