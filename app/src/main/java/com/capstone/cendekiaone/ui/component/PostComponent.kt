@@ -76,7 +76,7 @@ fun HeaderPost(
                 .align(Alignment.CenterVertically)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_launcher_background),
+                painter = painterResource(id = R.drawable.placeholder),
                 contentDescription = "Image Profile",
                 modifier = Modifier
                     .size(40.dp)
@@ -125,7 +125,7 @@ fun HeaderPost(
 @Composable
 fun MainPost() {
     Image(
-        painter = painterResource(id = R.drawable.ic_launcher_background),
+        painter = painterResource(id = R.drawable.placeholder),
         contentDescription = "Image Profile",
         modifier = Modifier
             .fillMaxWidth()

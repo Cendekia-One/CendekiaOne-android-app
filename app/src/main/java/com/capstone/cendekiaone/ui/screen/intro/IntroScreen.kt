@@ -3,7 +3,6 @@ package com.capstone.cendekiaone.ui.screen.intro
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,10 +17,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -124,11 +121,6 @@ fun IntroScreen(
             onClick = { navController.navigate(Screen.Login.route) },
         )
     }
-}
-
-@Composable
-private fun ShowToast(message: String) {
-    Toast.makeText(LocalContext.current, message, Toast.LENGTH_SHORT).show()
 }
 
 @Preview(showBackground = true, device = "id:pixel_4")

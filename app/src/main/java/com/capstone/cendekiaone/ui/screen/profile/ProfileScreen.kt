@@ -1,7 +1,5 @@
 package com.capstone.cendekiaone.ui.screen.profile
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,7 +10,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -47,7 +43,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.capstone.cendekiaone.BuildConfig
 import com.capstone.cendekiaone.R
 import com.capstone.cendekiaone.data.helper.LocalViewModelFactory
 import com.capstone.cendekiaone.data.helper.UserRepository
@@ -147,7 +142,7 @@ fun HeaderProfile(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_launcher_background),
+            painter = painterResource(id = R.drawable.placeholder),
             contentDescription = "Image Profile",
             modifier = Modifier
                 .size(70.dp)
