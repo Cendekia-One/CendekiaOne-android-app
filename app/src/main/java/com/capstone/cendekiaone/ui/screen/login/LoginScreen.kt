@@ -113,12 +113,11 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(24.dp))
             ButtonComponent(
                 provideText = stringResource(R.string.signIn),
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {
-                    // Trigger the registration process in the ViewModel
-                    loginViewModel.login(email, password)
-                }
-            )
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                // Trigger the registration process in the ViewModel
+                loginViewModel.login(email, password)
+            }
             Row {
                 Text(
                     text = stringResource(R.string.dont_have_account), style = TextStyle(

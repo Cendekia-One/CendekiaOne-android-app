@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="img">#76d1fe</color>
-    <color name="background">#FF000000</color>
+    <color name="img">#B2c5ff</color>
+    <color name="background">#FFFFFFFF</color>
+    <color name="onBackground">#FF000000</color>
 </resources>

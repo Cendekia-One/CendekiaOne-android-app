@@ -14,9 +14,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -48,12 +52,13 @@ fun IntroScreen(
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
 
-    DisposableEffect(userRepository) {
-        Log.d(TAG, "DisposableEffect: observing user data")
-        val observer = Observer<UserModel> { user ->
-            Log.d(TAG, "Observer: user data changed - $user")
-            if (user.isLogin) {
+    // Observe user login status with LaunchedEffect
+    LaunchedEffect(userRepository) {
+        userRepository.getUser().observeForever { user ->
+            if (user != null && user.isLogin) {
+                Log.d(TAG, "User is logged in. Navigating to HomeActivity.")
                 navController.navigate(Screen.Home.route) {
+                    // Pop up to the Home screen, removing all previous screens from the back stack
                     popUpTo(navController.graph.startDestinationId) {
                         saveState = true
                     }
@@ -61,16 +66,7 @@ fun IntroScreen(
                 }
             }
         }
-
-        userRepository.getUser().observeForever(observer)
-
-        onDispose {
-            // Remove the observer when the effect is disposed
-            userRepository.getUser().removeObserver(observer)
-            Log.d(TAG, "DisposableEffect: disposed")
-        }
     }
-
 
     Column(
         modifier = modifier
@@ -118,8 +114,7 @@ fun IntroScreen(
         ButtonComponent(
             provideText = stringResource(R.string.get_started),
             modifier = Modifier.fillMaxWidth(),
-            onClick = { navController.navigate(Screen.Login.route) },
-        )
+        ) { navController.navigate(Screen.Login.route) }
     }
 }
 

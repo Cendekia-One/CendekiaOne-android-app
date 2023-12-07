@@ -108,11 +108,10 @@ fun CreateScreen(
             )
             ButtonComponent(
                 provideText = stringResource(R.string.posting),
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {
-                    createViewModel.uploadStory(getFile, description)
-                }
-            )
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                createViewModel.uploadStory(getFile, description)
+            }
         }
 
         // Handle login result

@@ -82,7 +82,7 @@ fun ProfileScreen(
                             // Set showDialog to true when the logout icon is clicked
                             showDialog = true
                         },
-                        modifier = Modifier.size(40.dp)
+                        modifier = Modifier.size(40.dp).padding(end = 12.dp)
                     ) {
                         val icon: Painter = painterResource(id = R.drawable.ic_logout_outline)
                         Icon(
