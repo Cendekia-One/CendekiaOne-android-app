@@ -26,16 +26,15 @@ class RegisterViewModel(private val apiService: ApiService) : ViewModel() {
     }
 
     // Function to initiate the registration process
-    fun register(name: String, email: String, password: String) {
+    fun register(name: String, username: String, email: String, password: String) {
         _isLoading.value = true
-        val request = ApiService.RegisterRequest(name, email, password)
-        apiService.register(request).enqueue(object : Callback<DataResponse> {
+        apiService.register(name, username, email, password).enqueue(object : Callback<DataResponse> {
             override fun onResponse(call: Call<DataResponse>, response: Response<DataResponse>) {
                 _isLoading.value = false
                 val responseBody = response.body()
-                if (response.isSuccessful && responseBody?.message == "User Created") {
+                if (response.isSuccessful && responseBody?.message == "register success") {
                     // Registration is successful
-                    _registrationResult.value = RegistrationResult.Success(responseBody.message)
+                    _registrationResult.value = RegistrationResult.Success("Register Success")
                 } else {
                     // Registration failed
                     _registrationResult.value = RegistrationResult.Error("Registration failed")

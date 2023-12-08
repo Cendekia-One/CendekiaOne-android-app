@@ -20,7 +20,7 @@ class ApiConfig {
 
             // Create a Retrofit instance with the base URL, Gson converter, and OkHttpClient
             val retrofit = Retrofit.Builder()
-                .baseUrl("https://testapi-5uyt64tiaq-et.a.run.app/")
+                .baseUrl("https://podinfo1-5uyt64tiaq-et.a.run.app/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build()

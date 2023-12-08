@@ -8,16 +8,6 @@ import retrofit2.Call
 import retrofit2.http.*
 
 interface ApiService {
-    // Register a user with name, email, and password
-    @POST("register")
-    fun register(@Body request: RegisterRequest): Call<DataResponse>
-
-    data class RegisterRequest(
-        val name: String,
-        val email: String,
-        val password: String
-    )
-
     // Log in a user with email and password
     @POST("login")
     fun login(@Body request: LoginRequest): Call<LoginResponse>
@@ -26,6 +16,15 @@ interface ApiService {
         val email: String,
         val password: String
     )
+
+    @FormUrlEncoded
+    @POST("register")
+    fun register(
+        @Field("name") name: String,
+        @Field("username") username: String,
+        @Field("email") email: String,
+        @Field("password") password: String
+    ): Call<DataResponse>
 
     // Upload a story
     @Multipart

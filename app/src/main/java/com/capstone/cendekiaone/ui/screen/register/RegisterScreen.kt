@@ -132,7 +132,7 @@ fun RegisterScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 // Trigger the registration process in the ViewModel
-                registerViewModel.register(name, email, password)
+                registerViewModel.register(name, name, email, password)
             }
             Row {
                 Text(
