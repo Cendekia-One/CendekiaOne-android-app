@@ -15,25 +15,22 @@ data class DataResponse(
 // login response
 data class LoginResponse(
 
-    @field:SerializedName("loginResult")
+    @field:SerializedName("data")
     val loginResult: LoginResult,
 
-    @field:SerializedName("error")
-    val error: Boolean,
-
-    @field:SerializedName("message")
+    @field:SerializedName("status")
     val message: String
 )
 
 data class LoginResult(
 
-    @field:SerializedName("name")
+    @field:SerializedName("token")
     val name: String,
 
-    @field:SerializedName("userId")
+    @field:SerializedName("id_user")
     val userId: String,
 
-    @field:SerializedName("token")
+    @field:SerializedName("username")
     val token: String
 )
 

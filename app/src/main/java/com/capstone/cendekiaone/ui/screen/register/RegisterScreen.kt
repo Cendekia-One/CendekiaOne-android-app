@@ -57,7 +57,7 @@ fun RegisterScreen(
     ),
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
-    var name by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -102,13 +102,13 @@ fun RegisterScreen(
                     .align(Alignment.CenterHorizontally)
             )
             OutlinedTextFieldComponent(
-                provideText = stringResource(R.string.enter_name),
+                provideText = stringResource(R.string.enter_username),
                 icon = painterResource(R.drawable.ic_name_filled),
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Text
                 ),
-                value = name,
-                onValueChange = { name = it }
+                value = username,
+                onValueChange = { username = it }
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextFieldComponent(
@@ -132,7 +132,7 @@ fun RegisterScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 // Trigger the registration process in the ViewModel
-                registerViewModel.register(name, name, email, password)
+                registerViewModel.register(username, username, email, password)
             }
             Row {
                 Text(
