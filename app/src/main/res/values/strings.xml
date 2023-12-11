@@ -17,6 +17,7 @@
     <string name="menu_profile">Profile</string>
     <string name="menu_create">Create</string>
     <string name="search">Search</string>
+    <string name="bio_post">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi.</string>
     <string name="description_post">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi.</string>
     <string name="many_like">1029 Likes</string>
     <string name="validation_cek">Validation Cek</string>

@@ -1,7 +1,9 @@
 package com.capstone.cendekiaone.ui.screen.profile
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,7 +24,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.capstone.cendekiaone.R
 import com.capstone.cendekiaone.data.helper.LocalViewModelFactory
 import com.capstone.cendekiaone.data.helper.UserRepository
@@ -51,6 +57,7 @@ import com.capstone.cendekiaone.ui.component.ButtonComponent
 import com.capstone.cendekiaone.ui.component.OutlinedButtonComponent
 import com.capstone.cendekiaone.ui.navigation.Screen
 import com.capstone.cendekiaone.ui.theme.myFont
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,10 +65,32 @@ fun ProfileScreen(
     navController: NavController = rememberNavController(),
     userRepository: UserRepository = viewModel(
         factory = LocalViewModelFactory.provide()
-    )
+    ),
+    profileViewModel: ProfileViewModel = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
 ) {
-    var showDialog by remember { mutableStateOf(false) }
+    // Observe user details from the ViewModel
+    val userDetails by profileViewModel.userDetails.observeAsState()
 
+    // Observe loading state from the ViewModel
+    val isLoading by profileViewModel.isLoading.observeAsState(initial = false)
+
+    // Load user details when the screen is created
+    LaunchedEffect(profileViewModel) {
+        userRepository.getUser().observeForever { user ->
+            if (user != null && user.isLogin) {
+                Log.d("ProfileScreen", "User Token Screen: ${user.token}")
+                Log.d("ProfileScreen", "User ID Screen: ${user.id}")
+
+                launch {
+                    profileViewModel.loadUserDetails(user.id)
+                }
+            }
+        }
+    }
+
+    var showDialog by remember { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
@@ -71,7 +100,7 @@ fun ProfileScreen(
                 scrollBehavior = scrollBehavior,
                 title = {
                     Text(
-                        "cendikia_one",
+                        userDetails?.username ?: "",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -95,17 +124,27 @@ fun ProfileScreen(
             )
         }
     ) { innerPadding ->
-        LazyColumn(
+        Box(
             modifier = Modifier
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp)
         ) {
-            item {
-                HeaderProfile()
-                DescriptionProfile(
-                    navController
+            LazyColumn {
+                item {
+                    HeaderProfile()
+                    DescriptionProfile(
+                        navController
+                    )
+                    TabLayout()
+                }
+            }
+            // Loading indicator
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .align(Alignment.Center)
                 )
-                TabLayout()
             }
         }
     }
@@ -134,15 +173,21 @@ fun ProfileScreen(
 
 @Composable
 fun HeaderProfile(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    profileViewModel: ProfileViewModel = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
 ) {
+    // Observe user details from the ViewModel
+    val userDetails by profileViewModel.userDetails.observeAsState()
+
     Row(
         modifier = modifier
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Image(
-            painter = painterResource(id = R.drawable.placeholder),
+            painter = rememberAsyncImagePainter(model = userDetails?.profilePicture ?: R.drawable.placeholder),
             contentDescription = "Image Profile",
             modifier = Modifier
                 .size(70.dp)
@@ -219,13 +264,19 @@ fun HeaderProfile(
 
 @Composable
 fun DescriptionProfile(
-    navController: NavController = rememberNavController()
+    navController: NavController = rememberNavController(),
+    profileViewModel: ProfileViewModel = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
 ) {
+    // Observe user details from the ViewModel
+    val userDetails by profileViewModel.userDetails.observeAsState()
+
     Column(
         modifier = Modifier.padding(top = 16.dp)
     ) {
         Text(
-            text = "CendikiaOne",
+            text = userDetails?.name ?: "",
             style = TextStyle(
                 textAlign = TextAlign.Center,
                 fontFamily = myFont,
@@ -233,7 +284,7 @@ fun DescriptionProfile(
             ),
         )
         Text(
-            text = stringResource(R.string.description_post),
+            text = userDetails?.bio ?: "-",
             style = TextStyle(
                 textAlign = TextAlign.Justify,
                 fontFamily = myFont,

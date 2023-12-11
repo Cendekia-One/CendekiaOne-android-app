@@ -47,9 +47,9 @@ import java.io.File
 @Composable
 fun CreateScreen(
     modifier: Modifier = Modifier,
-    createViewModel: CreateViewModel = viewModel(
-        factory = LocalViewModelFactory.provide()
-    ),
+//    createViewModel: CreateViewModel = viewModel(
+//        factory = LocalViewModelFactory.provide()
+//    ),
     navController: NavController,
 ) {
     var getFile by remember { mutableStateOf<File?>(null) }
@@ -69,11 +69,11 @@ fun CreateScreen(
             }
         }
 
-    // Observe the loading state from the ViewModel
-    val isLoading by createViewModel.isLoading.observeAsState(initial = false)
-
-    // Observe the registration result from the ViewModel
-    val uploadResult by createViewModel.uploadResult.observeAsState()
+//    // Observe the loading state from the ViewModel
+//    val isLoading by createViewModel.isLoading.observeAsState(initial = false)
+//
+//    // Observe the registration result from the ViewModel
+//    val uploadResult by createViewModel.uploadResult.observeAsState()
 
     Box(
         modifier = modifier
@@ -110,39 +110,39 @@ fun CreateScreen(
                 provideText = stringResource(R.string.posting),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                createViewModel.uploadStory(getFile, description)
+//                createViewModel.uploadStory(getFile, description)
             }
         }
 
-        // Handle login result
-        uploadResult?.let { result ->
-            when (result) {
-                is CreateViewModel.UploadResult.Success -> {
-                    // Registration is successful, show Toast and navigate to LoginScreen
-                    ShowToast(result.message)
-                    navController.navigate(Screen.Home.route)
-                    createViewModel.resetUploadResult()
-                }
-                is CreateViewModel.UploadResult.Error -> {
-                    // Handle error if needed, show Toast
-                    ShowToast(result.errorMessage)
-                    createViewModel.resetUploadResult()
-                }
-                is CreateViewModel.UploadResult.NetworkError -> {
-                    // Handle network error if needed, show Toast
-                    ShowToast("Network Error")
-                    createViewModel.resetUploadResult()
-                }
-            }
-        }
-
-        // Loading indicator
-        if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(50.dp),
-                strokeWidth = 5.dp
-            )
-        }
+//        // Handle login result
+//        uploadResult?.let { result ->
+//            when (result) {
+//                is CreateViewModel.UploadResult.Success -> {
+//                    // Registration is successful, show Toast and navigate to LoginScreen
+//                    ShowToast(result.message)
+//                    navController.navigate(Screen.Home.route)
+//                    createViewModel.resetUploadResult()
+//                }
+//                is CreateViewModel.UploadResult.Error -> {
+//                    // Handle error if needed, show Toast
+//                    ShowToast(result.errorMessage)
+//                    createViewModel.resetUploadResult()
+//                }
+//                is CreateViewModel.UploadResult.NetworkError -> {
+//                    // Handle network error if needed, show Toast
+//                    ShowToast("Network Error")
+//                    createViewModel.resetUploadResult()
+//                }
+//            }
+//        }
+//
+//        // Loading indicator
+//        if (isLoading) {
+//            CircularProgressIndicator(
+//                modifier = Modifier.size(50.dp),
+//                strokeWidth = 5.dp
+//            )
+//        }
     }
 }
 

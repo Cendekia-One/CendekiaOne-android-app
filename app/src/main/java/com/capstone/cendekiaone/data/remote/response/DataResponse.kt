@@ -1,7 +1,5 @@
 package com.capstone.cendekiaone.data.remote.response
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 data class DataResponse(
@@ -14,61 +12,51 @@ data class DataResponse(
 
 // login response
 data class LoginResponse(
-
     @field:SerializedName("data")
     val loginResult: LoginResult,
 
     @field:SerializedName("status")
-    val message: String
+    val status: String
 )
 
 data class LoginResult(
-
     @field:SerializedName("token")
-    val name: String,
+    val token: String,
 
     @field:SerializedName("id_user")
     val userId: String,
 
     @field:SerializedName("username")
-    val token: String
+    val username: String
 )
 
-data class StoryResponse(
+data class UserDetail(
+    @field:SerializedName("status")
+    val status: String,
 
-    @field:SerializedName("listStory")
-    val listStory: List<ListStory>,
-
-    @field:SerializedName("error")
-    val error: Boolean,
-
-    @field:SerializedName("message")
-    val message: String
+    @field:SerializedName("data")
+    val data: DataUser,
 )
 
-
-@Entity(tableName = "stories")
-data class ListStory(
-
-    @field:SerializedName("photoUrl")
-    val photoUrl: String,
-
-    @field:SerializedName("createdAt")
-    val createdAt: String,
+data class DataUser(
+    @field:SerializedName("id")
+    val id: String,
 
     @field:SerializedName("name")
     val name: String,
 
-    @field:SerializedName("description")
-    val description: String,
+    @field:SerializedName("username")
+    val username: String,
 
-    @field:SerializedName("lon")
-    val lon: Double,
+    @field:SerializedName("bio")
+    val bio: String,
 
-    @PrimaryKey
-    @field:SerializedName("id")
-    val id: String,
+    @field:SerializedName("profile_picture")
+    val profilePicture: String,
 
-    @field:SerializedName("lat")
-    val lat: Double
+    @field:SerializedName("createdAt")
+    val createdAt: String,
+
+    @field:SerializedName("updatedAt")
+    val updatedAt: String,
 )

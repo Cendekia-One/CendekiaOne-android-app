@@ -5,10 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.capstone.cendekiaone.data.helper.UserRepository
 import com.capstone.cendekiaone.data.pref.UserModel
-import com.capstone.cendekiaone.data.remote.response.DataResponse
 import com.capstone.cendekiaone.data.remote.response.LoginResponse
 import com.capstone.cendekiaone.data.remote.retforit.ApiService
-import com.capstone.cendekiaone.ui.screen.register.RegisterViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -42,8 +40,9 @@ class LoginViewModel(
 
                 if (response.isSuccessful) {
                     val token = responseBody?.loginResult?.token
-                    if (token != null) {
-                        userRepository.saveUser(UserModel(token, true))
+                    val id = responseBody?.loginResult?.userId
+                    if (token != null && id != null) {
+                        userRepository.saveUser(UserModel(token, id,true))
                         _loginResult.value = LoginResult.Success(token)
                     } else {
                         _loginResult.value = LoginResult.Error

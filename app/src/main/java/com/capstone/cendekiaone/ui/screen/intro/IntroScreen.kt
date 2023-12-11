@@ -14,12 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,14 +26,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Observer
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.capstone.cendekiaone.R
 import com.capstone.cendekiaone.data.helper.LocalViewModelFactory
 import com.capstone.cendekiaone.data.helper.UserRepository
-import com.capstone.cendekiaone.data.pref.UserModel
 import com.capstone.cendekiaone.ui.component.ButtonComponent
 import com.capstone.cendekiaone.ui.navigation.Screen
 import com.capstone.cendekiaone.ui.theme.myFont
@@ -56,7 +50,9 @@ fun IntroScreen(
     LaunchedEffect(userRepository) {
         userRepository.getUser().observeForever { user ->
             if (user != null && user.isLogin) {
-                Log.d(TAG, "User is logged in. Navigating to HomeActivity.")
+                Log.d(TAG, "User is logged in. Navigating to HomeActivity")
+                Log.d(TAG, "User Token: ${user.token}")
+                Log.d(TAG, "User ID: ${user.id}")
                 navController.navigate(Screen.Home.route) {
                     // Pop up to the Home screen, removing all previous screens from the back stack
                     popUpTo(navController.graph.startDestinationId) {

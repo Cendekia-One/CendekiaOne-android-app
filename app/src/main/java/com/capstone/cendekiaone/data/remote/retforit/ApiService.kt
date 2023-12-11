@@ -2,9 +2,9 @@ package com.capstone.cendekiaone.data.remote.retforit
 
 import com.capstone.cendekiaone.data.remote.response.DataResponse
 import com.capstone.cendekiaone.data.remote.response.LoginResponse
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
+import com.capstone.cendekiaone.data.remote.response.UserDetail
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.*
 
 interface ApiService {
@@ -26,12 +26,7 @@ interface ApiService {
         @Field("password") password: String
     ): Call<DataResponse>
 
-    // Upload a story
-    @Multipart
-    @POST("stories")
-    fun uploadStory(
-        @Header("Authorization") header: String,
-        @Part file: MultipartBody.Part,
-        @Part("description") description: RequestBody
-    ): Call<DataResponse>
+    // User detail
+    @GET("user/{id_user}")
+    suspend fun userDetail(@Path("id_user") userId: String): Response<UserDetail>
 }

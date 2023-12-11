@@ -16,6 +16,7 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
         return dataStore.data.map { preferences ->
             UserModel(
                 preferences[TOKEN_KEY] ?: "", // Retrieve token from preferences
+                preferences[ID_KEY] ?: "", // Retrieve id from preferences
                 preferences[STATE_KEY] ?: false // Retrieve login state from preferences
             )
         }
@@ -25,6 +26,7 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
     suspend fun saveUser(user: UserModel) {
         dataStore.edit { preferences ->
             preferences[TOKEN_KEY] = user.token // Save user's token to preferences
+            preferences[ID_KEY] = user.id // Save user's id to preferences
             preferences[STATE_KEY] = user.isLogin // Save login state to preferences
         }
     }
@@ -42,6 +44,7 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
         private var INSTANCE: UserPreferences? = null
 
         private val TOKEN_KEY = stringPreferencesKey("token") // Define the key for token preference
+        private val ID_KEY = stringPreferencesKey("id") // Define the key for id preference
         private val STATE_KEY = booleanPreferencesKey("state") // Define the key for login state preference
 
         // Create a singleton instance of UserPreferences
