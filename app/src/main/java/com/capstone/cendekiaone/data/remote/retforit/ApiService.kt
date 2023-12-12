@@ -29,4 +29,15 @@ interface ApiService {
     // User detail
     @GET("user/{id_user}")
     suspend fun userDetail(@Path("id_user") userId: String): Response<UserDetail>
+
+    // Register a user with name, username, email, and password
+    @FormUrlEncoded
+    @POST("user/update-profile")
+    fun updateProfile(
+        @Field("id_user") idUser: String,
+        @Field("username") username: String,
+        @Field("name") name: String,
+        @Field("bio") bio: String,
+//        @Field("profile_url") profileUrl: String
+    ): Call<DataResponse>
 }

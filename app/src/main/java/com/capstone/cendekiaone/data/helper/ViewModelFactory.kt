@@ -14,6 +14,7 @@ import com.capstone.cendekiaone.data.remote.retforit.ApiService
 import com.capstone.cendekiaone.ui.screen.login.LoginViewModel
 import com.capstone.cendekiaone.ui.screen.register.RegisterViewModel
 import androidx.datastore.preferences.core.Preferences
+import com.capstone.cendekiaone.ui.screen.profile.EditProfileViewModel
 import com.capstone.cendekiaone.ui.screen.profile.ProfileViewModel
 
 
@@ -40,6 +41,9 @@ class LocalViewModelFactory private constructor(
             }
             modelClass.isAssignableFrom(ProfileViewModel::class.java) -> {
                 ProfileViewModel(apiService) as T
+            }
+            modelClass.isAssignableFrom(EditProfileViewModel::class.java) -> {
+                EditProfileViewModel(apiService) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }

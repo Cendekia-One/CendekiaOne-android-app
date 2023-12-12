@@ -42,4 +42,5 @@
     <string name="toast_choose_from_gallery">choose from gallery</string>
     <string name="catergory_post">Category (e.g Tech, Math)</string>
     <string name="enter_username">Enter your username</string>
+    <string name="enter_bio">Enter you bio</string>
 </resources>

@@ -1,5 +1,8 @@
+@file:Suppress("NAME_SHADOWING")
+
 package com.capstone.cendekiaone.ui.screen.profile
 
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,21 +17,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,31 +41,42 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.capstone.cendekiaone.R
+import com.capstone.cendekiaone.data.helper.LocalViewModelFactory
+import com.capstone.cendekiaone.data.helper.UserRepository
 import com.capstone.cendekiaone.ui.component.BaseCircleIconBox
 import com.capstone.cendekiaone.ui.component.ButtonComponent
 import com.capstone.cendekiaone.ui.component.OutlinedTextFieldComponent
 import com.capstone.cendekiaone.ui.navigation.Screen
 import com.capstone.cendekiaone.utils.toBitmap
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfile(
     modifier: Modifier = Modifier,
     navController: NavController,
-){
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    editProfileViewModel: EditProfileViewModel = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
+    userRepository: UserRepository = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
+    profileViewModel: ProfileViewModel = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
+) {
     val context = LocalContext.current
     var stateOfProfileImage by remember {
         mutableStateOf<ImageBitmap?>(null)
@@ -73,11 +88,68 @@ fun EditProfile(
                 stateOfProfileImage = uri.toBitmap(context)
             }
         }
+
+    // Observe the loading state from the ViewModel
+    val isLoading by editProfileViewModel.isLoading.observeAsState(initial = false)
+
+    // Observe the registration result from the ViewModel
+    val editResult by editProfileViewModel.editResult.observeAsState()
+
+    // Observe user details from the ViewModel
+    val userDetails by profileViewModel.userDetails.observeAsState()
+
+    LaunchedEffect(profileViewModel) {
+        userRepository.getUser().observeForever { user ->
+            if (user != null && user.isLogin) {
+                Log.d("EditProfileScreen", "User Token Screen: ${user.token}")
+                Log.d("EditProfileScreen", "User ID Screen: ${user.id}")
+
+                launch {
+                    profileViewModel.loadUserDetails(user.id)
+                }
+            }
+        }
+    }
+
+    var username by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+    var bio by remember { mutableStateOf("") }
+
+    userDetails?.let { userDetails ->
+        // Update the username variable
+        username = userDetails.username
+        name = userDetails.name
+        bio = userDetails.bio
+    }
+
+    // Handle registrations result
+    editResult?.let { result ->
+        when (result) {
+            is EditProfileViewModel.EditResult.Success -> {
+                // Registration is successful, show Toast and navigate to LoginScreen
+                ShowToast(result.message)
+                navController.navigate(Screen.Profile.route)
+                // Reset the registration result to allow for future registrations
+                editProfileViewModel.resetEditResult()
+            }
+            is EditProfileViewModel.EditResult.Error -> {
+                // Handle error if needed, show Toast
+                ShowToast(result.errorMessage)
+                // Reset the registration result to allow for future registrations
+                editProfileViewModel.resetEditResult()
+            }
+            is EditProfileViewModel.EditResult.NetworkError -> {
+                // Handle network error if needed, show Toast
+                ShowToast("Network Error")
+                // Reset the registration result to allow for future registrations
+                editProfileViewModel.resetEditResult()
+            }
+        }
+    }
+
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                scrollBehavior = scrollBehavior,
                 title = {
                     Text(
                         stringResource(R.string.edit_profile),
@@ -95,7 +167,7 @@ fun EditProfile(
                         Icon(
                             painter = icon,
                             contentDescription = "Icon Back",
-                            tint = MaterialTheme.colorScheme.onBackground
+                            tint = colorScheme.onBackground
                         )
                     }
                 },
@@ -114,7 +186,7 @@ fun EditProfile(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterVertically)
         ) {
-            Box{
+            Box {
                 //dipake klo udh ada api image
 //                GlideImage(
 //                    modifier = Modifier
@@ -126,10 +198,10 @@ fun EditProfile(
                 Image(
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(90.dp)
+                        .size(120.dp)
                         .clip(CircleShape),
-                    bitmap = stateOfProfileImage ?:
-                    R.drawable.placholder_image.toBitmap(context = context),
+                    bitmap = stateOfProfileImage
+                        ?: R.drawable.placholder_image.toBitmap(context = context),
                     contentDescription = null
                 )
                 Box(
@@ -155,36 +227,66 @@ fun EditProfile(
                 }
             }
             Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 OutlinedTextFieldComponent(
-                    provideText = stringResource(R.string.text_placeholder_username),
-                    value = "",
-                    onValueChange = {  }
+                    provideText = stringResource(R.string.enter_username),
+                    icon = painterResource(R.drawable.ic_username_filled),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Text
+                    ),
+                    value = username,
+                    onValueChange = { username = it }
                 )
                 OutlinedTextFieldComponent(
-                    provideText = stringResource(R.string.text_placeholder_name),
-                    value = "",
-                    onValueChange = {  }
+                    provideText = stringResource(R.string.enter_name),
+                    icon = painterResource(R.drawable.ic_name_filled),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Text
+                    ),
+                    value = name,
+                    onValueChange = { name = it }
                 )
                 OutlinedTextFieldComponent(
-                    provideText = stringResource(R.string.text_placeholder_bio),
-                    value = "",
-                    onValueChange = {  }
+                    provideText = stringResource(R.string.enter_bio),
+                    icon = painterResource(R.drawable.ic_bio_filled),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Text
+                    ),
+                    value = bio,
+                    onValueChange = { bio = it }
                 )
                 Spacer(modifier = Modifier.padding(top = 16.dp))
                 ButtonComponent(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(4.dp)),
+                    modifier = Modifier.fillMaxWidth(),
                     provideText = stringResource(R.string.btn_text_submit),
-                    shape = RoundedCornerShape(4.dp)
                 ) {
-                    Toast.makeText(context, "Success Change Profile", Toast.LENGTH_SHORT).show()
+                    userRepository.getUser().observeForever { user ->
+                        if (user != null && user.isLogin) {
+                            Log.d("EditProfileScreen", "User Token Screen: ${user.token}")
+                            Log.d("EditProfileScreen", "User ID Screen: ${user.id}")
+
+                            editProfileViewModel.editProfile(user.id, username, name, bio)
+                        }
+                    }
                 }
+            }
+
+            // Loading indicator
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(50.dp),
+                    strokeWidth = 5.dp
+                )
             }
         }
     }
+
+}
+
+@Composable
+private fun ShowToast(message: String) {
+    Toast.makeText(LocalContext.current, message, Toast.LENGTH_SHORT).show()
 }
 
 @Preview(showSystemUi = true)
