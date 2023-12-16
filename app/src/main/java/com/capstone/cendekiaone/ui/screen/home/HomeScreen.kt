@@ -25,9 +25,6 @@ import com.capstone.cendekiaone.ui.component.TopAppComponent
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    userRepository: UserRepository = viewModel(
-        factory = LocalViewModelFactory.provide()
-    ),
     navController: NavController,
 ) {
 

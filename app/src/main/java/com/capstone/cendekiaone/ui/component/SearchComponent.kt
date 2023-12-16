@@ -1,5 +1,6 @@
 package com.capstone.cendekiaone.ui.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,7 +23,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.capstone.cendekiaone.R
+import com.capstone.cendekiaone.ui.navigation.Screen
 import com.capstone.cendekiaone.ui.theme.myFont
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,6 +33,7 @@ import com.capstone.cendekiaone.ui.theme.myFont
 fun SearchComponent(
     query: String,
     onQueryChange: (String) -> Unit,
+    navController: NavController,
     modifier: Modifier = Modifier,
 ) {
     ProvideTextStyle(
@@ -47,9 +51,9 @@ fun SearchComponent(
             SearchBar(
                 query = query,
                 onQueryChange = onQueryChange,
-                onSearch = {},
+                onSearch = {  },
                 active = false,
-                onActiveChange = {},
+                onActiveChange = { navController.navigate(Screen.Search.route) },
                 leadingIcon = {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_search_outline),
@@ -75,14 +79,4 @@ fun SearchComponent(
             ) {}
         }
     }
-}
-
-@Preview
-@Composable
-fun SearchComponentPreview() {
-    SearchComponent(
-        query = "Sample Query",
-        onQueryChange = {  },
-        modifier = Modifier,
-    )
 }

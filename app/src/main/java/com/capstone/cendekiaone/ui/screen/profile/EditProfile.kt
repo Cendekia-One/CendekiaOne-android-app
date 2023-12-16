@@ -59,8 +59,11 @@ import com.capstone.cendekiaone.ui.component.BaseCircleIconBox
 import com.capstone.cendekiaone.ui.component.ButtonComponent
 import com.capstone.cendekiaone.ui.component.OutlinedTextFieldComponent
 import com.capstone.cendekiaone.ui.navigation.Screen
+import com.capstone.cendekiaone.ui.screen.create.toBitmap
 import com.capstone.cendekiaone.utils.toBitmap
+import com.capstone.cendekiaone.utils.uriToFile
 import kotlinx.coroutines.launch
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,15 +80,18 @@ fun EditProfile(
         factory = LocalViewModelFactory.provide()
     ),
 ) {
+    var getFile by remember { mutableStateOf<File?>(null) }
+
     val context = LocalContext.current
-    var stateOfProfileImage by remember {
+    var stateOfImage by remember {
         mutableStateOf<ImageBitmap?>(null)
     }
     val pickImageLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             if (uri != null) {
-                // TODO: Upload to server
-                stateOfProfileImage = uri.toBitmap(context)
+                // Convert the selected URI to a File
+                getFile = uriToFile(uri, context)
+                stateOfImage = getFile?.toBitmap() ?: ImageBitmap(1, 1)
             }
         }
 
@@ -200,7 +206,7 @@ fun EditProfile(
                     modifier = Modifier
                         .size(120.dp)
                         .clip(CircleShape),
-                    bitmap = stateOfProfileImage
+                    bitmap = stateOfImage
                         ?: R.drawable.placholder_image.toBitmap(context = context),
                     contentDescription = null
                 )
@@ -235,7 +241,7 @@ fun EditProfile(
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Text
                     ),
-                    value = username,
+                    value = username ?: "",
                     onValueChange = { username = it }
                 )
                 OutlinedTextFieldComponent(
@@ -244,7 +250,7 @@ fun EditProfile(
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Text
                     ),
-                    value = name,
+                    value = name ?: "",
                     onValueChange = { name = it }
                 )
                 OutlinedTextFieldComponent(
@@ -253,7 +259,7 @@ fun EditProfile(
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Text
                     ),
-                    value = bio,
+                    value = bio ?: "",
                     onValueChange = { bio = it }
                 )
                 Spacer(modifier = Modifier.padding(top = 16.dp))
