@@ -79,6 +79,7 @@ dependencies {
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation ("com.github.bumptech.glide:compose:1.0.0-beta01")
     implementation("androidx.compose.material:material-icons-extended:1.5.4")
+    implementation("androidx.compose.material:material:1.5.4")
 
     val cameraxVersion = "1.3.1"
 

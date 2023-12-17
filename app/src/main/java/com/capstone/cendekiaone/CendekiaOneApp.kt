@@ -13,6 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import com.capstone.cendekiaone.ui.component.NavigationBarComponent
 import com.capstone.cendekiaone.ui.navigation.Screen
 import com.capstone.cendekiaone.ui.screen.brief.BriefScreen
+import com.capstone.cendekiaone.ui.screen.camera.CameraScreen
 import com.capstone.cendekiaone.ui.screen.chat.ChatScreen
 import com.capstone.cendekiaone.ui.screen.create.CreateScreen
 import com.capstone.cendekiaone.ui.screen.create.UploadImageScreen
@@ -43,7 +44,7 @@ fun CendekiaOneApp(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Intro.route,
+            startDestination = Screen.Create.route,
             modifier = Modifier.padding(innerPadding)
         )
         {
@@ -67,6 +68,9 @@ fun CendekiaOneApp(
             }
             composable(Screen.Brief.route) {
                 BriefScreen()
+            }
+            composable(Screen.Camera.route) {
+                CameraScreen()
             }
             composable(Screen.Create.route) {
                 CreateScreen()

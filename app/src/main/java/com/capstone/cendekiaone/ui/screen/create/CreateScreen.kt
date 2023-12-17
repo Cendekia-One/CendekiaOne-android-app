@@ -1,6 +1,12 @@
 package com.capstone.cendekiaone.ui.screen.create
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -22,10 +28,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,14 +54,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import coil.compose.rememberAsyncImagePainter
 import com.capstone.cendekiaone.R
-import com.capstone.cendekiaone.ui.component.BaseCircleIconBox
 import com.capstone.cendekiaone.ui.component.ButtonComponent
 import com.capstone.cendekiaone.ui.component.OutlinedTextFieldComponent
 import com.capstone.cendekiaone.ui.theme.myFont
 import com.capstone.cendekiaone.utils.toBitmap
 import com.capstone.cendekiaone.utils.uriToFile
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Objects
 
 @Composable
 fun CreateScreen(
@@ -108,7 +117,6 @@ fun HeaderPost(
             )
 
             Spacer(modifier = Modifier.width(16.dp))
-
             Column(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
@@ -128,9 +136,7 @@ fun HeaderPost(
 }
 
 @Composable
-fun MainPost(
-    modifier: Modifier = Modifier
-) {
+fun MainPost() {
     var getFile by remember { mutableStateOf<File?>(null) }
     val context = LocalContext.current
     var stateOfImage by remember {
@@ -145,32 +151,117 @@ fun MainPost(
             }
         }
 
+    var capturedImageUri by remember {
+        mutableStateOf<Uri>(Uri.EMPTY)
+    }
+    val file = context.createImageFile()
+    val uri = FileProvider.getUriForFile(
+        Objects.requireNonNull(context),
+        context.packageName + ".provider", file
+    )
+
+    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success) {
+            // Image capture was successful, now you can use the capturedImageUri to access the image
+            Toast.makeText(context, "Image captured successfully", Toast.LENGTH_SHORT).show()
+            // Update capturedImageUri with the URI of the captured image
+            capturedImageUri = uri
+            // Additional logic to handle the captured image, e.g., save it or display it
+        } else {
+            Toast.makeText(context, "Image capture failed", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) {
+        if (it) {
+            Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show()
+            cameraLauncher.launch(uri)
+        } else {
+            Toast.makeText(context, "Permission Denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1f)
     ) {
-        Image(
-            bitmap = stateOfImage ?: R.drawable.placeholder.toBitmap(context = context),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-        )
+        if (capturedImageUri.path?.isNotEmpty() == true) {
+            Image(
+                painter = rememberAsyncImagePainter(capturedImageUri),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            Image(
+                bitmap = stateOfImage ?: R.drawable.placeholder.toBitmap(context = context),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+            )
+        }
+
         Box(
             modifier = Modifier
                 .background(Color.Transparent, shape = CircleShape)
                 .padding(8.dp)
                 .align(Alignment.BottomEnd)
         ) {
-            val icon: Painter = painterResource(id = R.drawable.ic_edit_outline)
-            FilledIconButton(onClick = { pickImageLauncher.launch("image/*") }) {
-                Icon(
-                    painter = icon,
-                    contentDescription = "Localized description"
-                )
+            Column {
+                FilledIconButton(
+                    onClick = {
+                        val permissionCheckResult =
+                            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+
+                        if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+                            cameraLauncher.launch(uri)
+                        } else {
+                            permissionLauncher.launch(Manifest.permission.CAMERA)
+                        }
+                    },
+                    modifier = Modifier
+                        .size(40.dp)
+                        .align(Alignment.CenterHorizontally)
+                ) {
+                    val icon: Painter = painterResource(id = R.drawable.ic_camera_outline)
+                    Icon(
+                        painter = icon,
+                        contentDescription = "Icon Comment",
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+                FilledIconButton(
+                    onClick = {
+                        pickImageLauncher.launch("image/*")
+                    },
+                    modifier = Modifier
+                        .size(40.dp)
+                        .align(Alignment.CenterHorizontally)
+                ) {
+                    val icon: Painter = painterResource(id = R.drawable.ic_gallery_outline)
+                    Icon(
+                        painter = icon,
+                        contentDescription = "Icon Comment",
+                    )
+                }
             }
         }
     }
+}
+
+@SuppressLint("SimpleDateFormat")
+fun Context.createImageFile(): File {
+    val timeStamp = SimpleDateFormat("yyyy_MM_dd_HH:mm:ss").format(Date())
+    val imageFileName = "JPEG_" + timeStamp + "_"
+    return File.createTempFile(
+        imageFileName,
+        ".jpg",
+        externalCacheDir
+    )
 }
 
 @Composable

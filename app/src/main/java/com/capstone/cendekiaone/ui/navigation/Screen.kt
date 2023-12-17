@@ -15,4 +15,5 @@ sealed class Screen(val route: String) {
     object Notification : Screen("notification")
     object Chat : Screen("chat")
     object Brief : Screen("brief")
+    object Camera : Screen("camera")
 }
