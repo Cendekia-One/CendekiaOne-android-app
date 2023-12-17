@@ -52,6 +52,12 @@ fun NavigationBarComponent(
                 screen = Screen.Create,
             ),
             NavigationItem(
+                title = stringResource(R.string.menu_brief),
+                icon = R.drawable.ic_magic_outline,
+                selectedIcon = R.drawable.ic_magic_filled,
+                screen = Screen.Brief,
+            ),
+            NavigationItem(
                 title = stringResource(R.string.menu_profile),
                 icon = R.drawable.ic_profile_outline,
                 selectedIcon = R.drawable.ic_profile_filled,

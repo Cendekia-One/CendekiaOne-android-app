@@ -2,6 +2,7 @@
 
 package com.capstone.cendekiaone.ui.screen.profile
 
+import android.graphics.BitmapFactory
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -40,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -59,7 +61,6 @@ import com.capstone.cendekiaone.ui.component.BaseCircleIconBox
 import com.capstone.cendekiaone.ui.component.ButtonComponent
 import com.capstone.cendekiaone.ui.component.OutlinedTextFieldComponent
 import com.capstone.cendekiaone.ui.navigation.Screen
-import com.capstone.cendekiaone.ui.screen.create.toBitmap
 import com.capstone.cendekiaone.utils.toBitmap
 import com.capstone.cendekiaone.utils.uriToFile
 import kotlinx.coroutines.launch
@@ -288,6 +289,15 @@ fun EditProfile(
         }
     }
 
+}
+
+fun File.toBitmap(): ImageBitmap {
+    return try {
+        BitmapFactory.decodeFile(this.path).asImageBitmap()
+    } catch (e: Exception) {
+        e.printStackTrace()
+        ImageBitmap(1, 1) // Return a placeholder or an empty image in case of an error
+    }
 }
 
 @Composable

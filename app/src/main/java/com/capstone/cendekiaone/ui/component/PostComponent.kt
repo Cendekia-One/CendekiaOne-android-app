@@ -199,6 +199,20 @@ fun BottomPost(
                     .size(40.dp)
                     .align(Alignment.CenterVertically)
             ) {
+                val icon: Painter = painterResource(id = R.drawable.ic_magic_outline)
+                Icon(
+                    painter = icon,
+                    contentDescription = "Icon Brief",
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            }
+
+            IconButton(
+                onClick = { },
+                modifier = Modifier
+                    .size(40.dp)
+                    .align(Alignment.CenterVertically)
+            ) {
                 val icon: Painter = painterResource(id = R.drawable.ic_save_outline)
                 Icon(
                     painter = icon,

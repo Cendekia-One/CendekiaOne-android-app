@@ -44,4 +44,5 @@
     <string name="enter_username">Enter your username</string>
     <string name="enter_bio">Enter you bio</string>
     <string name="menu_search">Search</string>
+    <string name="menu_brief">Brief</string>
 </resources>
