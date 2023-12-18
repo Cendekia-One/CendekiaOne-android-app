@@ -35,8 +35,20 @@ interface ApiService {
     // Edit profile
     @Multipart
     @POST("update-profile")
+    fun updateProfileWithPhoto(
+        @Part("id_user") idUser: RequestBody,
+        @Part("username") username: RequestBody,
+        @Part("name") name: RequestBody,
+        @Part("bio") bio: RequestBody,
+        @Part profileImage: MultipartBody.Part,
+    ): Call<DataResponse>
+
+    @Multipart
+    @POST("update-profile")
     fun updateProfile(
         @Part("id_user") idUser: RequestBody,
-        @Part profileImage: MultipartBody.Part
+        @Part("username") username: RequestBody,
+        @Part("name") name: RequestBody,
+        @Part("bio") bio: RequestBody,
     ): Call<DataResponse>
 }

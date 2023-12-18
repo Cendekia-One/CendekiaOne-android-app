@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.capstone.cendekiaone.R
 import com.capstone.cendekiaone.data.helper.LocalViewModelFactory
 import com.capstone.cendekiaone.data.helper.UserRepository
@@ -117,6 +118,8 @@ fun EditProfile(
             }
         }
     }
+
+    var isImageVisible by remember { mutableStateOf(false) }
 
     var username by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
@@ -194,23 +197,25 @@ fun EditProfile(
             verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterVertically)
         ) {
             Box {
-                //dipake klo udh ada api image
-//                GlideImage(
-//                    modifier = Modifier
-//                        .size(90.dp)
-//                        .clip(CircleShape),
-//                    model = "https://adik-api.neodigitalcreation.my.id/public/images/default/default.jpeg",
-//                    contentDescription = null
-//                )
-                Image(
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(120.dp)
-                        .clip(CircleShape),
-                    bitmap = stateOfImage
-                        ?: R.drawable.placholder_image.toBitmap(context = context),
-                    contentDescription = null
-                )
+                if (stateOfImage != null) {
+                    Image(
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(120.dp)
+                            .clip(CircleShape),
+                        bitmap = stateOfImage!!,
+                        contentDescription = null
+                    )
+                } else {
+                    Image(
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(120.dp)
+                            .clip(CircleShape),
+                        painter = rememberAsyncImagePainter(model = userDetails?.profilePicture ?: R.drawable.placeholder),
+                        contentDescription = null
+                    )
+                }
                 Box(
                     modifier = Modifier
                         .background(colorScheme.surface, shape = CircleShape)
@@ -269,11 +274,17 @@ fun EditProfile(
                     provideText = stringResource(R.string.btn_text_submit),
                 ) {
                     userRepository.getUser().observeForever { user ->
-                        if (user != null && user.isLogin) {
+                        if (user != null && user.isLogin && getFile != null) {
                             Log.d("EditProfileScreen", "User Token Screen: ${user.token}")
                             Log.d("EditProfileScreen", "User ID Screen: ${user.id}")
 
-                            editProfileViewModel.editProfile(user.id, getFile)
+                            editProfileViewModel.editProfileWithPhoto(user.id, username, name, bio, getFile)
+                        }
+                        else if (user != null && user.isLogin) {
+                            Log.d("EditProfileScreen", "User Token Screen: ${user.token}")
+                            Log.d("EditProfileScreen", "User ID Screen: ${user.id}")
+
+                            editProfileViewModel.editProfile(user.id, username, name, bio)
                         }
                     }
                 }
