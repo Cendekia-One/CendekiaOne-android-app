@@ -284,7 +284,7 @@ fun EditProfile(
                             Log.d("EditProfileScreen", "User Token Screen: ${user.token}")
                             Log.d("EditProfileScreen", "User ID Screen: ${user.id}")
 
-                            editProfileViewModel.editProfile(user.id, username, name, bio)
+                            editProfileViewModel.editProfile(user.id, getFile)
                         }
                     }
                 }
