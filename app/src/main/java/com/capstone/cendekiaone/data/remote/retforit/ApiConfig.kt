@@ -20,7 +20,7 @@ class ApiConfig {
 
             // Create a Retrofit instance with the base URL, Gson converter, and OkHttpClient
             val retrofit = Retrofit.Builder()
-                .baseUrl("https://fa90-2405-8180-801-e4fc-e86d-22ae-2e97-dba.ngrok-free.app/api/")
+                .baseUrl("https://337d-2405-8180-801-e4fc-cad-6abd-8ae5-83f9.ngrok-free.app/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build()

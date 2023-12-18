@@ -2,6 +2,7 @@ package com.capstone.cendekiaone.data.remote.retforit
 
 import com.capstone.cendekiaone.data.remote.response.DataResponse
 import com.capstone.cendekiaone.data.remote.response.LoginResponse
+import com.capstone.cendekiaone.data.remote.response.TopResponsePost
 import com.capstone.cendekiaone.data.remote.response.UserDetail
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -51,4 +52,16 @@ interface ApiService {
         @Part("name") name: RequestBody,
         @Part("bio") bio: RequestBody,
     ): Call<DataResponse>
+
+    // Post
+    @Multipart
+    @POST("post")
+    fun post(
+        @Part("id_user") idUser: RequestBody,
+        @Part("post_title") postTitle: RequestBody,
+        @Part postImage: MultipartBody.Part,
+        @Part("post_body") postBody: RequestBody,
+        @Part("categories") categories: RequestBody,
+        @Part("sub_categories") subCategories: RequestBody,
+    ): Call<TopResponsePost>
 }

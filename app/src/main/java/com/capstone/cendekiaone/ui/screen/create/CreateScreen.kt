@@ -4,8 +4,12 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.net.Uri
+import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -28,12 +32,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -42,6 +49,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
@@ -56,13 +64,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.capstone.cendekiaone.R
+import com.capstone.cendekiaone.data.helper.LocalViewModelFactory
+import com.capstone.cendekiaone.data.helper.UserRepository
 import com.capstone.cendekiaone.ui.component.ButtonComponent
 import com.capstone.cendekiaone.ui.component.OutlinedTextFieldComponent
+import com.capstone.cendekiaone.ui.navigation.Screen
+import com.capstone.cendekiaone.ui.screen.profile.ProfileViewModel
 import com.capstone.cendekiaone.ui.theme.myFont
 import com.capstone.cendekiaone.utils.toBitmap
 import com.capstone.cendekiaone.utils.uriToFile
+import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -71,6 +87,7 @@ import java.util.Objects
 @Composable
 fun CreateScreen(
     modifier: Modifier = Modifier,
+    navController: NavController,
 ) {
     Column(
         modifier = modifier
@@ -83,19 +100,38 @@ fun CreateScreen(
             )
             .verticalScroll(rememberScrollState())
     ) {
-        HeaderPost(
-            username = "CendikiaOne",
-        )
-        MainPost()
-        BottomPost()
+        HeaderPost()
+        MainPost(navController = navController)
     }
 }
 
 @Composable
 fun HeaderPost(
-    username: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    userRepository: UserRepository = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
+    profileViewModel: ProfileViewModel = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
 ) {
+    // Observe user details from the ViewModel
+    val userDetails by profileViewModel.userDetails.observeAsState()
+
+    // Load user details when the screen is created
+    LaunchedEffect(profileViewModel) {
+        userRepository.getUser().observeForever { user ->
+            if (user != null && user.isLogin) {
+                Log.d("ProfileScreen", "User Token Screen: ${user.token}")
+                Log.d("ProfileScreen", "User ID Screen: ${user.id}")
+
+                launch {
+                    profileViewModel.loadUserDetails(user.id)
+                }
+            }
+        }
+    }
+
     Row(
         modifier = modifier
             .height(64.dp)
@@ -109,20 +145,20 @@ fun HeaderPost(
                 .align(Alignment.CenterVertically)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.placeholder),
+                contentScale = ContentScale.Crop,
+                painter = rememberAsyncImagePainter(model = userDetails?.profilePicture ?: R.drawable.placeholder),
                 contentDescription = "Image Profile",
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
             )
-
             Spacer(modifier = Modifier.width(16.dp))
             Column(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
             ) {
                 Text(
-                    text = username,
+                    text = userDetails?.username ?: "",
                     style = TextStyle(
                         fontSize = 14.sp,
                         textAlign = TextAlign.Center,
@@ -136,23 +172,22 @@ fun HeaderPost(
 }
 
 @Composable
-fun MainPost() {
+fun MainPost(
+    createViewModel: CreateViewModel = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
+    userRepository: UserRepository = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
+    navController: NavController,
+) {
+    val isLoading by createViewModel.isLoading.observeAsState(initial = false)
+    val postResult by createViewModel.editResult.observeAsState()
+
     var getFile by remember { mutableStateOf<File?>(null) }
     val context = LocalContext.current
     var stateOfImage by remember {
         mutableStateOf<ImageBitmap?>(null)
-    }
-    val pickImageLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            if (uri != null) {
-                // Convert the selected URI to a File
-                getFile = uriToFile(uri, context)
-                stateOfImage = getFile?.toBitmap() ?: ImageBitmap(1, 1)
-            }
-        }
-
-    var capturedImageUri by remember {
-        mutableStateOf<Uri>(Uri.EMPTY)
     }
     val file = context.createImageFile()
     val uri = FileProvider.getUriForFile(
@@ -160,15 +195,24 @@ fun MainPost() {
         context.packageName + ".provider", file
     )
 
+    var isFromGallery by remember { mutableStateOf(false) }
+
+    val pickImageLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            if (uri != null) {
+                // Convert the selected URI to a File
+                getFile = uriToFile(uri, context)
+                stateOfImage = getFile?.toBitmap() ?: ImageBitmap(1, 1)
+                isFromGallery = true
+            }
+        }
+
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-        if (success) {
-            // Image capture was successful, now you can use the capturedImageUri to access the image
-            Toast.makeText(context, "Image captured successfully", Toast.LENGTH_SHORT).show()
-            // Update capturedImageUri with the URI of the captured image
-            capturedImageUri = uri
-            // Additional logic to handle the captured image, e.g., save it or display it
-        } else {
-            Toast.makeText(context, "Image capture failed", Toast.LENGTH_SHORT).show()
+        if (uri != null) {
+            // Convert the selected URI to a File
+            getFile = uriToFile(uri, context)
+            stateOfImage = getFile?.toBitmap() ?: ImageBitmap(1, 1)
+            isFromGallery = false
         }
     }
 
@@ -183,26 +227,47 @@ fun MainPost() {
         }
     }
 
+    postResult?.let { result ->
+        when (result) {
+            is CreateViewModel.PostResult.Success -> {
+                // Registration is successful, show Toast and navigate to LoginScreen
+                ShowToast(result.message)
+                navController.navigate(Screen.Home.route)
+                // Reset the registration result to allow for future registrations
+                createViewModel.resetPostResult()
+            }
+            is CreateViewModel.PostResult.Error -> {
+                // Handle error if needed, show Toast
+                ShowToast(result.errorMessage)
+                // Reset the registration result to allow for future registrations
+                createViewModel.resetPostResult()
+            }
+            is CreateViewModel.PostResult.NetworkError -> {
+                // Handle network error if needed, show Toast
+                ShowToast("Network Error")
+                // Reset the registration result to allow for future registrations
+                createViewModel.resetPostResult()
+            }
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1f)
     ) {
-        if (capturedImageUri.path?.isNotEmpty() == true) {
-            Image(
-                painter = rememberAsyncImagePainter(capturedImageUri),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-        } else {
-            Image(
-                bitmap = stateOfImage ?: R.drawable.placeholder.toBitmap(context = context),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
-            )
-        }
+        Image(
+            bitmap = stateOfImage?.let {
+                if (isFromGallery) {
+                    it
+                } else {
+                    it.rotate(90f)
+                }
+            } ?: R.drawable.placeholder.toBitmap(context = context),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop,
+        )
 
         Box(
             modifier = Modifier
@@ -250,24 +315,20 @@ fun MainPost() {
                 }
             }
         }
+        // Loading indicator
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(50.dp),
+                strokeWidth = 5.dp
+            )
+        }
     }
-}
 
-@SuppressLint("SimpleDateFormat")
-fun Context.createImageFile(): File {
-    val timeStamp = SimpleDateFormat("yyyy_MM_dd_HH:mm:ss").format(Date())
-    val imageFileName = "JPEG_" + timeStamp + "_"
-    return File.createTempFile(
-        imageFileName,
-        ".jpg",
-        externalCacheDir
-    )
-}
-
-@Composable
-fun BottomPost() {
     var description by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("") }
+    var subCategory by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier.padding(horizontal = 8.dp)
@@ -286,13 +347,51 @@ fun BottomPost() {
             onValueChange = { category = it }
         )
 
+        Spacer(modifier = Modifier.height(8.dp))
+        OutlinedTextFieldComponent(
+            provideText = stringResource(R.string.subcatergory_post),
+            value = subCategory,
+            onValueChange = { subCategory = it }
+        )
+
         Spacer(modifier = Modifier.height(16.dp))
         ButtonComponent(
             provideText = stringResource(R.string.posting),
             modifier = Modifier.fillMaxWidth()
-        ) { }
+        ) {
+            userRepository.getUser().observeForever { user ->
+                if (user != null && user.isLogin) {
+                    Log.d("CreateScreen", "User ID Screen: ${user.id}")
+
+                    createViewModel.post(user.id, description, getFile, description, category, subCategory)
+                }
+            }
+        }
         Spacer(modifier = Modifier.height(8.dp))
     }
+}
+
+fun ImageBitmap.rotate(degrees: Float): ImageBitmap {
+    val matrix = Matrix()
+    matrix.postRotate(degrees)
+    return Bitmap.createBitmap(this.asAndroidBitmap(), 0, 0, width, height, matrix, true).asImageBitmap()
+}
+
+
+@SuppressLint("SimpleDateFormat")
+fun Context.createImageFile(): File {
+    val timeStamp = SimpleDateFormat("yyyy_MM_dd_HH:mm:ss").format(Date())
+    val imageFileName = "JPEG_" + timeStamp + "_"
+    return File.createTempFile(
+        imageFileName,
+        ".jpg",
+        externalCacheDir
+    )
+}
+
+@Composable
+private fun ShowToast(message: String) {
+    Toast.makeText(LocalContext.current, message, Toast.LENGTH_SHORT).show()
 }
 
 fun File.toBitmap(): ImageBitmap {
@@ -307,5 +406,5 @@ fun File.toBitmap(): ImageBitmap {
 @Preview(showBackground = true, device = "id:pixel_4")
 @Composable
 fun CreateScreenPreview() {
-    CreateScreen()
+    CreateScreen(navController = rememberNavController())
 }

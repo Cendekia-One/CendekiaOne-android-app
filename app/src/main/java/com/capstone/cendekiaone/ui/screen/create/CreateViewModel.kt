@@ -1,98 +1,90 @@
-//package com.capstone.cendekiaone.ui.screen.create
-//
-//import androidx.lifecycle.LiveData
-//import androidx.lifecycle.MutableLiveData
-//import androidx.lifecycle.ViewModel
-//import com.capstone.cendekiaone.data.helper.UserRepository
-//import com.capstone.cendekiaone.data.remote.response.DataResponse
-//import com.capstone.cendekiaone.data.remote.retforit.ApiService
-//import com.capstone.cendekiaone.utils.reduceFileImage
-//import okhttp3.MediaType.Companion.toMediaType
-//import okhttp3.MediaType.Companion.toMediaTypeOrNull
-//import okhttp3.MultipartBody
-//import okhttp3.RequestBody.Companion.asRequestBody
-//import okhttp3.RequestBody.Companion.toRequestBody
-//import retrofit2.Call
-//import retrofit2.Callback
-//import retrofit2.Response
-//import java.io.File
-//
-//class CreateViewModel(
-//    private val apiService: ApiService,
-//    private val userRepository: UserRepository
-//) : ViewModel() {
-//    // LiveData to observe loading state
-//    private val _isLoading = MutableLiveData<Boolean>()
-//    val isLoading: LiveData<Boolean> = _isLoading
-//
-//    // LiveData to observe the upload result
-//    private val _uploadResult = MutableLiveData<UploadResult?>()
-//    val uploadResult: LiveData<UploadResult?> = _uploadResult
-//
-//    // Sealed class to represent different upload results
-//    sealed class UploadResult {
-//        data class Success(val message: String) : UploadResult()
-//        data class Error(val errorMessage: String) : UploadResult()
-//        object NetworkError : UploadResult()
-//    }
-//
-//    // Function to initiate the upload process
-//    fun uploadStory(file: File?, description: String) {
-//        if (file == null) {
-//            _uploadResult.value = UploadResult.Error("Error get image file")
-//            return
-//        }
-//
-//        _isLoading.value = true
-//
-//        // Reduce the image file before uploading
-//        val reducedFile = reduceFileImage(file)
-//
-//        // Create a request body for the description
-//        val descriptionBody = description.toRequestBody("text/plain".toMediaType())
-//
-//        // Create a request body for the image file
-//        val requestImageFile = reducedFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
-//
-//        // Create a MultipartBody.Part for the image file
-//        val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
-//            "photo",
-//            reducedFile.name,
-//            requestImageFile
-//        )
-//
-//        // Observe the user to get the authorization token
-//        userRepository.getUser().observeForever { user ->
-//            if (user != null) {
-//                // Construct the client for uploading the story
-//                val client = apiService.uploadStory("Bearer " + user.token, imageMultipart, descriptionBody)
-//
-//                // Make the upload request
-//                client.enqueue(object : Callback<DataResponse> {
-//                    override fun onResponse(
-//                        call: Call<DataResponse>,
-//                        response: Response<DataResponse>
-//                    ) {
-//                        _isLoading.value = false
-//                        val responseBody = response.body()
-//
-//                        if (response.isSuccessful && responseBody?.message == "Post created successfully") {
-//                            _uploadResult.value = UploadResult.Success(responseBody.message)
-//                        } else {
-//                            _uploadResult.value = UploadResult.Error("Post created failed")
-//                        }
-//                    }
-//
-//                    override fun onFailure(call: Call<DataResponse>, t: Throwable) {
-//                        _isLoading.value = false
-//                        _uploadResult.value = UploadResult.NetworkError
-//                    }
-//                })
-//            }
-//        }
-//    }
-//
-//    fun resetUploadResult() {
-//        _uploadResult.value = null
-//    }
-//}
+package com.capstone.cendekiaone.ui.screen.create
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.capstone.cendekiaone.data.remote.response.DataResponse
+import com.capstone.cendekiaone.data.remote.response.TopResponsePost
+import com.capstone.cendekiaone.data.remote.retforit.ApiService
+import com.capstone.cendekiaone.utils.reduceFileImage
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.io.File
+
+class CreateViewModel(
+    private val apiService: ApiService,
+) : ViewModel() {
+    // LiveData to observe loading state
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
+    // LiveData to observe the login result
+    private val _postResult = MutableLiveData<PostResult?>()
+    val editResult: LiveData<PostResult?> = _postResult
+
+    // Sealed class to represent different login results
+    sealed class PostResult {
+        data class Success(val message: String) : PostResult()
+        data class Error(val errorMessage: String) : PostResult()
+        object NetworkError : PostResult()
+    }
+
+    fun post(
+        idUser: String,
+        postTitle: String,
+        file: File?,
+        postBody: String,
+        categories: String,
+        subCategories: String
+    ) {
+        if (file == null) {
+            _postResult.value = PostResult.Error("Take Picture Image Failed")
+            return
+        }
+
+        val reducedFile = reduceFileImage(file)
+        val idUser = idUser.toRequestBody("text/plain".toMediaType())
+        val postTitle = postTitle.toRequestBody("text/plain".toMediaType())
+        val requestImageFile = reducedFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
+        val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
+            "postImage",
+            reducedFile.name,
+            requestImageFile
+        )
+        val postBody = postBody.toRequestBody("text/plain".toMediaType())
+        val categories = categories.toRequestBody("text/plain".toMediaType())
+        val subCategories = subCategories.toRequestBody("text/plain".toMediaType())
+
+        _isLoading.value = true
+        apiService.post(idUser, postTitle, imageMultipart, postBody, categories, subCategories)
+            .enqueue(object : Callback<TopResponsePost> {
+                override fun onResponse(
+                    call: Call<TopResponsePost>,
+                    response: Response<TopResponsePost>
+                ) {
+                    _isLoading.value = false
+                    val responseBody = response.body()
+                    if (response.isSuccessful && responseBody?.error == false) {
+                        _postResult.value = PostResult.Success("Post Created")
+                    } else {
+                        _postResult.value = PostResult.Error("Post Created Failed")
+                    }
+                }
+
+                override fun onFailure(call: Call<TopResponsePost>, t: Throwable) {
+                    _isLoading.value = false
+                    _postResult.value = PostResult.NetworkError
+                }
+            })
+    }
+
+    fun resetPostResult() {
+        _postResult.value = null
+    }
+}

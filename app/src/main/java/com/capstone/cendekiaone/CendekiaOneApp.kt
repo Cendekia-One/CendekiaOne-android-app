@@ -73,7 +73,7 @@ fun CendekiaOneApp(
                 CameraScreen()
             }
             composable(Screen.Create.route) {
-                CreateScreen()
+                CreateScreen(navController = navController)
             }
             composable(Screen.UploadImage.route) {
                 UploadImageScreen(navController = navController)

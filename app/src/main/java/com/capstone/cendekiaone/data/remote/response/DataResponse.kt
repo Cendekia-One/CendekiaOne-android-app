@@ -63,3 +63,58 @@ data class DataUser(
     @field:SerializedName("profile_picture")
     val profilePicture: String,
 )
+
+// Post
+data class TopResponsePost(
+    @field:SerializedName("error")
+    val error: Boolean,
+
+    @field:SerializedName("message")
+    val message: MidResponsePost
+)
+
+data class MidResponsePost(
+    @field:SerializedName("status")
+    val status: String,
+
+    @field:SerializedName("data")
+    val data: BottomResponsePost
+)
+
+data class BottomResponsePost(
+    @field:SerializedName("idPost")
+    val idPost: Int,
+
+    @field:SerializedName("createBy")
+    val createBy: String,
+
+    @field:SerializedName("postPicture")
+    val postPicture: String,
+
+    @field:SerializedName("description")
+    val description: String,
+
+    @field:SerializedName("category")
+    val category: String,
+
+    @field:SerializedName("subCatergory")
+    val subCatergory: String,
+
+    @field:SerializedName("likes")
+    val likes: String,
+
+    @field:SerializedName("comments")
+    val comments: String,
+
+    @field:SerializedName("following")
+    val following: Boolean,
+
+    @field:SerializedName("saved")
+    val saved: Boolean,
+
+    @field:SerializedName("summary")
+    val summary: Boolean,
+
+    @field:SerializedName("createdAt")
+    val createdAt: String,
+)

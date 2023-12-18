@@ -118,8 +118,6 @@ fun EditProfile(
         }
     }
 
-    var isImageVisible by remember { mutableStateOf(false) }
-
     var username by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
     var bio by remember { mutableStateOf("") }

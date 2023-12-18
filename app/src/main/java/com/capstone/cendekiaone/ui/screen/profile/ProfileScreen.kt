@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -187,6 +188,7 @@ fun HeaderProfile(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Image(
+            contentScale = ContentScale.Crop,
             painter = rememberAsyncImagePainter(model = userDetails?.profilePicture ?: R.drawable.placeholder),
             contentDescription = "Image Profile",
             modifier = Modifier
