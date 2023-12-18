@@ -62,7 +62,6 @@ import com.capstone.cendekiaone.ui.component.BaseCircleIconBox
 import com.capstone.cendekiaone.ui.component.ButtonComponent
 import com.capstone.cendekiaone.ui.component.OutlinedTextFieldComponent
 import com.capstone.cendekiaone.ui.navigation.Screen
-import com.capstone.cendekiaone.utils.toBitmap
 import com.capstone.cendekiaone.utils.uriToFile
 import kotlinx.coroutines.launch
 import java.io.File
@@ -284,7 +283,7 @@ fun EditProfile(
                             Log.d("EditProfileScreen", "User Token Screen: ${user.token}")
                             Log.d("EditProfileScreen", "User ID Screen: ${user.id}")
 
-                            editProfileViewModel.editProfile(user.id, getFile)
+                            editProfileViewModel.editProfile(user.id, username, name, bio)
                         }
                     }
                 }
