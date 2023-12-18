@@ -68,5 +68,5 @@ interface ApiService {
 
     // Get all posts
     @GET("posts")
-    suspend fun getAllPosts(): Response<GetPostResponse>
+    suspend fun getAllPosts(@Query("page") page: Int): Response<GetPostResponse>
 }

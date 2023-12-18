@@ -1,5 +1,7 @@
 package com.capstone.cendekiaone.data.remote.response
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 data class DataResponse(
@@ -131,7 +133,9 @@ data class GetPostResponse(
     val pagination: GetPostPagination
 )
 
+@Entity(tableName = "GetPostMidResponse")
 data class GetPostMidResponse(
+    @PrimaryKey
     @field:SerializedName("idPost")
     val idPost: Int,
 
