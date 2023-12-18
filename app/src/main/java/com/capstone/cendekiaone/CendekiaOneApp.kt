@@ -61,7 +61,7 @@ fun CendekiaOneApp(
                 HomeScreen(navController = navController)
             }
             composable(Screen.Explore.route) {
-                ExploreScreen(navController = navController)
+                ExploreScreen()
             }
             composable(Screen.Search.route) {
                 SearchScreen()

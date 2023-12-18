@@ -1,65 +1,57 @@
 package com.capstone.cendekiaone.ui.screen.explore
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.capstone.cendekiaone.ui.component.SearchComponent
-import com.capstone.cendekiaone.ui.navigation.Screen
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
+import com.capstone.cendekiaone.data.remote.response.GetPostMidResponse
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExploreScreen(
-    modifier: Modifier = Modifier,
-    navController: NavController,
-) {
+fun ExploreScreen() {
+    WeaponsList(ExploreViewModel())
+}
 
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            TopAppBar(
-                title = { },
-                scrollBehavior = scrollBehavior,
-                actions = {
-                    SearchComponent(
-                        query = "Search User",
-                        onQueryChange = { },
-                        navController = navController
-                    )
-                },
-            )
-        }
-    ) { innerPadding ->
-        LazyColumn(
-            contentPadding = innerPadding,
-            modifier = modifier
-                .fillMaxSize()
-        ) {
-            item {
-
-            }
-        }
+@Composable
+fun ExploreScreen2(dataItem: GetPostMidResponse) {
+    Box(
+        Modifier
+            .height(200.dp)
+            .background(Color.Transparent)
+            .padding(horizontal = 6.dp)
+    ) {
+        Image(
+            contentScale = ContentScale.Inside,
+            painter = rememberAsyncImagePainter(dataItem.postPicture),
+            contentDescription = null,
+            modifier = Modifier
+                .align(Alignment.Center).fillMaxWidth()
+        )
     }
 }
 
-@Preview(showBackground = true, device = "id:pixel_4")
 @Composable
-fun ExploreScreenPreview() {
-    val navController = rememberNavController()
-
-    ExploreScreen(
-        modifier = Modifier,
-        navController = navController
-    )
+fun WeaponsList(viewModel: ExploreViewModel) {
+    val weaponsData = viewModel.weaponsData.collectAsState()
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        items(count = weaponsData.value.size) {
+            ExploreScreen2(weaponsData.value[it])
+        }
+    }
 }

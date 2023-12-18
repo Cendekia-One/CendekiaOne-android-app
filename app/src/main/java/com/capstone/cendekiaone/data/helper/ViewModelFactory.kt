@@ -15,6 +15,7 @@ import com.capstone.cendekiaone.ui.screen.login.LoginViewModel
 import com.capstone.cendekiaone.ui.screen.register.RegisterViewModel
 import androidx.datastore.preferences.core.Preferences
 import com.capstone.cendekiaone.ui.screen.create.CreateViewModel
+import com.capstone.cendekiaone.ui.screen.explore.ExploreViewModel
 import com.capstone.cendekiaone.ui.screen.profile.EditProfileViewModel
 import com.capstone.cendekiaone.ui.screen.profile.ProfileViewModel
 
