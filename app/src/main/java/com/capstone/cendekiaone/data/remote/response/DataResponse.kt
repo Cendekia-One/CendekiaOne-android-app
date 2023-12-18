@@ -51,12 +51,15 @@ data class DataUser(
     @field:SerializedName("bio")
     val bio: String,
 
+    @field:SerializedName("follower")
+    val follower: String,
+
+    @field:SerializedName("following")
+    val following: String,
+
+    @field:SerializedName("post")
+    val post: String,
+
     @field:SerializedName("profile_picture")
     val profilePicture: String,
-
-    @field:SerializedName("createdAt")
-    val createdAt: String,
-
-    @field:SerializedName("updatedAt")
-    val updatedAt: String,
 )

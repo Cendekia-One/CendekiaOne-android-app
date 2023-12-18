@@ -3,6 +3,8 @@ package com.capstone.cendekiaone.data.remote.retforit
 import com.capstone.cendekiaone.data.remote.response.DataResponse
 import com.capstone.cendekiaone.data.remote.response.LoginResponse
 import com.capstone.cendekiaone.data.remote.response.UserDetail
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
@@ -30,14 +32,11 @@ interface ApiService {
     @GET("user/{id_user}")
     suspend fun userDetail(@Path("id_user") userId: String): Response<UserDetail>
 
-    // Register a user with name, username, email, and password
-    @FormUrlEncoded
-    @POST("user/update-profile")
+    // Edit profile
+    @Multipart
+    @POST("update-profile")
     fun updateProfile(
-        @Field("id_user") idUser: String,
-        @Field("username") username: String,
-        @Field("name") name: String,
-        @Field("bio") bio: String,
-//        @Field("profile_url") profileUrl: String
+        @Part("id_user") idUser: RequestBody,
+        @Part profileImage: MultipartBody.Part
     ): Call<DataResponse>
 }

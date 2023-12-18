@@ -44,7 +44,7 @@ fun CendekiaOneApp(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Create.route,
+            startDestination = Screen.Intro.route,
             modifier = Modifier.padding(innerPadding)
         )
         {
