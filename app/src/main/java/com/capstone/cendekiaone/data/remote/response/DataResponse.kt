@@ -118,3 +118,58 @@ data class BottomResponsePost(
     @field:SerializedName("createdAt")
     val createdAt: String,
 )
+
+// Get all posts
+data class GetPostResponse(
+    @field:SerializedName("status")
+    val status: String,
+
+    @field:SerializedName("data")
+    val data: List<GetPostMidResponse>,
+
+    @field:SerializedName("pagination")
+    val pagination: GetPostPagination
+)
+
+data class GetPostMidResponse(
+    @field:SerializedName("idPost")
+    val idPost: Int,
+
+    @field:SerializedName("createBy")
+    val createBy: String,
+
+    @field:SerializedName("postPicture")
+    val postPicture: String,
+
+    @field:SerializedName("category")
+    val category: String,
+
+    @field:SerializedName("subCatergory")
+    val subCatergory: String,
+
+    @field:SerializedName("likes")
+    val likes: String,
+
+    @field:SerializedName("comments")
+    val comments: String,
+
+    @field:SerializedName("following")
+    val following: Boolean,
+
+    @field:SerializedName("saved")
+    val saved: Boolean,
+
+    @field:SerializedName("summary")
+    val summary: Boolean,
+)
+
+data class GetPostPagination(
+    @field:SerializedName("currentPage")
+    val currentPage: Int,
+
+    @field:SerializedName("totalPages")
+    val totalPages: Int,
+
+    @field:SerializedName("totalPosts")
+    val totalPosts: Int,
+)

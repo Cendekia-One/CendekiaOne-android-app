@@ -1,6 +1,7 @@
 package com.capstone.cendekiaone.data.remote.retforit
 
 import com.capstone.cendekiaone.data.remote.response.DataResponse
+import com.capstone.cendekiaone.data.remote.response.GetPostResponse
 import com.capstone.cendekiaone.data.remote.response.LoginResponse
 import com.capstone.cendekiaone.data.remote.response.TopResponsePost
 import com.capstone.cendekiaone.data.remote.response.UserDetail
@@ -64,4 +65,8 @@ interface ApiService {
         @Part("categories") categories: RequestBody,
         @Part("sub_categories") subCategories: RequestBody,
     ): Call<TopResponsePost>
+
+    // Get all posts
+    @GET("posts")
+    suspend fun getAllPosts(): Response<GetPostResponse>
 }
