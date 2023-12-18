@@ -197,7 +197,7 @@ fun HeaderProfile(
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {
             Text(
-                text = "12",
+                text = userDetails?.post ?: "-",
                 style = TextStyle(
                     fontSize = 16.sp,
                     textAlign = TextAlign.Center,
@@ -219,7 +219,7 @@ fun HeaderProfile(
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {
             Text(
-                text = "1200",
+                text = userDetails?.follower ?: "-",
                 style = TextStyle(
                     fontSize = 16.sp,
                     textAlign = TextAlign.Center,
@@ -241,7 +241,7 @@ fun HeaderProfile(
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {
             Text(
-                text = "1039",
+                text = userDetails?.following ?: "-",
                 style = TextStyle(
                     fontSize = 16.sp,
                     textAlign = TextAlign.Center,
