@@ -8,6 +8,9 @@ sealed class Screen(val route: String) {
     object Create : Screen("create")
     object UploadImage : Screen("upload_image")
     object Explore : Screen("explore")
+    object ExploreDetail : Screen("explore_detail"){
+        fun createRoute(postId: Int): String = "explore_detail/$postId"
+    }
     object Search : Screen("search")
     object Profile : Screen("profile")
     object EditProfile : Screen("edit_profile")

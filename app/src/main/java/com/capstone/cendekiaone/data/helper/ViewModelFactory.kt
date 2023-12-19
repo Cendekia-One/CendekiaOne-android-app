@@ -15,7 +15,9 @@ import com.capstone.cendekiaone.ui.screen.login.LoginViewModel
 import com.capstone.cendekiaone.ui.screen.register.RegisterViewModel
 import androidx.datastore.preferences.core.Preferences
 import com.capstone.cendekiaone.ui.screen.create.CreateViewModel
+import com.capstone.cendekiaone.ui.screen.explore.ExploreDetailViewModel
 import com.capstone.cendekiaone.ui.screen.explore.ExploreViewModel
+import com.capstone.cendekiaone.ui.screen.explore.PostRepository
 import com.capstone.cendekiaone.ui.screen.profile.EditProfileViewModel
 import com.capstone.cendekiaone.ui.screen.profile.ProfileViewModel
 
@@ -27,7 +29,8 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "se
 class LocalViewModelFactory private constructor(
     private val apiService: ApiService,
     private val pref: UserPreferences,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val postRepository: PostRepository
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -50,6 +53,9 @@ class LocalViewModelFactory private constructor(
             modelClass.isAssignableFrom(CreateViewModel::class.java) -> {
                 CreateViewModel(apiService) as T
             }
+            modelClass.isAssignableFrom(ExploreDetailViewModel::class.java) -> {
+                ExploreDetailViewModel(postRepository) as T
+            }
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
     }
@@ -61,9 +67,10 @@ class LocalViewModelFactory private constructor(
             val apiService = ApiConfig.getApiService()
             val userPreferences = UserPreferences.getInstance(context.dataStore)
             val userRepository = UserRepository(userPreferences)
+            val postRepository = PostRepository(apiService)
 
-            return remember(context, apiService, userPreferences, userRepository) {
-                LocalViewModelFactory(apiService, userPreferences, userRepository)
+            return remember(context, apiService, userPreferences, userRepository, postRepository) {
+                LocalViewModelFactory(apiService, userPreferences, userRepository, postRepository)
             }
         }
     }

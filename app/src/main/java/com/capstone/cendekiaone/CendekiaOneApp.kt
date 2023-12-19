@@ -17,8 +17,8 @@ import com.capstone.cendekiaone.ui.screen.camera.CameraScreen
 import com.capstone.cendekiaone.ui.screen.chat.ChatScreen
 import com.capstone.cendekiaone.ui.screen.create.CreateScreen
 import com.capstone.cendekiaone.ui.screen.create.UploadImageScreen
+import com.capstone.cendekiaone.ui.screen.explore.ExploreDetailScreen
 import com.capstone.cendekiaone.ui.screen.explore.ExploreScreen
-import com.capstone.cendekiaone.ui.screen.explore.SearchScreen
 import com.capstone.cendekiaone.ui.screen.home.HomeScreen
 import com.capstone.cendekiaone.ui.screen.intro.IntroScreen
 import com.capstone.cendekiaone.ui.screen.login.LoginScreen
@@ -61,10 +61,7 @@ fun CendekiaOneApp(
                 HomeScreen(navController = navController)
             }
             composable(Screen.Explore.route) {
-                ExploreScreen()
-            }
-            composable(Screen.Search.route) {
-                SearchScreen()
+                ExploreScreen(navController = navController)
             }
             composable(Screen.Brief.route) {
                 BriefScreen()
@@ -89,6 +86,10 @@ fun CendekiaOneApp(
             }
             composable(Screen.Chat.route) {
                 ChatScreen(navController = navController)
+            }
+            composable(Screen.ExploreDetail.route + "/{postId}") { backStackEntry ->
+                val postId = backStackEntry.arguments?.getString("postId")?.toInt() ?: -1
+                ExploreDetailScreen(navController = navController, postId = postId)
             }
         }
     }

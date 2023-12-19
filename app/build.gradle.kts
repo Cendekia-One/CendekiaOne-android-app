@@ -80,6 +80,7 @@ dependencies {
     implementation ("com.github.bumptech.glide:compose:1.0.0-beta01")
     implementation("androidx.compose.material:material-icons-extended:1.5.4")
     implementation("androidx.compose.material:material:1.5.4")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 
     val cameraxVersion = "1.3.1"
 
@@ -125,4 +126,8 @@ dependencies {
     // Paging
     implementation("androidx.paging:paging-runtime-ktx:3.2.1")
     implementation("androidx.paging:paging-compose:3.2.1")
+
+    // Grid
+    implementation("androidx.compose.foundation:foundation:1.5.4")
+    implementation("androidx.compose.foundation:foundation-layout:1.5.4")
 }
