@@ -1,5 +1,7 @@
-package com.capstone.cendekiaone.ui.screen.explore
+package com.capstone.cendekiaone.ui.screen.detail
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -29,11 +31,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -47,6 +53,7 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.capstone.cendekiaone.R
 import com.capstone.cendekiaone.data.helper.LocalViewModelFactory
+import com.capstone.cendekiaone.data.helper.UserRepository
 import com.capstone.cendekiaone.ui.navigation.Screen
 import com.capstone.cendekiaone.ui.theme.myFont
 import kotlinx.coroutines.launch
@@ -106,15 +113,28 @@ fun PostComponent(
     exploreDetailViewModel: ExploreDetailViewModel = viewModel(
         factory = LocalViewModelFactory.provide()
     ),
+    userRepository: UserRepository = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
 ) {
     val postDetails by exploreDetailViewModel.postDetails.observeAsState()
     val isLoading by exploreDetailViewModel.isLoading.observeAsState(initial = false)
+
+    // Observe the save result from the ViewModel
+    val saveResult by exploreDetailViewModel.savePost.observeAsState()
+    val likeResult by exploreDetailViewModel.likedPost.observeAsState()
 
     LaunchedEffect(exploreDetailViewModel) {
         launch {
             exploreDetailViewModel.loadPostDetails(postId.toString())
         }
     }
+
+    var isSaved by remember { mutableStateOf(false) }
+    var isLiked by remember { mutableStateOf(false) }
+
+    // Use a mutable state to keep track of the like count
+    var likeCount by remember { mutableStateOf(postDetails?.likes ?: 0) }
 
     Column(
         modifier = modifier
@@ -224,15 +244,38 @@ fun PostComponent(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(
-                    onClick = { },
+                    onClick = {
+                        // Trigger the save process in the ViewModel
+                        userRepository.getUser().observeForever { user ->
+                            if (user != null && user.isLogin) {
+                                Log.d("EditProfileScreen", "User Token Screen: ${user.token}")
+                                Log.d("EditProfileScreen", "User ID Screen: ${user.id}")
+
+                                val savePostId = postId.toString()
+                                exploreDetailViewModel.likePost(savePostId, user.id)
+
+                                // Toggle the save button state
+                                isLiked = !isLiked
+
+                                // Update the like count
+                                likeCount += if (isLiked) 1 else -1
+                            }
+                        }
+                    },
                     modifier = Modifier
                         .size(40.dp)
                         .align(Alignment.CenterVertically)
                 ) {
-                    val icon: Painter = painterResource(id = R.drawable.ic_like_outline)
+                    // Use different icons based on the save button state
+                    val icon: Painter = if (isLiked) {
+                        painterResource(id = R.drawable.ic_like_filled)
+                    } else {
+                        painterResource(id = R.drawable.ic_like_outline)
+                    }
+
                     Icon(
                         painter = icon,
-                        contentDescription = "Icon Like",
+                        contentDescription = "Icon Save",
                         tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
@@ -286,12 +329,32 @@ fun PostComponent(
                 }
 
                 IconButton(
-                    onClick = { },
+                    onClick = {
+                        // Trigger the save process in the ViewModel
+                        userRepository.getUser().observeForever { user ->
+                            if (user != null && user.isLogin) {
+                                Log.d("EditProfileScreen", "User Token Screen: ${user.token}")
+                                Log.d("EditProfileScreen", "User ID Screen: ${user.id}")
+
+                                val savePostId = postId.toString()
+                                exploreDetailViewModel.savePost(savePostId, user.id)
+
+                                // Toggle the save button state
+                                isSaved = !isSaved
+                            }
+                        }
+                    },
                     modifier = Modifier
                         .size(40.dp)
                         .align(Alignment.CenterVertically)
                 ) {
-                    val icon: Painter = painterResource(id = R.drawable.ic_save_outline)
+                    // Use different icons based on the save button state
+                    val icon: Painter = if (isSaved) {
+                        painterResource(id = R.drawable.ic_save_filled)
+                    } else {
+                        painterResource(id = R.drawable.ic_save_outline)
+                    }
+
                     Icon(
                         painter = icon,
                         contentDescription = "Icon Save",
@@ -300,7 +363,7 @@ fun PostComponent(
                 }
             }
             Text(
-                text = "${postDetails?.likes} Likes",
+                text = "${postDetails?.likes?.plus(likeCount)} Likes",
                 style = TextStyle(
                     textAlign = TextAlign.Center,
                     fontFamily = myFont,
@@ -318,4 +381,57 @@ fun PostComponent(
             )
         }
     }
+
+    // Handle registrations result
+    saveResult?.let { result ->
+        when (result) {
+            is ExploreDetailViewModel.SaveResult.Success -> {
+                // Registration is successful, show Toast and navigate to LoginScreen
+                ShowToast(result.message)
+                // Reset the registration result to allow for future registrations
+                exploreDetailViewModel.resetSaveResult()
+            }
+            is ExploreDetailViewModel.SaveResult.Error -> {
+                // Handle error if needed, show Toast
+                ShowToast(result.errorMessage)
+                // Reset the registration result to allow for future registrations
+                exploreDetailViewModel.resetSaveResult()
+            }
+            is ExploreDetailViewModel.SaveResult.NetworkError -> {
+                // Handle network error if needed, show Toast
+                ShowToast("Network Error")
+                // Reset the registration result to allow for future registrations
+                exploreDetailViewModel.resetSaveResult()
+            }
+        }
+    }
+
+    // Handle registrations result
+    likeResult?.let { result ->
+        when (result) {
+            is ExploreDetailViewModel.LikeResult.Success -> {
+                // Registration is successful, show Toast and navigate to LoginScreen
+                ShowToast(result.message)
+                // Reset the registration result to allow for future registrations
+                exploreDetailViewModel.resetSaveResult()
+            }
+            is ExploreDetailViewModel.LikeResult.Error -> {
+                // Handle error if needed, show Toast
+                ShowToast(result.errorMessage)
+                // Reset the registration result to allow for future registrations
+                exploreDetailViewModel.resetSaveResult()
+            }
+            is ExploreDetailViewModel.LikeResult.NetworkError -> {
+                // Handle network error if needed, show Toast
+                ShowToast("Network Error")
+                // Reset the registration result to allow for future registrations
+                exploreDetailViewModel.resetSaveResult()
+            }
+        }
+    }
+}
+
+@Composable
+private fun ShowToast(message: String) {
+    Toast.makeText(LocalContext.current, message, Toast.LENGTH_SHORT).show()
 }

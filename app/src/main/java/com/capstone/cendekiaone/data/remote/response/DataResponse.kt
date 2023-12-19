@@ -179,6 +179,6 @@ data class GetPostPagination(
 )
 
 data class PostSavedResponse(
-    @SerializedName("message")
-    val message: String,
+    @field:SerializedName("message")
+    val message: String
 )
