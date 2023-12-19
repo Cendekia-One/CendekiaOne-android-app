@@ -177,3 +177,8 @@ data class GetPostPagination(
     @field:SerializedName("totalPosts")
     val totalPosts: Int,
 )
+
+data class PostSavedResponse(
+    @SerializedName("message")
+    val message: String,
+)

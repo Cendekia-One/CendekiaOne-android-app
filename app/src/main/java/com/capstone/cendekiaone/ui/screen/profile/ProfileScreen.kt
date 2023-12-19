@@ -195,6 +195,7 @@ fun HeaderProfile(
                 .size(70.dp)
                 .clip(CircleShape)
         )
+
         Column(
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {

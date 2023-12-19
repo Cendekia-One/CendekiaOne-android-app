@@ -87,10 +87,12 @@ fun CendekiaOneApp(
             composable(Screen.Chat.route) {
                 ChatScreen(navController = navController)
             }
-            composable(Screen.ExploreDetail.route + "/{postId}") { backStackEntry ->
+            composable(Screen.ExploreDetail.route + "/{postId}/{username}") { backStackEntry ->
                 val postId = backStackEntry.arguments?.getString("postId")?.toInt() ?: -1
-                ExploreDetailScreen(navController = navController, postId = postId)
+                val username = backStackEntry.arguments?.getString("username") ?: ""
+                ExploreDetailScreen(navController = navController, postId = postId, username = username)
             }
+
         }
     }
 }

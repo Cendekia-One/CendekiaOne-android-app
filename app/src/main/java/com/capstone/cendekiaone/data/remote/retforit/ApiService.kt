@@ -3,6 +3,9 @@ package com.capstone.cendekiaone.data.remote.retforit
 import com.capstone.cendekiaone.data.remote.response.DataResponse
 import com.capstone.cendekiaone.data.remote.response.GetPostResponse
 import com.capstone.cendekiaone.data.remote.response.LoginResponse
+import com.capstone.cendekiaone.data.remote.response.PostDetailResponse
+import com.capstone.cendekiaone.data.remote.response.ResponseDetailPost
+import com.capstone.cendekiaone.data.remote.response.SearchResponse
 import com.capstone.cendekiaone.data.remote.response.TopResponsePost
 import com.capstone.cendekiaone.data.remote.response.UserDetail
 import okhttp3.MultipartBody
@@ -70,7 +73,19 @@ interface ApiService {
     @GET("posts")
     suspend fun getAllPosts(@Query("page") page: Int): Response<GetPostResponse>
 
-    // Get detail post
-    @GET("posts")
-    suspend fun getAllPosts(): Response<GetPostResponse>
+    // Get post by id
+    @GET("post/{id_post}")
+    suspend fun getDetailPosts(@Path("id_post") userId: String): Response<PostDetailResponse>
+
+    // Post save post
+    @FormUrlEncoded
+    @POST("saved")
+    fun saved(
+        @Field("id_post") idPost: String,
+        @Field("saved_by") savedBy: String,
+    ): Call<DataResponse>
+
+    // Search user
+    @GET("search")
+    suspend fun searchByUsername(@Query("username") username: String): Response<SearchResponse>
 }

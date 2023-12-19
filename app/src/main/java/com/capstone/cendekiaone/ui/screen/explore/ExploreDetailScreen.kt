@@ -1,10 +1,9 @@
 package com.capstone.cendekiaone.ui.screen.explore
 
-import android.icu.number.Scale
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -41,15 +42,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.capstone.cendekiaone.R
+import com.capstone.cendekiaone.data.helper.LocalViewModelFactory
 import com.capstone.cendekiaone.ui.navigation.Screen
 import com.capstone.cendekiaone.ui.theme.myFont
-import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
-import com.capstone.cendekiaone.data.helper.LocalViewModelFactory
-import com.capstone.cendekiaone.ui.screen.profile.ProfileViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,6 +57,7 @@ fun ExploreDetailScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
     postId: Int,
+    username: String
 ) {
     Scaffold(
         topBar = {
@@ -89,9 +90,9 @@ fun ExploreDetailScreen(
             contentPadding = innerPadding,
             modifier = modifier
                 .fillMaxSize()
-        ){
+        ) {
             item {
-                PostComponent(modifier, postId)
+                PostComponent(modifier, postId, username)
             }
         }
     }
@@ -101,7 +102,20 @@ fun ExploreDetailScreen(
 fun PostComponent(
     modifier: Modifier = Modifier,
     postId: Int,
+    username: String,
+    exploreDetailViewModel: ExploreDetailViewModel = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
 ) {
+    val postDetails by exploreDetailViewModel.postDetails.observeAsState()
+    val isLoading by exploreDetailViewModel.isLoading.observeAsState(initial = false)
+
+    LaunchedEffect(exploreDetailViewModel) {
+        launch {
+            exploreDetailViewModel.loadPostDetails(postId.toString())
+        }
+    }
+
     Column(
         modifier = modifier
             .padding(16.dp)
@@ -112,238 +126,196 @@ fun PostComponent(
                 shape = RoundedCornerShape(16.dp)
             )
     ) {
-        // Tag to display postId
-        Text(
-            text = "Post ID: $postId",
-            modifier = Modifier
-                .padding(8.dp)
-                .background(MaterialTheme.colorScheme.primary)
-                .padding(4.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .align(Alignment.End)
-        )
-        HeaderPost()
-        MainPost(postId = postId)
-        BottomPost()
-    }
-}
-
-@Composable
-fun HeaderPost(
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier
-            .height(64.dp)
-            .fillMaxWidth()
-            .padding(end = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(start = 16.dp)
-                .align(Alignment.CenterVertically)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.placeholder),
-                contentDescription = "Image Profile",
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-            )
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-            ) {
-                Text(
-                    text = "username",
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        textAlign = TextAlign.Center,
-                        fontFamily = myFont,
-                        fontWeight = FontWeight.SemiBold
-                    ),
-                )
-                Text(
-                    text = "category",
-                    style = TextStyle(
-                        fontSize = 12.sp, textAlign = TextAlign.Center, fontFamily = myFont
-                    ),
-                )
-            }
-        }
-        IconButton(
-            onClick = { },
-            modifier = Modifier
-                .size(40.dp)
-                .align(Alignment.CenterVertically)
-        ) {
-            val icon: Painter = painterResource(id = R.drawable.ic_menu_outline)
-            Icon(
-                painter = icon,
-                contentDescription = "Icon Menu",
-                tint = MaterialTheme.colorScheme.onBackground
-            )
-        }
-    }
-}
-
-@Composable
-fun MainPost(
-    exploreDetailViewModel: ExploreDetailViewModel = viewModel(
-        factory = LocalViewModelFactory.provide()
-    ),
-    postId: Int
-) {
-
-    // Trigger loading of the post when the composable is first launched
-    LaunchedEffect(postId) {
-        exploreDetailViewModel.getPostById(postId)
-    }
-
-    // Observe changes in the post data
-    val post = exploreDetailViewModel.postById.observeAsState()
-
-    // Check if the data is not null
-    post.value?.let { post ->
-        // Display post information (modify this part based on your data structure)
-        Image(
-            painter = rememberAsyncImagePainter(model = post.postPicture),
-            contentDescription = "Image Post",
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f),
-        )
-    }
-}
-
-@Composable
-fun BottomPost(
-    modifier: Modifier = Modifier
-) {
-    Column {
         Row(
             modifier = modifier
-                .height(54.dp)
+                .height(64.dp)
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp),
+                .padding(end = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            IconButton(
-                onClick = { },
+            // Head Post
+            Row(
                 modifier = Modifier
-                    .size(40.dp)
+                    .padding(start = 16.dp)
                     .align(Alignment.CenterVertically)
             ) {
-                val icon: Painter = painterResource(id = R.drawable.ic_like_outline)
-                Icon(
-                    painter = icon,
-                    contentDescription = "Icon Like",
-                    tint = MaterialTheme.colorScheme.onBackground
+                Image(
+                    painter = rememberAsyncImagePainter(model = postDetails?.profileCreator ?: R.drawable.placeholder),
+                    contentDescription = "Image Profile",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
                 )
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                ) {
+                    Text(
+                        text = postDetails?.createBy ?: "Username",
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            textAlign = TextAlign.Center,
+                            fontFamily = myFont,
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                    )
+                    Row {
+                        Text(
+                            text = postDetails?.category ?: "Category",
+                            style = TextStyle(
+                                fontSize = 12.sp, textAlign = TextAlign.Center, fontFamily = myFont
+                            ),
+                        )
+                        Text(
+                            text = " - ${postDetails?.subCatergory}",
+                            style = TextStyle(
+                                fontSize = 12.sp, textAlign = TextAlign.Center, fontFamily = myFont
+                            ),
+                        )
+                    }
+                }
             }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
             IconButton(
                 onClick = { },
                 modifier = Modifier
                     .size(40.dp)
                     .align(Alignment.CenterVertically)
             ) {
-                val icon: Painter = painterResource(id = R.drawable.ic_comment_outline)
+                val icon: Painter = painterResource(id = R.drawable.ic_menu_outline)
                 Icon(
                     painter = icon,
-                    contentDescription = "Icon Comment",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            IconButton(
-                onClick = { },
-                modifier = Modifier
-                    .size(40.dp)
-                    .align(Alignment.CenterVertically)
-            ) {
-                val icon: Painter = painterResource(id = R.drawable.ic_share_outline)
-                Icon(
-                    painter = icon,
-                    contentDescription = "Icon Share",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            IconButton(
-                onClick = { },
-                modifier = Modifier
-                    .size(40.dp)
-                    .align(Alignment.CenterVertically)
-            ) {
-                val icon: Painter = painterResource(id = R.drawable.ic_magic_outline)
-                Icon(
-                    painter = icon,
-                    contentDescription = "Icon Brief",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
-
-            IconButton(
-                onClick = { },
-                modifier = Modifier
-                    .size(40.dp)
-                    .align(Alignment.CenterVertically)
-            ) {
-                val icon: Painter = painterResource(id = R.drawable.ic_save_outline)
-                Icon(
-                    painter = icon,
-                    contentDescription = "Icon Save",
+                    contentDescription = "Icon Menu",
                     tint = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
+
+        // Main Post
+        Box {
+            Image(
+                painter = rememberAsyncImagePainter(model = postDetails?.postPicture ?: R.drawable.placeholder),
+                contentDescription = "Image Post",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f),
+                contentScale = ContentScale.Crop
+            )
+
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .align(Alignment.Center)
+                )
+            }
+        }
+
+        // Bottom Post
+        Column {
+            Row(
+                modifier = modifier
+                    .height(54.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(
+                    onClick = { },
+                    modifier = Modifier
+                        .size(40.dp)
+                        .align(Alignment.CenterVertically)
+                ) {
+                    val icon: Painter = painterResource(id = R.drawable.ic_like_outline)
+                    Icon(
+                        painter = icon,
+                        contentDescription = "Icon Like",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                IconButton(
+                    onClick = { },
+                    modifier = Modifier
+                        .size(40.dp)
+                        .align(Alignment.CenterVertically)
+                ) {
+                    val icon: Painter = painterResource(id = R.drawable.ic_comment_outline)
+                    Icon(
+                        painter = icon,
+                        contentDescription = "Icon Comment",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                IconButton(
+                    onClick = { },
+                    modifier = Modifier
+                        .size(40.dp)
+                        .align(Alignment.CenterVertically)
+                ) {
+                    val icon: Painter = painterResource(id = R.drawable.ic_share_outline)
+                    Icon(
+                        painter = icon,
+                        contentDescription = "Icon Share",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                IconButton(
+                    onClick = { },
+                    modifier = Modifier
+                        .size(40.dp)
+                        .align(Alignment.CenterVertically)
+                ) {
+                    val icon: Painter = painterResource(id = R.drawable.ic_magic_outline)
+                    Icon(
+                        painter = icon,
+                        contentDescription = "Icon Brief",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+
+                IconButton(
+                    onClick = { },
+                    modifier = Modifier
+                        .size(40.dp)
+                        .align(Alignment.CenterVertically)
+                ) {
+                    val icon: Painter = painterResource(id = R.drawable.ic_save_outline)
+                    Icon(
+                        painter = icon,
+                        contentDescription = "Icon Save",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            }
             Text(
-                text = stringResource(R.string.many_like),
+                text = "${postDetails?.likes} Likes",
                 style = TextStyle(
                     textAlign = TextAlign.Center,
                     fontFamily = myFont,
                 ),
-                modifier = Modifier.padding(start = 16.dp).align(Alignment.CenterVertically)
-            )
-            val icon: Painter = painterResource(id = R.drawable.ic_verified)
-            Icon(
-                painter = icon,
-                contentDescription = "Icon Share",
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(start = 16.dp)
+                modifier = Modifier
+                    .padding(start = 16.dp)
             )
             Text(
-                text = stringResource(R.string.verified),
+                text = postDetails?.postBody ?: "Description",
                 style = TextStyle(
-                    textAlign = TextAlign.Center,
+                    textAlign = TextAlign.Justify,
                     fontFamily = myFont,
-                    color = MaterialTheme.colorScheme.primary,
                 ),
-                modifier = Modifier.padding(start = 4.dp).align(Alignment.CenterVertically)
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 8.dp)
             )
         }
-        Text(
-            text = stringResource(R.string.description_post),
-            style = TextStyle(
-                textAlign = TextAlign.Justify,
-                fontFamily = myFont,
-            ),
-            modifier = Modifier.padding(16.dp)
-        )
     }
 }

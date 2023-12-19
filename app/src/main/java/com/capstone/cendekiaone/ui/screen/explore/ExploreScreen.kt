@@ -41,7 +41,7 @@ fun ExploreScreen2(item: GetPostMidResponse, navController: NavController) {
                 shape = RoundedCornerShape(16.dp)
             )
             .clickable {
-                navController.navigate(Screen.ExploreDetail.route + "/${item.idPost}")
+                navController.navigate(Screen.ExploreDetail.createRoute(item.idPost, item.createBy))
             }
     )
 }
