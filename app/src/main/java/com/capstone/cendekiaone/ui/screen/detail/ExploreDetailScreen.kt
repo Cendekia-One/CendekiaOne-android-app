@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -115,7 +114,7 @@ fun ExploreDetailScreen(
                 .fillMaxSize()
         ) {
             item {
-                PostComponent(modifier, postId, username)
+                PostComponent(modifier, postId, username, navController)
             }
         }
     }
@@ -127,6 +126,7 @@ fun PostComponent(
     modifier: Modifier = Modifier,
     postId: Int,
     username: String,
+    navController: NavController,
     exploreDetailViewModel: ExploreDetailViewModel = viewModel(
         factory = LocalViewModelFactory.provide()
     ),
@@ -277,6 +277,9 @@ fun PostComponent(
                         // TODO
                         if (createByWho == myUsername) {
                             exploreDetailViewModel.deletePost(postId.toString())
+                            exploreDetailViewModel.deletePost.value =
+                                ExploreDetailViewModel.DeleteResult.Success("Delete Post Success")
+                            navController.popBackStack()
                         } else {
                             // Handle the case where createByWho and myUsername are different
                             exploreDetailViewModel.deletePost.value =
@@ -543,23 +546,17 @@ fun PostComponent(
     saveResult?.let { result ->
         when (result) {
             is ExploreDetailViewModel.SaveResult.Success -> {
-                // Registration is successful, show Toast and navigate to LoginScreen
                 ShowToast(result.message)
-                // Reset the registration result to allow for future registrations
                 exploreDetailViewModel.resetSaveResult()
             }
 
             is ExploreDetailViewModel.SaveResult.Error -> {
-                // Handle error if needed, show Toast
                 ShowToast(result.errorMessage)
-                // Reset the registration result to allow for future registrations
                 exploreDetailViewModel.resetSaveResult()
             }
 
             is ExploreDetailViewModel.SaveResult.NetworkError -> {
-                // Handle network error if needed, show Toast
                 ShowToast("Network Error")
-                // Reset the registration result to allow for future registrations
                 exploreDetailViewModel.resetSaveResult()
             }
         }
@@ -569,23 +566,17 @@ fun PostComponent(
     likeResult?.let { result ->
         when (result) {
             is ExploreDetailViewModel.LikeResult.Success -> {
-                // Registration is successful, show Toast and navigate to LoginScreen
                 ShowToast(result.message)
-                // Reset the registration result to allow for future registrations
                 exploreDetailViewModel.resetSaveResult()
             }
 
             is ExploreDetailViewModel.LikeResult.Error -> {
-                // Handle error if needed, show Toast
                 ShowToast(result.errorMessage)
-                // Reset the registration result to allow for future registrations
                 exploreDetailViewModel.resetSaveResult()
             }
 
             is ExploreDetailViewModel.LikeResult.NetworkError -> {
-                // Handle network error if needed, show Toast
                 ShowToast("Network Error")
-                // Reset the registration result to allow for future registrations
                 exploreDetailViewModel.resetSaveResult()
             }
         }
@@ -595,23 +586,17 @@ fun PostComponent(
     commentResult?.let { result ->
         when (result) {
             is ExploreDetailViewModel.CommentResult.Success -> {
-                // Registration is successful, show Toast and navigate to LoginScreen
                 ShowToast(result.message)
-                // Reset the registration result to allow for future registrations
                 exploreDetailViewModel.resetSaveResult()
             }
 
             is ExploreDetailViewModel.CommentResult.Error -> {
-                // Handle error if needed, show Toast
                 ShowToast(result.errorMessage)
-                // Reset the registration result to allow for future registrations
                 exploreDetailViewModel.resetSaveResult()
             }
 
             is ExploreDetailViewModel.CommentResult.NetworkError -> {
-                // Handle network error if needed, show Toast
                 ShowToast("Network Error")
-                // Reset the registration result to allow for future registrations
                 exploreDetailViewModel.resetSaveResult()
             }
         }
@@ -621,23 +606,17 @@ fun PostComponent(
     deletResult?.let { result ->
         when (result) {
             is ExploreDetailViewModel.DeleteResult.Success -> {
-                // Registration is successful, show Toast and navigate to LoginScreen
                 ShowToast(result.message)
-                // Reset the registration result to allow for future registrations
                 exploreDetailViewModel.resetSaveResult()
             }
 
             is ExploreDetailViewModel.DeleteResult.Error -> {
-                // Handle error if needed, show Toast
                 ShowToast(result.errorMessage)
-                // Reset the registration result to allow for future registrations
                 exploreDetailViewModel.resetSaveResult()
             }
 
             is ExploreDetailViewModel.DeleteResult.NetworkError -> {
-                // Handle network error if needed, show Toast
                 ShowToast("Network Error")
-                // Reset the registration result to allow for future registrations
                 exploreDetailViewModel.resetSaveResult()
             }
         }
