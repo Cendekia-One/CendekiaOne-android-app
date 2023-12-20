@@ -16,6 +16,7 @@ import com.capstone.cendekiaone.ui.screen.register.RegisterViewModel
 import androidx.datastore.preferences.core.Preferences
 import com.capstone.cendekiaone.ui.screen.create.CreateViewModel
 import com.capstone.cendekiaone.ui.screen.detail.ExploreDetailViewModel
+import com.capstone.cendekiaone.ui.screen.home.HomeViewModel
 import com.capstone.cendekiaone.ui.screen.profile.EditProfileViewModel
 import com.capstone.cendekiaone.ui.screen.profile.ProfileViewModel
 import com.capstone.cendekiaone.ui.screen.search.SearchViewModel
@@ -56,6 +57,9 @@ class LocalViewModelFactory private constructor(
             }
             modelClass.isAssignableFrom(SearchViewModel::class.java) -> {
                 SearchViewModel(apiService) as T
+            }
+            modelClass.isAssignableFrom(HomeViewModel::class.java) -> {
+                HomeViewModel(apiService) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }

@@ -20,6 +20,7 @@ import com.capstone.cendekiaone.ui.screen.create.UploadImageScreen
 import com.capstone.cendekiaone.ui.screen.detail.ExploreDetailScreen
 import com.capstone.cendekiaone.ui.screen.explore.ExploreScreen
 import com.capstone.cendekiaone.ui.screen.home.HomeScreen
+import com.capstone.cendekiaone.ui.screen.home.HomeViewModel
 import com.capstone.cendekiaone.ui.screen.intro.IntroScreen
 import com.capstone.cendekiaone.ui.screen.login.LoginScreen
 import com.capstone.cendekiaone.ui.screen.notification.NotificationScreen

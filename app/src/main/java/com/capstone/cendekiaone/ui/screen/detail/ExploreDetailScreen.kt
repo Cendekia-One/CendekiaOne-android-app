@@ -3,7 +3,6 @@ package com.capstone.cendekiaone.ui.screen.detail
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,19 +17,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
@@ -69,12 +63,8 @@ import com.capstone.cendekiaone.R
 import com.capstone.cendekiaone.data.helper.LocalViewModelFactory
 import com.capstone.cendekiaone.data.helper.UserRepository
 import com.capstone.cendekiaone.data.remote.response.GetCommentData
-import com.capstone.cendekiaone.data.remote.response.GetPostMidResponse
 import com.capstone.cendekiaone.data.remote.retforit.ApiService
 import com.capstone.cendekiaone.ui.navigation.Screen
-import com.capstone.cendekiaone.ui.screen.explore.ExploreScreen2
-import com.capstone.cendekiaone.ui.screen.explore.ExploreViewModel
-import com.capstone.cendekiaone.ui.theme.Shapes
 import com.capstone.cendekiaone.ui.theme.myFont
 import kotlinx.coroutines.launch
 
@@ -281,6 +271,7 @@ fun PostComponent(
                         // Trigger the save process in the ViewModel
                         userRepository.getUser().observeForever { user ->
                             if (user != null && user.isLogin) {
+                                // TODO
                                 val savePostId = postId.toString()
                                 exploreDetailViewModel.likePost(savePostId, user.id)
 
@@ -394,6 +385,7 @@ fun PostComponent(
                 }
             }
             Text(
+                // TODO
                 text = "${postDetails?.likes?.plus(likeCount)} Likes",
                 style = TextStyle(
                     textAlign = TextAlign.Center,
@@ -485,7 +477,6 @@ fun PostComponent(
                     )
                 }
             }
-            // TODO Place to get Comment
             CommentList(
                 apiService = exploreDetailViewModel.apiService,
                 viewModel = exploreDetailViewModel
@@ -577,7 +568,9 @@ fun CommentList(apiService: ApiService, viewModel: ExploreDetailViewModel) {
     val commentData: LazyPagingItems<GetCommentData> =
         viewModel.commentData.collectAsLazyPagingItems()
 
-    LazyColumn {
+    LazyColumn(
+        modifier = Modifier.padding(16.dp)
+    ) {
         items(commentData.itemCount) { index ->
             val item = commentData[index]
             if (item != null) {
@@ -600,44 +593,6 @@ fun CommentComponent(item: GetCommentData) {
         )
         Column {
             Text(text = item.username)
-            Text(text = item.commentBody)
-        }
-    }
-}
-
-@Composable
-fun ExploreScreen2(item: GetPostMidResponse, navController: NavController) {
-    Image(
-        painter = rememberAsyncImagePainter(item.postPicture),
-        contentDescription = "Post Image",
-        contentScale = ContentScale.Crop,
-        modifier = Modifier
-            .size(140.dp)
-            .clip(Shapes.large)
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.secondaryContainer,
-                shape = RoundedCornerShape(16.dp)
-            )
-            .clickable {
-                navController.navigate(Screen.ExploreDetail.createRoute(item.idPost, item.createBy))
-            }
-    )
-}
-
-@Composable
-fun WeaponsList(viewModel: ExploreViewModel, navController: NavController) {
-    val weaponsData: LazyPagingItems<GetPostMidResponse> =
-        viewModel.weaponsData.collectAsLazyPagingItems()
-
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(3)
-    ) {
-        items(weaponsData.itemCount) { index ->
-            val item = weaponsData[index]
-            if (item != null) {
-                ExploreScreen2(item, navController)
-            }
         }
     }
 }

@@ -3,6 +3,7 @@ package com.capstone.cendekiaone.data.remote.retforit
 import com.capstone.cendekiaone.data.remote.response.PostCommentResponse
 import com.capstone.cendekiaone.data.remote.response.DataResponse
 import com.capstone.cendekiaone.data.remote.response.GetCommentResponse
+import com.capstone.cendekiaone.data.remote.response.GetPostFollowedResponse
 import com.capstone.cendekiaone.data.remote.response.GetPostResponse
 import com.capstone.cendekiaone.data.remote.response.LoginResponse
 import com.capstone.cendekiaone.data.remote.response.PostDetailResponse
@@ -110,6 +111,13 @@ interface ApiService {
         @Path("id") postId: String,
         @Query("page") page: Int
     ): Response<GetCommentResponse>
+
+    // Get post by followed
+    @GET("followed-post/{idUser}")
+    suspend fun getFollowedPosts(
+        @Path("idUser") idUser: String,
+        @Query("page") page: Int
+    ): Response<GetPostFollowedResponse>
 
     // Search user
     @GET("search")
