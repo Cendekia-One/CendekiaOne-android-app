@@ -96,9 +96,13 @@ class ExploreDetailViewModel(
                 _isLoading.value = false
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody?.message == "successfully liked this post") {
-                    _likedPost.value = LikeResult.Success("Successfully Liked This Post")
+                    _likedPost.value = LikeResult.Success(responseBody.message)
                 } else {
-                    _likedPost.value = LikeResult.Error("Already Like This Post")
+                    if (responseBody != null) {
+                        _likedPost.value = LikeResult.Error(responseBody.message)
+                    }else{
+                        _likedPost.value = LikeResult.Error("internet error")
+                    }
                 }
             }
 
