@@ -7,11 +7,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.capstone.cendekiaone.data.remote.response.GetAllUserData
+import com.capstone.cendekiaone.data.remote.response.PostFollowResponse
+import com.capstone.cendekiaone.data.remote.response.PostSavedResponse
 import com.capstone.cendekiaone.data.remote.response.User
 import com.capstone.cendekiaone.data.remote.retforit.ApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class SearchViewModel(private val apiService: ApiService) : ViewModel() {
 
@@ -65,5 +70,39 @@ class SearchViewModel(private val apiService: ApiService) : ViewModel() {
                 _isLoading.postValue(false)
             }
         }
+    }
+
+    // Post follow
+    private val _followUser = MutableLiveData<FollowResult?>()
+    val followUser: MutableLiveData<FollowResult?> = _followUser
+
+    sealed class FollowResult {
+        data class Success(val message: String) : FollowResult()
+        data class Error(val errorMessage: String) : FollowResult()
+        object NetworkError : FollowResult()
+    }
+
+    fun postFollowUser(accountOwner: String, followedUser: String) {
+        _isLoading.value = true
+        apiService.follow(accountOwner, followedUser).enqueue(object : Callback<PostFollowResponse> {
+            override fun onResponse(call: Call<PostFollowResponse>, response: Response<PostFollowResponse>) {
+                _isLoading.value = false
+                val responseBody = response.body()
+                if (response.isSuccessful && responseBody?.message == "successfully followed this user") {
+                    _followUser.value = FollowResult.Success("Successfully Followed This User")
+                } else {
+                    _followUser.value = FollowResult.Error("Already Followed This User")
+                }
+            }
+
+            override fun onFailure(call: Call<PostFollowResponse>, t: Throwable) {
+                _isLoading.value = false
+                _followUser.value = FollowResult.NetworkError
+            }
+        })
+    }
+
+    fun resetFollowResult() {
+        _followUser.value = null
     }
 }

@@ -568,15 +568,18 @@ fun CommentList(apiService: ApiService, viewModel: ExploreDetailViewModel) {
     val commentData: LazyPagingItems<GetCommentData> =
         viewModel.commentData.collectAsLazyPagingItems()
 
-    LazyColumn(
-        modifier = Modifier.padding(16.dp)
-    ) {
-        items(commentData.itemCount) { index ->
-            val item = commentData[index]
-            if (item != null) {
-                CommentComponent(item)
+    Column {
+        LazyColumn(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            items(commentData.itemCount) { index ->
+                val item = commentData[index]
+                if (item != null) {
+                    CommentComponent(item)
+                }
             }
         }
+        Box(modifier = Modifier.padding(16.dp))
     }
 }
 
@@ -591,8 +594,11 @@ fun CommentComponent(item: GetCommentData) {
                 .size(40.dp)
                 .clip(CircleShape)
         )
-        Column {
-            Text(text = item.username)
+        Column(
+            modifier = Modifier.padding(start = 16.dp)
+        ) {
+            Text(text = item.username, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+            Text(text = item.commentBody)
         }
     }
 }

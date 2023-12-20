@@ -18,6 +18,7 @@ import com.capstone.cendekiaone.ui.screen.chat.ChatScreen
 import com.capstone.cendekiaone.ui.screen.create.CreateScreen
 import com.capstone.cendekiaone.ui.screen.create.UploadImageScreen
 import com.capstone.cendekiaone.ui.screen.detail.ExploreDetailScreen
+import com.capstone.cendekiaone.ui.screen.detailUser.DetailUserScreen
 import com.capstone.cendekiaone.ui.screen.explore.ExploreScreen
 import com.capstone.cendekiaone.ui.screen.home.HomeScreen
 import com.capstone.cendekiaone.ui.screen.home.HomeViewModel
@@ -93,7 +94,10 @@ fun CendekiaOneApp(
                 val username = backStackEntry.arguments?.getString("username") ?: ""
                 ExploreDetailScreen(navController = navController, postId = postId, username = username)
             }
-
+            composable(Screen.DetailUser.route + "/{userId}") { backStackEntry ->
+                val userId = backStackEntry.arguments?.getString("userId")?.toInt() ?: -1
+                DetailUserScreen(navController = navController, userId = userId)
+            }
         }
     }
 }

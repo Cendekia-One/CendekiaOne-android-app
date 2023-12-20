@@ -48,4 +48,6 @@
     <string name="subcatergory_post">Sub Category (e.g Street Food)</string>
     <string name="menu_explore_detail">Detail Explore</string>
     <string name="add_comment">Add a comment</string>
+    <string name="follow">Follow</string>
+    <string name="following">Following</string>
 </resources>

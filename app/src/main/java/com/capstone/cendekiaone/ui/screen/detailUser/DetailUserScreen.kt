@@ -1,6 +1,5 @@
 package com.capstone.cendekiaone.ui.screen.detailUser
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,7 +42,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -53,11 +51,13 @@ import coil.compose.rememberAsyncImagePainter
 import com.capstone.cendekiaone.R
 import com.capstone.cendekiaone.data.helper.LocalViewModelFactory
 import com.capstone.cendekiaone.data.helper.UserRepository
-import com.capstone.cendekiaone.ui.component.AlertDialogComponent
 import com.capstone.cendekiaone.ui.component.ButtonComponent
 import com.capstone.cendekiaone.ui.component.OutlinedButtonComponent
 import com.capstone.cendekiaone.ui.navigation.Screen
+import com.capstone.cendekiaone.ui.screen.explore.SearchViewModel
+import com.capstone.cendekiaone.ui.screen.profile.EditProfileViewModel
 import com.capstone.cendekiaone.ui.screen.profile.ProfileViewModel
+import com.capstone.cendekiaone.ui.screen.profile.ShowToast
 import com.capstone.cendekiaone.ui.theme.myFont
 import kotlinx.coroutines.launch
 
@@ -65,12 +65,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun DetailUserScreen(
     navController: NavController = rememberNavController(),
-    userRepository: UserRepository = viewModel(
-        factory = LocalViewModelFactory.provide()
-    ),
     profileViewModel: ProfileViewModel = viewModel(
         factory = LocalViewModelFactory.provide()
     ),
+    userId: Int
 ) {
     // Observe user details from the ViewModel
     val userDetails by profileViewModel.userDetails.observeAsState()
@@ -80,19 +78,11 @@ fun DetailUserScreen(
 
     // Load user details when the screen is created
     LaunchedEffect(profileViewModel) {
-        userRepository.getUser().observeForever { user ->
-            if (user != null && user.isLogin) {
-                Log.d("ProfileScreen", "User Token Screen: ${user.token}")
-                Log.d("ProfileScreen", "User ID Screen: ${user.id}")
-
-                launch {
-                    profileViewModel.loadUserDetails(user.id)
-                }
-            }
+        launch {
+            profileViewModel.loadUserDetails(userId.toString())
         }
     }
 
-    var showDialog by remember { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
@@ -107,22 +97,20 @@ fun DetailUserScreen(
                         overflow = TextOverflow.Ellipsis
                     )
                 },
-                actions = {
+                navigationIcon = {
                     IconButton(
-                        onClick = {
-                            // Set showDialog to true when the logout icon is clicked
-                            showDialog = true
-                        },
-                        modifier = Modifier.size(40.dp).padding(end = 12.dp)
+                        onClick = { navController.navigate(Screen.Explore.route) },
+                        modifier = Modifier
+                            .size(40.dp)
                     ) {
-                        val icon: Painter = painterResource(id = R.drawable.ic_logout_outline)
+                        val icon: Painter = painterResource(id = R.drawable.ic_back)
                         Icon(
                             painter = icon,
-                            contentDescription = "Icon Logout",
+                            contentDescription = "Icon Back",
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
-                }
+                },
             )
         }
     ) { innerPadding ->
@@ -135,7 +123,7 @@ fun DetailUserScreen(
                 item {
                     HeaderDetailUser()
                     DescriptionDetailUser(
-                        navController
+                        navController, userId
                     )
                     TabLayoutDetailUser()
                 }
@@ -149,27 +137,6 @@ fun DetailUserScreen(
                 )
             }
         }
-    }
-
-    // Logout Confirmation Dialog
-    if (showDialog) {
-        AlertDialogComponent(
-            onDismiss = {
-                // Reset the showDialog state when the dialog is dismissed
-                showDialog = false
-            },
-            onConfirm = {
-                // Log out the user and navigate to the Intro screen
-                userRepository.logout()
-                navController.navigate(Screen.Login.route) {
-                    // Clear the back stack
-                    popUpTo(navController.graph.startDestinationId) {
-                        saveState = true
-                    }
-                }
-                showDialog = false
-            }
-        )
     }
 }
 
@@ -269,12 +236,22 @@ fun HeaderDetailUser(
 @Composable
 fun DescriptionDetailUser(
     navController: NavController = rememberNavController(),
+    userId: Int,
     profileViewModel: ProfileViewModel = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
+    searchViewModel: SearchViewModel = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
+    userRepository: UserRepository = viewModel(
         factory = LocalViewModelFactory.provide()
     ),
 ) {
     // Observe user details from the ViewModel
     val userDetails by profileViewModel.userDetails.observeAsState()
+    val userFollow by searchViewModel.followUser.observeAsState()
+
+    var isFollowing by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.padding(top = 16.dp)
@@ -301,15 +278,51 @@ fun DescriptionDetailUser(
                 .padding(top = 8.dp, bottom = 8.dp),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            ButtonComponent(
-                provideText = stringResource(R.string.edit_profile),
-                onClick = {
-                    navController.navigate(Screen.EditProfile.route)
-                },
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 4.dp),
-            )
+            val buttonText = if (isFollowing) {
+                // User is already following, display unfollow button
+                stringResource(R.string.following)
+            } else {
+                // User is not following, display follow button
+                stringResource(R.string.follow)
+            }
+
+            if (isFollowing) {
+                // User is already following, display unfollow button
+                OutlinedButtonComponent(
+                    provideText = buttonText,
+                    onClick = {
+                        // TODO: Implement unfollow logic
+                        userRepository.getUser().observeForever { user ->
+                            if (user != null && user.isLogin) {
+                                searchViewModel.postFollowUser(user.id, userId.toString())
+                            }
+                            // Update the state to reflect the change
+                            isFollowing = false
+                        }
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 4.dp),
+                )
+            } else {
+                // User is not following, display follow button
+                ButtonComponent(
+                    provideText = buttonText,
+                    onClick = {
+                        // TODO: Implement follow logic
+                        userRepository.getUser().observeForever { user ->
+                            if (user != null && user.isLogin) {
+                                searchViewModel.postFollowUser(user.id, userId.toString())
+                            }
+                            // Update the state to reflect the change
+                            isFollowing = true
+                        }
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 4.dp),
+                )
+            }
             OutlinedButtonComponent(
                 provideText = stringResource(R.string.share_profile),
                 onClick = { },
@@ -317,6 +330,29 @@ fun DescriptionDetailUser(
                     .weight(1f)
                     .padding(start = 4.dp),
             )
+        }
+    }
+
+    userFollow?.let { result ->
+        when (result) {
+            is SearchViewModel.FollowResult.Success -> {
+                // Registration is successful, show Toast and navigate to LoginScreen
+                ShowToast(result.message)
+                // Reset the registration result to allow for future registrations
+                searchViewModel.resetFollowResult()
+            }
+            is SearchViewModel.FollowResult.Error -> {
+                // Handle error if needed, show Toast
+                ShowToast(result.errorMessage)
+                // Reset the registration result to allow for future registrations
+                searchViewModel.resetFollowResult()
+            }
+            is SearchViewModel.FollowResult.NetworkError -> {
+                // Handle network error if needed, show Toast
+                ShowToast("Network Error")
+                // Reset the registration result to allow for future registrations
+                searchViewModel.resetFollowResult()
+            }
         }
     }
 }
@@ -343,12 +379,4 @@ fun TabLayoutDetailUser() {
             )
         }
     }
-}
-
-@Preview(showBackground = true, device = "id:pixel_4")
-@Composable
-fun DetailUserScreenPreview() {
-    DetailUserScreen(
-        navController = rememberNavController()
-    )
 }

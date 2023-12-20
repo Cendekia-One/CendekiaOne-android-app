@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -47,6 +48,7 @@ import com.capstone.cendekiaone.data.helper.LocalViewModelFactory
 import com.capstone.cendekiaone.data.remote.response.GetPostMidResponse
 import com.capstone.cendekiaone.ui.navigation.Screen
 import com.capstone.cendekiaone.ui.theme.Shapes
+import com.capstone.cendekiaone.ui.theme.myFont
 
 @Composable
 fun ExploreScreen(navController: NavController) {
@@ -56,7 +58,7 @@ fun ExploreScreen(navController: NavController) {
         Box(modifier = Modifier.padding(top = 75.dp)) {
             WeaponsList(ExploreViewModel(), navController)
         }
-        SearchScreen()
+        SearchScreen(navController = navController)
     }
 }
 
@@ -75,6 +77,7 @@ fun ExploreScreen2(item: GetPostMidResponse, navController: NavController) {
                 shape = RoundedCornerShape(16.dp)
             )
             .clickable {
+                //TODO
                 navController.navigate(Screen.ExploreDetail.createRoute(item.idPost, item.createBy))
             }
     )
@@ -102,7 +105,8 @@ fun WeaponsList(viewModel: ExploreViewModel, navController: NavController) {
 fun SearchScreen(
     searchViewModel: SearchViewModel = viewModel(
         factory = LocalViewModelFactory.provide()
-    )
+    ),
+    navController: NavController
 ) {
     var text by rememberSaveable { mutableStateOf("") }
     var active by rememberSaveable { mutableStateOf(false) }
@@ -144,8 +148,8 @@ fun SearchScreen(
                 LazyColumn {
                     items(searchResults) { user ->
                         ListItem(
-                            headlineContent = { Text(user.username) },
-                            supportingContent = { Text(user.bio ?: "") },
+                            headlineContent = { Text(user.username, fontWeight = FontWeight.SemiBold) },
+                            supportingContent = { Text(user.bio ?: "", fontFamily = myFont) },
                             leadingContent = {
                                 Image(
                                     painter = rememberAsyncImagePainter(user.profilePicture),
@@ -162,6 +166,7 @@ fun SearchScreen(
                             modifier = Modifier
                                 .clickable {
                                     // Handle click on the search result item
+                                    navController.navigate(Screen.DetailUser.createRoute(user.id))
                                 }
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp, vertical = 4.dp)
@@ -173,8 +178,8 @@ fun SearchScreen(
                 LazyColumn {
                     items(allUsers) { userData ->
                         ListItem(
-                            headlineContent = { Text(userData.name) },
-                            supportingContent = { Text(userData.bio ?: "") },
+                            headlineContent = { Text(userData.name, fontWeight = FontWeight.SemiBold) },
+                            supportingContent = { Text(userData.bio ?: "", fontFamily = myFont) },
                             leadingContent = {
                                 Image(
                                     painter = rememberAsyncImagePainter(userData.profilePicture),
@@ -190,7 +195,8 @@ fun SearchScreen(
                             ),
                             modifier = Modifier
                                 .clickable {
-                                    // Handle click on the user item
+                                    //TODO
+                                    navController.navigate(Screen.DetailUser.createRoute(userData.id))
                                 }
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp, vertical = 4.dp)

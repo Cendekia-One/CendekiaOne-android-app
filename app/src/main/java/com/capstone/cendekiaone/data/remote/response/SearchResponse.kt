@@ -25,3 +25,8 @@ data class User(
     @field:SerializedName("updatedAt")
     val updatedAt: String
 )
+
+data class PostFollowResponse(
+    @field:SerializedName("message")
+    val message: String,
+)

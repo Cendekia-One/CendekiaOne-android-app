@@ -8,6 +8,7 @@ import com.capstone.cendekiaone.data.remote.response.GetPostFollowedResponse
 import com.capstone.cendekiaone.data.remote.response.GetPostResponse
 import com.capstone.cendekiaone.data.remote.response.LoginResponse
 import com.capstone.cendekiaone.data.remote.response.PostDetailResponse
+import com.capstone.cendekiaone.data.remote.response.PostFollowResponse
 import com.capstone.cendekiaone.data.remote.response.PostSavedResponse
 import com.capstone.cendekiaone.data.remote.response.SearchResponse
 import com.capstone.cendekiaone.data.remote.response.TopResponsePost
@@ -127,4 +128,12 @@ interface ApiService {
     // Get all user
     @GET("users")
     suspend fun getAllUsers(): Response<GetAllUserResponse>
+
+    // Post Follow
+    @FormUrlEncoded
+    @POST("follow")
+    fun follow(
+        @Field("account_owner") accountOwner: String,
+        @Field("followed_user") followedUser: String,
+    ): Call<PostFollowResponse>
 }

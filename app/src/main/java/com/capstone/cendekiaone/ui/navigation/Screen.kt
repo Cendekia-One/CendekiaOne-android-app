@@ -19,4 +19,7 @@ sealed class Screen(val route: String) {
     object Chat : Screen("chat")
     object Brief : Screen("brief")
     object Camera : Screen("camera")
+    object DetailUser : Screen("detail_user") {
+        fun createRoute(userId: Int): String = "detail_user/$userId"
+    }
 }

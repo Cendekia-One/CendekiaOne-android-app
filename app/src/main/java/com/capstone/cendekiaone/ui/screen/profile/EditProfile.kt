@@ -312,7 +312,7 @@ fun File.toBitmap(): ImageBitmap {
 }
 
 @Composable
-private fun ShowToast(message: String) {
+fun ShowToast(message: String) {
     Toast.makeText(LocalContext.current, message, Toast.LENGTH_SHORT).show()
 }
 
