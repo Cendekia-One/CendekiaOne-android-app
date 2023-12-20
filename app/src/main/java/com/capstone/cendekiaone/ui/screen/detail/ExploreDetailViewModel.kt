@@ -5,15 +5,22 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
+import com.capstone.cendekiaone.data.remote.response.PostCommentResponse
 import com.capstone.cendekiaone.data.remote.response.PostDetailData
 import com.capstone.cendekiaone.data.remote.response.PostSavedResponse
+import com.capstone.cendekiaone.data.remote.retforit.ApiConfig
 import com.capstone.cendekiaone.data.remote.retforit.ApiService
+import com.capstone.cendekiaone.ui.screen.explore.ExplorePagingSource
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class ExploreDetailViewModel(
-    private val apiService: ApiService,
+    val apiService: ApiService,
 ) : ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
@@ -99,5 +106,54 @@ class ExploreDetailViewModel(
                 _likedPost.value = LikeResult.NetworkError
             }
         })
+    }
+
+    // Comment post
+    private val _commentPost = MutableLiveData<CommentResult?>()
+    val commentPost: MutableLiveData<CommentResult?> = _commentPost
+
+    sealed class CommentResult {
+        data class Success(val message: String) : CommentResult()
+        data class Error(val errorMessage: String) : CommentResult()
+        object NetworkError : CommentResult()
+    }
+
+    fun commentPost(idPost: String, commentBy: String , commentBody: String) {
+        _isLoading.value = true
+        apiService.commentPost(idPost, commentBy, commentBody).enqueue(object : Callback<PostCommentResponse> {
+            override fun onResponse(call: Call<PostCommentResponse>, response: Response<PostCommentResponse>) {
+                _isLoading.value = false
+                val responseBody = response.body()
+                if (response.isSuccessful && responseBody?.status == "success") {
+                    _commentPost.value = CommentResult.Success("Successfully Comment This Post")
+                } else {
+                    _commentPost.value = CommentResult.Error("Failed Comment This Post")
+                }
+            }
+
+            override fun onFailure(call: Call<PostCommentResponse>, t: Throwable) {
+                _isLoading.value = false
+                _commentPost.value = CommentResult.NetworkError
+            }
+        })
+    }
+
+    // Get comment
+    private var postId: String? = null
+
+    // Set the postId
+    fun setPostId(postId: String) {
+        this.postId = postId
+    }
+
+    private val pager = Pager(
+        PagingConfig(pageSize = PAGE_SIZE),
+        pagingSourceFactory = { CommentPagingSource(ApiConfig.getApiService(), postId ?: "") }
+    )
+
+    val commentData = pager.flow.cachedIn(viewModelScope)
+
+    companion object {
+        private const val PAGE_SIZE = 10
     }
 }

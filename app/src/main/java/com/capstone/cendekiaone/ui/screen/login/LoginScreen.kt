@@ -102,7 +102,8 @@ fun LoginScreen(
                     keyboardType = KeyboardType.Email
                 ),
                 value = email,
-                onValueChange = { email = it }
+                onValueChange = { email = it },
+                modifier = Modifier
             )
             Spacer(modifier = Modifier.height(8.dp))
             PasswordTextFieldComponent(

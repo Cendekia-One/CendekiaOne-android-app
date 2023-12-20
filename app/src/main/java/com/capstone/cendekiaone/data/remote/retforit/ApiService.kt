@@ -1,6 +1,8 @@
 package com.capstone.cendekiaone.data.remote.retforit
 
+import com.capstone.cendekiaone.data.remote.response.PostCommentResponse
 import com.capstone.cendekiaone.data.remote.response.DataResponse
+import com.capstone.cendekiaone.data.remote.response.GetCommentResponse
 import com.capstone.cendekiaone.data.remote.response.GetPostResponse
 import com.capstone.cendekiaone.data.remote.response.LoginResponse
 import com.capstone.cendekiaone.data.remote.response.PostDetailResponse
@@ -92,6 +94,22 @@ interface ApiService {
         @Field("post_id") idPost: String,
         @Field("liked_by") LikedBy: String,
     ): Call<PostSavedResponse>
+
+    // Comment post
+    @FormUrlEncoded
+    @POST("comment")
+    fun commentPost(
+        @Field("post_id") idPost: String,
+        @Field("comment_by") commentBy: String,
+        @Field("comment_body") commentBody: String,
+    ): Call<PostCommentResponse>
+
+    // Get comment
+    @GET("comments/{id}")
+    suspend fun getCommentPosts(
+        @Path("id") postId: String,
+        @Query("page") page: Int
+    ): Response<GetCommentResponse>
 
     // Search user
     @GET("search")

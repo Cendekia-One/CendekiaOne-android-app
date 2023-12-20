@@ -245,7 +245,8 @@ fun EditProfile(
                         keyboardType = KeyboardType.Text
                     ),
                     value = username ?: "",
-                    onValueChange = { username = it }
+                    onValueChange = { username = it },
+                    modifier = Modifier
                 )
                 OutlinedTextFieldComponent(
                     provideText = stringResource(R.string.enter_name),
@@ -254,7 +255,8 @@ fun EditProfile(
                         keyboardType = KeyboardType.Text
                     ),
                     value = name ?: "",
-                    onValueChange = { name = it }
+                    onValueChange = { name = it },
+                    modifier = Modifier
                 )
                 OutlinedTextFieldComponent(
                     provideText = stringResource(R.string.enter_bio),
@@ -263,7 +265,8 @@ fun EditProfile(
                         keyboardType = KeyboardType.Text
                     ),
                     value = bio ?: "",
-                    onValueChange = { bio = it }
+                    onValueChange = { bio = it },
+                    modifier = Modifier
                 )
                 Spacer(modifier = Modifier.padding(top = 16.dp))
                 ButtonComponent(

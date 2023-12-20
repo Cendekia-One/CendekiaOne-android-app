@@ -108,7 +108,8 @@ fun RegisterScreen(
                     keyboardType = KeyboardType.Text
                 ),
                 value = username,
-                onValueChange = { username = it }
+                onValueChange = { username = it },
+                modifier = Modifier
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextFieldComponent(
@@ -118,7 +119,8 @@ fun RegisterScreen(
                     keyboardType = KeyboardType.Email
                 ),
                 value = email,
-                onValueChange = { email = it }
+                onValueChange = { email = it },
+                modifier = Modifier
             )
             Spacer(modifier = Modifier.height(8.dp))
             PasswordTextFieldComponent(

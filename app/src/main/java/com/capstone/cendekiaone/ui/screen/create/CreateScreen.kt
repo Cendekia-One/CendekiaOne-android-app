@@ -337,21 +337,24 @@ fun MainPost(
         OutlinedTextFieldComponent(
             provideText = stringResource(R.string.description),
             value = description,
-            onValueChange = { description = it }
+            onValueChange = { description = it },
+            modifier = Modifier
         )
 
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextFieldComponent(
             provideText = stringResource(R.string.catergory_post),
             value = category,
-            onValueChange = { category = it }
+            onValueChange = { category = it },
+            modifier = Modifier
         )
 
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextFieldComponent(
             provideText = stringResource(R.string.subcatergory_post),
             value = subCategory,
-            onValueChange = { subCategory = it }
+            onValueChange = { subCategory = it },
+            modifier = Modifier
         )
 
         Spacer(modifier = Modifier.height(16.dp))

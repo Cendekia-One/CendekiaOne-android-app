@@ -47,4 +47,5 @@
     <string name="menu_brief">Brief</string>
     <string name="subcatergory_post">Sub Category</string>
     <string name="menu_explore_detail">Detail Explore</string>
+    <string name="add_comment">Add a comment</string>
 </resources>

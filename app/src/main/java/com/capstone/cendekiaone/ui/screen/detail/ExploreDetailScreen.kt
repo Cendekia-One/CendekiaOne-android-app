@@ -1,14 +1,15 @@
 package com.capstone.cendekiaone.ui.screen.detail
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,22 +18,33 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,11 +62,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberAsyncImagePainter
 import com.capstone.cendekiaone.R
 import com.capstone.cendekiaone.data.helper.LocalViewModelFactory
 import com.capstone.cendekiaone.data.helper.UserRepository
+import com.capstone.cendekiaone.data.remote.response.GetCommentData
+import com.capstone.cendekiaone.data.remote.response.GetPostMidResponse
+import com.capstone.cendekiaone.data.remote.retforit.ApiService
 import com.capstone.cendekiaone.ui.navigation.Screen
+import com.capstone.cendekiaone.ui.screen.explore.ExploreScreen2
+import com.capstone.cendekiaone.ui.screen.explore.ExploreViewModel
+import com.capstone.cendekiaone.ui.theme.Shapes
 import com.capstone.cendekiaone.ui.theme.myFont
 import kotlinx.coroutines.launch
 
@@ -105,6 +125,7 @@ fun ExploreDetailScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostComponent(
     modifier: Modifier = Modifier,
@@ -123,6 +144,7 @@ fun PostComponent(
     // Observe the save result from the ViewModel
     val saveResult by exploreDetailViewModel.savePost.observeAsState()
     val likeResult by exploreDetailViewModel.likedPost.observeAsState()
+    val commentResult by exploreDetailViewModel.commentPost.observeAsState()
 
     LaunchedEffect(exploreDetailViewModel) {
         launch {
@@ -135,6 +157,13 @@ fun PostComponent(
 
     // Use a mutable state to keep track of the like count
     var likeCount by remember { mutableStateOf(postDetails?.likes ?: 0) }
+
+    var openBottomSheet by rememberSaveable { mutableStateOf(false) }
+    var skipPartiallyExpanded by remember { mutableStateOf(false) }
+    var edgeToEdgeEnabled by remember { mutableStateOf(false) }
+    val bottomSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = skipPartiallyExpanded
+    )
 
     Column(
         modifier = modifier
@@ -160,7 +189,9 @@ fun PostComponent(
                     .align(Alignment.CenterVertically)
             ) {
                 Image(
-                    painter = rememberAsyncImagePainter(model = postDetails?.profileCreator ?: R.drawable.placeholder),
+                    painter = rememberAsyncImagePainter(
+                        model = postDetails?.profileCreator ?: R.drawable.placeholder
+                    ),
                     contentDescription = "Image Profile",
                     modifier = Modifier
                         .size(40.dp)
@@ -217,7 +248,9 @@ fun PostComponent(
         // Main Post
         Box {
             Image(
-                painter = rememberAsyncImagePainter(model = postDetails?.postPicture ?: R.drawable.placeholder),
+                painter = rememberAsyncImagePainter(
+                    model = postDetails?.postPicture ?: R.drawable.placeholder
+                ),
                 contentDescription = "Image Post",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -248,9 +281,6 @@ fun PostComponent(
                         // Trigger the save process in the ViewModel
                         userRepository.getUser().observeForever { user ->
                             if (user != null && user.isLogin) {
-                                Log.d("EditProfileScreen", "User Token Screen: ${user.token}")
-                                Log.d("EditProfileScreen", "User ID Screen: ${user.id}")
-
                                 val savePostId = postId.toString()
                                 exploreDetailViewModel.likePost(savePostId, user.id)
 
@@ -283,7 +313,11 @@ fun PostComponent(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 IconButton(
-                    onClick = { },
+                    onClick = {
+                        openBottomSheet = !openBottomSheet
+                        val savePostId = postId.toString()
+                        exploreDetailViewModel.setPostId(savePostId)
+                    },
                     modifier = Modifier
                         .size(40.dp)
                         .align(Alignment.CenterVertically)
@@ -333,9 +367,6 @@ fun PostComponent(
                         // Trigger the save process in the ViewModel
                         userRepository.getUser().observeForever { user ->
                             if (user != null && user.isLogin) {
-                                Log.d("EditProfileScreen", "User Token Screen: ${user.token}")
-                                Log.d("EditProfileScreen", "User ID Screen: ${user.id}")
-
                                 val savePostId = postId.toString()
                                 exploreDetailViewModel.savePost(savePostId, user.id)
 
@@ -382,7 +413,87 @@ fun PostComponent(
         }
     }
 
-    // Handle registrations result
+    // Sheet content
+    if (openBottomSheet) {
+        val windowInsets = if (edgeToEdgeEnabled)
+            WindowInsets(0) else BottomSheetDefaults.windowInsets
+
+        ModalBottomSheet(
+            onDismissRequest = { openBottomSheet = false },
+            sheetState = bottomSheetState,
+            windowInsets = windowInsets
+        ) {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+
+            }
+            var commentBody by remember { mutableStateOf("") }
+            Row(
+                modifier = Modifier.padding(8.dp)
+            ) {
+                OutlinedTextField(
+                    value = commentBody,
+                    onValueChange = {
+                        commentBody = it
+                    },
+                    label = { Text("Add a comment") },
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_bio_filled),
+                            contentDescription = null
+                        )
+                    },
+                    trailingIcon = {
+                        if (commentBody.isNotEmpty()) {
+                            IconButton(
+                                onClick = {
+                                    commentBody = ""
+                                },
+                                modifier = Modifier.size(40.dp)
+                            ) {
+                                val icon: Painter = painterResource(id = R.drawable.ic_close)
+                                Icon(
+                                    painter = icon,
+                                    contentDescription = "Clear",
+                                    tint = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+                        }
+                    },
+                    modifier = Modifier.weight(1f),
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                FilledIconButton(
+                    onClick = {
+                        // Trigger the comment process in the ViewModel
+                        userRepository.getUser().observeForever { user ->
+                            if (user != null && user.isLogin) {
+                                val savePostId = postId.toString()
+                                exploreDetailViewModel.commentPost(savePostId, user.id, commentBody)
+                                exploreDetailViewModel.setPostId(savePostId)
+                            }
+                        }
+                    },
+                    modifier = Modifier
+                        .size(40.dp)
+                        .align(Alignment.CenterVertically)
+                ) {
+                    val icon: Painter = painterResource(id = R.drawable.ic_sent_outline)
+                    Icon(
+                        painter = icon,
+                        contentDescription = "Icon Brief",
+                        tint = MaterialTheme.colorScheme.background,
+                    )
+                }
+            }
+            // TODO Place to get Comment
+            CommentList(
+                apiService = exploreDetailViewModel.apiService,
+                viewModel = exploreDetailViewModel
+            )
+        }
+    }
+
+    // saveResult
     saveResult?.let { result ->
         when (result) {
             is ExploreDetailViewModel.SaveResult.Success -> {
@@ -391,12 +502,14 @@ fun PostComponent(
                 // Reset the registration result to allow for future registrations
                 exploreDetailViewModel.resetSaveResult()
             }
+
             is ExploreDetailViewModel.SaveResult.Error -> {
                 // Handle error if needed, show Toast
                 ShowToast(result.errorMessage)
                 // Reset the registration result to allow for future registrations
                 exploreDetailViewModel.resetSaveResult()
             }
+
             is ExploreDetailViewModel.SaveResult.NetworkError -> {
                 // Handle network error if needed, show Toast
                 ShowToast("Network Error")
@@ -406,7 +519,7 @@ fun PostComponent(
         }
     }
 
-    // Handle registrations result
+    // likeResult
     likeResult?.let { result ->
         when (result) {
             is ExploreDetailViewModel.LikeResult.Success -> {
@@ -415,17 +528,115 @@ fun PostComponent(
                 // Reset the registration result to allow for future registrations
                 exploreDetailViewModel.resetSaveResult()
             }
+
             is ExploreDetailViewModel.LikeResult.Error -> {
                 // Handle error if needed, show Toast
                 ShowToast(result.errorMessage)
                 // Reset the registration result to allow for future registrations
                 exploreDetailViewModel.resetSaveResult()
             }
+
             is ExploreDetailViewModel.LikeResult.NetworkError -> {
                 // Handle network error if needed, show Toast
                 ShowToast("Network Error")
                 // Reset the registration result to allow for future registrations
                 exploreDetailViewModel.resetSaveResult()
+            }
+        }
+    }
+
+    // commentResult
+    commentResult?.let { result ->
+        when (result) {
+            is ExploreDetailViewModel.CommentResult.Success -> {
+                // Registration is successful, show Toast and navigate to LoginScreen
+                ShowToast(result.message)
+                // Reset the registration result to allow for future registrations
+                exploreDetailViewModel.resetSaveResult()
+            }
+
+            is ExploreDetailViewModel.CommentResult.Error -> {
+                // Handle error if needed, show Toast
+                ShowToast(result.errorMessage)
+                // Reset the registration result to allow for future registrations
+                exploreDetailViewModel.resetSaveResult()
+            }
+
+            is ExploreDetailViewModel.CommentResult.NetworkError -> {
+                // Handle network error if needed, show Toast
+                ShowToast("Network Error")
+                // Reset the registration result to allow for future registrations
+                exploreDetailViewModel.resetSaveResult()
+            }
+        }
+    }
+}
+
+@Composable
+fun CommentList(apiService: ApiService, viewModel: ExploreDetailViewModel) {
+    val commentData: LazyPagingItems<GetCommentData> =
+        viewModel.commentData.collectAsLazyPagingItems()
+
+    LazyColumn {
+        items(commentData.itemCount) { index ->
+            val item = commentData[index]
+            if (item != null) {
+                CommentComponent(item)
+            }
+        }
+    }
+}
+
+@Composable
+fun CommentComponent(item: GetCommentData) {
+    Row {
+        Image(
+            painter = rememberAsyncImagePainter(item.profilePicture),
+            contentDescription = "Comment Image",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+        )
+        Column {
+            Text(text = item.username)
+            Text(text = item.commentBody)
+        }
+    }
+}
+
+@Composable
+fun ExploreScreen2(item: GetPostMidResponse, navController: NavController) {
+    Image(
+        painter = rememberAsyncImagePainter(item.postPicture),
+        contentDescription = "Post Image",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .size(140.dp)
+            .clip(Shapes.large)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .clickable {
+                navController.navigate(Screen.ExploreDetail.createRoute(item.idPost, item.createBy))
+            }
+    )
+}
+
+@Composable
+fun WeaponsList(viewModel: ExploreViewModel, navController: NavController) {
+    val weaponsData: LazyPagingItems<GetPostMidResponse> =
+        viewModel.weaponsData.collectAsLazyPagingItems()
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3)
+    ) {
+        items(weaponsData.itemCount) { index ->
+            val item = weaponsData[index]
+            if (item != null) {
+                ExploreScreen2(item, navController)
             }
         }
     }

@@ -29,7 +29,8 @@ fun OutlinedTextFieldComponent(
     icon: Painter? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     value: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    modifier: Modifier
 ) {
     OutlinedTextField(
         value = value,
