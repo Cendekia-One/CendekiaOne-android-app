@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
+import com.capstone.cendekiaone.data.remote.response.DataResponse
 import com.capstone.cendekiaone.data.remote.response.PostCommentResponse
 import com.capstone.cendekiaone.data.remote.response.PostDetailData
 import com.capstone.cendekiaone.data.remote.response.PostSavedResponse
@@ -155,5 +156,35 @@ class ExploreDetailViewModel(
 
     companion object {
         private const val PAGE_SIZE = 10
+    }
+
+    // Delete Post
+    private val _deletePost = MutableLiveData<DeleteResult?>()
+    val deletePost: MutableLiveData<DeleteResult?> = _deletePost
+
+    sealed class DeleteResult {
+        data class Success(val message: String) : DeleteResult()
+        data class Error(val errorMessage: String) : DeleteResult()
+        object NetworkError : DeleteResult()
+    }
+
+     fun deletePost(idPost: String) {
+        _isLoading.value = true
+        apiService.deletePost(idPost).enqueue(object : Callback<DataResponse> {
+            override fun onResponse(call: Call<DataResponse>, response: Response<DataResponse>) {
+                _isLoading.value = false
+                val responseBody = response.body()
+                if (response.isSuccessful && responseBody?.message == "delete post success") {
+                    _deletePost.value = DeleteResult.Success("Delete Post Success")
+                } else {
+                    _deletePost.value = DeleteResult.Error("This Post Not Your")
+                }
+            }
+
+            override fun onFailure(call: Call<DataResponse>, t: Throwable) {
+                _isLoading.value = false
+                _deletePost.value = DeleteResult.NetworkError
+            }
+        })
     }
 }

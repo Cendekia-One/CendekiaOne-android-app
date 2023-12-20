@@ -150,4 +150,10 @@ interface ApiService {
         @Path("idUser") idUser: String,
         @Query("page") page: Int
     ): Response<GetPostFollowedResponse>
+
+    // Delete post
+    @DELETE("post/{idPost}")
+    fun deletePost(
+        @Path("idPost") idPost: String,
+    ): Call<DataResponse>
 }

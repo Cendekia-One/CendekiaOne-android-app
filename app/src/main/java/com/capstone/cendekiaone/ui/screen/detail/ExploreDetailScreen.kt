@@ -1,5 +1,6 @@
 package com.capstone.cendekiaone.ui.screen.detail
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -13,14 +14,19 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
@@ -64,7 +70,7 @@ import com.capstone.cendekiaone.data.helper.LocalViewModelFactory
 import com.capstone.cendekiaone.data.helper.UserRepository
 import com.capstone.cendekiaone.data.remote.response.GetCommentData
 import com.capstone.cendekiaone.data.remote.retforit.ApiService
-import com.capstone.cendekiaone.ui.navigation.Screen
+import com.capstone.cendekiaone.ui.screen.profile.ProfileViewModel
 import com.capstone.cendekiaone.ui.theme.myFont
 import kotlinx.coroutines.launch
 
@@ -81,14 +87,14 @@ fun ExploreDetailScreen(
             TopAppBar(
                 title = {
                     Text(
-                        stringResource(R.string.menu_explore_detail),
+                        stringResource(R.string.menu_post),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = { navController.navigate(Screen.Explore.route) },
+                        onClick = { navController.popBackStack() },
                         modifier = Modifier
                             .size(40.dp)
                     ) {
@@ -127,6 +133,9 @@ fun PostComponent(
     userRepository: UserRepository = viewModel(
         factory = LocalViewModelFactory.provide()
     ),
+    profileViewModel: ProfileViewModel = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
 ) {
     val postDetails by exploreDetailViewModel.postDetails.observeAsState()
     val isLoading by exploreDetailViewModel.isLoading.observeAsState(initial = false)
@@ -135,12 +144,35 @@ fun PostComponent(
     val saveResult by exploreDetailViewModel.savePost.observeAsState()
     val likeResult by exploreDetailViewModel.likedPost.observeAsState()
     val commentResult by exploreDetailViewModel.commentPost.observeAsState()
+    val deletResult by exploreDetailViewModel.deletePost.observeAsState()
 
     LaunchedEffect(exploreDetailViewModel) {
         launch {
             exploreDetailViewModel.loadPostDetails(postId.toString())
         }
     }
+
+    val userDetails by profileViewModel.userDetails.observeAsState()
+
+    LaunchedEffect(profileViewModel) {
+        userRepository.getUser().observeForever { user ->
+            if (user != null && user.isLogin) {
+                Log.d("ProfileScreen", "User Token Screen: ${user.token}")
+                Log.d("ProfileScreen", "User ID Screen: ${user.id}")
+
+                launch {
+                    profileViewModel.loadUserDetails(user.id)
+                }
+            }
+        }
+    }
+
+    // TODO
+    var expanded by remember { mutableStateOf(false) }
+    val createByWho = postDetails?.createBy
+    val myUsername = userDetails?.username
+    Log.d("DETAIL", "USERNAME: $createByWho")
+    Log.d("DETAIL", "MYUSERNAME: $myUsername")
 
     var isSaved by remember { mutableStateOf(false) }
     var isLiked by remember { mutableStateOf(false) }
@@ -221,7 +253,9 @@ fun PostComponent(
                 }
             }
             IconButton(
-                onClick = { },
+                onClick = {
+                    expanded = true
+                },
                 modifier = Modifier
                     .size(40.dp)
                     .align(Alignment.CenterVertically)
@@ -232,6 +266,29 @@ fun PostComponent(
                     contentDescription = "Icon Menu",
                     tint = MaterialTheme.colorScheme.onBackground
                 )
+            }
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+            ) {
+                DropdownMenuItem(
+                    text = { Text("Delete") },
+                    onClick = {
+                        // TODO
+                        if (createByWho == myUsername) {
+                            exploreDetailViewModel.deletePost(postId.toString())
+                        } else {
+                            // Handle the case where createByWho and myUsername are different
+                            exploreDetailViewModel.deletePost.value =
+                                ExploreDetailViewModel.DeleteResult.Error("Failed, This Post Not Your")
+                        }
+                    },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Outlined.Delete,
+                            contentDescription = null
+                        )
+                    })
             }
         }
 
@@ -271,7 +328,6 @@ fun PostComponent(
                         // Trigger the save process in the ViewModel
                         userRepository.getUser().observeForever { user ->
                             if (user != null && user.isLogin) {
-                                // TODO
                                 val savePostId = postId.toString()
                                 exploreDetailViewModel.likePost(savePostId, user.id)
 
@@ -385,7 +441,6 @@ fun PostComponent(
                 }
             }
             Text(
-                // TODO
                 text = "${postDetails?.likes?.plus(likeCount)} Likes",
                 style = TextStyle(
                     textAlign = TextAlign.Center,
@@ -554,6 +609,32 @@ fun PostComponent(
             }
 
             is ExploreDetailViewModel.CommentResult.NetworkError -> {
+                // Handle network error if needed, show Toast
+                ShowToast("Network Error")
+                // Reset the registration result to allow for future registrations
+                exploreDetailViewModel.resetSaveResult()
+            }
+        }
+    }
+
+    // delete result //TODO
+    deletResult?.let { result ->
+        when (result) {
+            is ExploreDetailViewModel.DeleteResult.Success -> {
+                // Registration is successful, show Toast and navigate to LoginScreen
+                ShowToast(result.message)
+                // Reset the registration result to allow for future registrations
+                exploreDetailViewModel.resetSaveResult()
+            }
+
+            is ExploreDetailViewModel.DeleteResult.Error -> {
+                // Handle error if needed, show Toast
+                ShowToast(result.errorMessage)
+                // Reset the registration result to allow for future registrations
+                exploreDetailViewModel.resetSaveResult()
+            }
+
+            is ExploreDetailViewModel.DeleteResult.NetworkError -> {
                 // Handle network error if needed, show Toast
                 ShowToast("Network Error")
                 // Reset the registration result to allow for future registrations
