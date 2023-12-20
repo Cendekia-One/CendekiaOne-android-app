@@ -2,6 +2,7 @@ package com.capstone.cendekiaone.data.remote.retforit
 
 import com.capstone.cendekiaone.data.remote.response.PostCommentResponse
 import com.capstone.cendekiaone.data.remote.response.DataResponse
+import com.capstone.cendekiaone.data.remote.response.GetAllUserResponse
 import com.capstone.cendekiaone.data.remote.response.GetCommentResponse
 import com.capstone.cendekiaone.data.remote.response.GetPostFollowedResponse
 import com.capstone.cendekiaone.data.remote.response.GetPostResponse
@@ -122,4 +123,8 @@ interface ApiService {
     // Search user
     @GET("search")
     suspend fun searchByUsername(@Query("username") username: String): Response<SearchResponse>
+
+    // Get all user
+    @GET("users")
+    suspend fun getAllUsers(): Response<GetAllUserResponse>
 }

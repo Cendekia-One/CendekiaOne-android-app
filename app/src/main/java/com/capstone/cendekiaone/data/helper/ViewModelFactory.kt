@@ -19,7 +19,7 @@ import com.capstone.cendekiaone.ui.screen.detail.ExploreDetailViewModel
 import com.capstone.cendekiaone.ui.screen.home.HomeViewModel
 import com.capstone.cendekiaone.ui.screen.profile.EditProfileViewModel
 import com.capstone.cendekiaone.ui.screen.profile.ProfileViewModel
-import com.capstone.cendekiaone.ui.screen.search.SearchViewModel
+import com.capstone.cendekiaone.ui.screen.explore.SearchViewModel
 
 
 // Create a DataStore property in your Compose application
@@ -61,6 +61,7 @@ class LocalViewModelFactory private constructor(
             modelClass.isAssignableFrom(HomeViewModel::class.java) -> {
                 HomeViewModel(apiService) as T
             }
+
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
     }

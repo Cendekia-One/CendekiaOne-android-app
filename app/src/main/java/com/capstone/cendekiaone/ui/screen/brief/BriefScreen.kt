@@ -15,8 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.capstone.cendekiaone.R
 import com.capstone.cendekiaone.data.helper.LocalViewModelFactory
-import com.capstone.cendekiaone.ui.screen.profile.ProfileViewModel
-import com.capstone.cendekiaone.ui.screen.search.SearchViewModel
+import com.capstone.cendekiaone.ui.screen.explore.SearchViewModel
 import kotlinx.coroutines.launch
 
 @Composable

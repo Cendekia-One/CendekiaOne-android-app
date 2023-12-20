@@ -40,12 +40,12 @@
     <string name="text_placeholder_name">name</string>
     <string name="text_placeholder_bio">bio</string>
     <string name="toast_choose_from_gallery">choose from gallery</string>
-    <string name="catergory_post">Category (e.g Tech, Math)</string>
+    <string name="catergory_post">Category (e.g Culinary)</string>
     <string name="enter_username">Enter your username</string>
     <string name="enter_bio">Enter you bio</string>
     <string name="menu_search">Search</string>
     <string name="menu_brief">Brief</string>
-    <string name="subcatergory_post">Sub Category</string>
+    <string name="subcatergory_post">Sub Category (e.g Street Food)</string>
     <string name="menu_explore_detail">Detail Explore</string>
     <string name="add_comment">Add a comment</string>
 </resources>
