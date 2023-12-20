@@ -2,16 +2,23 @@ package com.capstone.cendekiaone.ui.screen.profile
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -20,14 +27,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,7 +41,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -49,14 +54,18 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberAsyncImagePainter
 import com.capstone.cendekiaone.R
 import com.capstone.cendekiaone.data.helper.LocalViewModelFactory
 import com.capstone.cendekiaone.data.helper.UserRepository
+import com.capstone.cendekiaone.data.remote.response.GetPostFollowedData
 import com.capstone.cendekiaone.ui.component.AlertDialogComponent
 import com.capstone.cendekiaone.ui.component.ButtonComponent
 import com.capstone.cendekiaone.ui.component.OutlinedButtonComponent
 import com.capstone.cendekiaone.ui.navigation.Screen
+import com.capstone.cendekiaone.ui.theme.Shapes
 import com.capstone.cendekiaone.ui.theme.myFont
 import kotlinx.coroutines.launch
 
@@ -92,13 +101,11 @@ fun ProfileScreen(
     }
 
     var showDialog by remember { mutableStateOf(false) }
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier,
         topBar = {
             TopAppBar(
-                scrollBehavior = scrollBehavior,
                 title = {
                     Text(
                         userDetails?.username ?: "",
@@ -112,7 +119,9 @@ fun ProfileScreen(
                             // Set showDialog to true when the logout icon is clicked
                             showDialog = true
                         },
-                        modifier = Modifier.size(40.dp).padding(end = 12.dp)
+                        modifier = Modifier
+                            .size(40.dp)
+                            .padding(end = 12.dp)
                     ) {
                         val icon: Painter = painterResource(id = R.drawable.ic_logout_outline)
                         Icon(
@@ -130,14 +139,12 @@ fun ProfileScreen(
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp)
         ) {
-            LazyColumn {
-                item {
-                    HeaderProfile()
-                    DescriptionProfile(
-                        navController
-                    )
-                    TabLayout()
-                }
+            Column {
+                HeaderProfile()
+                DescriptionProfile(
+                    navController
+                )
+                TabLayout(navController = navController, modifier = Modifier)
             }
             // Loading indicator
             if (isLoading) {
@@ -189,7 +196,9 @@ fun HeaderProfile(
     ) {
         Image(
             contentScale = ContentScale.Crop,
-            painter = rememberAsyncImagePainter(model = userDetails?.profilePicture ?: R.drawable.placeholder),
+            painter = rememberAsyncImagePainter(
+                model = userDetails?.profilePicture ?: R.drawable.placeholder
+            ),
             contentDescription = "Image Profile",
             modifier = Modifier
                 .size(70.dp)
@@ -321,25 +330,177 @@ fun DescriptionProfile(
 }
 
 @Composable
-fun TabLayout() {
-    val tabs = remember { listOf("Posts", "Saved") }
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
+fun TabLayout(
+    profileViewModel: ProfileViewModel = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
+    userRepository: UserRepository = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
+    navController: NavController,
+    modifier: Modifier
+) {
+    val tabIndex= profileViewModel.tabIndex
 
-    TabRow(
-        selectedTabIndex = selectedTabIndex,
-    ) {
-        tabs.forEachIndexed { index, title ->
-            Tab(
-                selected = selectedTabIndex == index,
-                onClick = { selectedTabIndex = index },
-                text = {
-                    Text(
-                        text = title,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+    val tabs = listOf("Posts", "Saved")
+
+    Column(modifier = modifier.fillMaxWidth()) {
+        TabRow(
+            selectedTabIndex = tabIndex,
+            indicator = { tabPositions ->
+                Box(
+                    modifier = Modifier.tabIndicatorOffset(tabPositions[tabIndex]),
+                    content = {
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(4.dp) // Adjust the height of the indicator
+                                .background(MaterialTheme.colorScheme.primary)
+                                .align(Alignment.BottomCenter) // Align with the bottom of the TabRow
+                        )
+                    }
+                )
+            }) {
+            tabs.forEachIndexed { index, title ->
+                Tab(
+                    text = {
+                        Text(
+                            title,
+                        )
+                    },
+                    selected = tabIndex == index,
+                    onClick = { profileViewModel.tabIndex(index) },
+                )
+            }
+        }
+        when (tabIndex) {
+            0 -> MyPostPage(profileViewModel, userRepository, navController)
+            1 -> MySavePage(profileViewModel, userRepository, navController)
+        }
+    }
+}
+
+@Composable
+fun MyPostPage(
+    profileViewModel: ProfileViewModel = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
+    userRepository: UserRepository = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
+    navController: NavController
+) {
+    MyPostList(ProfileViewModel(apiService = profileViewModel.apiService), userRepository, navController)
+}
+
+@Composable
+fun MyPostListComponent(item: GetPostFollowedData, navController: NavController) {
+    Image(
+        painter = rememberAsyncImagePainter(item.postPicture),
+        contentDescription = "Post Image",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .size(140.dp)
+            .clip(Shapes.large)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                shape = RoundedCornerShape(16.dp)
             )
+            .clickable {
+                //TODO
+                navController.navigate(Screen.ExploreDetail.createRoute(item.idPost, item.createBy))
+            }
+    )
+}
+
+@Composable
+fun MyPostList(
+    profileViewModel: ProfileViewModel = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
+    userRepository: UserRepository = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
+    navController: NavController
+) {
+
+    LaunchedEffect(profileViewModel) {
+        userRepository.getUser().observeForever { user ->
+            if (user != null && user.isLogin) {
+                Log.d("Home", "User Token Screen: ${user.token}")
+                Log.d("Home", "User ID Screen: ${user.id}")
+
+                launch {
+                    profileViewModel.setIdUser(user.id)
+                }
+            }
+        }
+    }
+
+    val myPostDataList: LazyPagingItems<GetPostFollowedData> =
+        profileViewModel.myPostData.collectAsLazyPagingItems()
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3)
+    ) {
+        items(myPostDataList.itemCount) { index ->
+            val item = myPostDataList[index]
+            if (item != null) {
+                MyPostListComponent(item, navController)
+            }
+        }
+    }
+}
+
+@Composable
+fun MySavePage(
+    profileViewModel: ProfileViewModel = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
+    userRepository: UserRepository = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
+    navController: NavController
+) {
+    MySaveList(ProfileViewModel(apiService = profileViewModel.apiService), userRepository, navController)
+}
+
+@Composable
+fun MySaveList(
+    profileViewModel: ProfileViewModel = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
+    userRepository: UserRepository = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
+    navController: NavController
+) {
+
+    LaunchedEffect(profileViewModel) {
+        userRepository.getUser().observeForever { user ->
+            if (user != null && user.isLogin) {
+                Log.d("Home", "User Token Screen: ${user.token}")
+                Log.d("Home", "User ID Screen: ${user.id}")
+
+                launch {
+                    profileViewModel.setIdUser(user.id)
+                }
+            }
+        }
+    }
+
+    val myPostDataList: LazyPagingItems<GetPostFollowedData> =
+        profileViewModel.mySaveData.collectAsLazyPagingItems()
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3)
+    ) {
+        items(myPostDataList.itemCount) { index ->
+            val item = myPostDataList[index]
+            if (item != null) {
+                MyPostListComponent(item, navController)
+            }
         }
     }
 }

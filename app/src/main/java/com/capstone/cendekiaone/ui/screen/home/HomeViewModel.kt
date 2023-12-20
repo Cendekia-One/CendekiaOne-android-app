@@ -14,7 +14,6 @@ class HomeViewModel(
 ) : ViewModel() {
     private var idUser: String? = null
 
-    // Set the userId
     fun setIdUser(idUser: String) {
         this.idUser = idUser
     }

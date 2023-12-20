@@ -56,14 +56,14 @@ fun ExploreScreen(navController: NavController) {
         modifier = Modifier.fillMaxSize()
     ) {
         Box(modifier = Modifier.padding(top = 75.dp)) {
-            WeaponsList(ExploreViewModel(), navController)
+            ExplorePostList(ExploreViewModel(), navController)
         }
         SearchScreen(navController = navController)
     }
 }
 
 @Composable
-fun ExploreScreen2(item: GetPostMidResponse, navController: NavController) {
+fun ExplorePostListComponent(item: GetPostMidResponse, navController: NavController) {
     Image(
         painter = rememberAsyncImagePainter(item.postPicture),
         contentDescription = "Post Image",
@@ -84,7 +84,7 @@ fun ExploreScreen2(item: GetPostMidResponse, navController: NavController) {
 }
 
 @Composable
-fun WeaponsList(viewModel: ExploreViewModel, navController: NavController) {
+fun ExplorePostList(viewModel: ExploreViewModel, navController: NavController) {
     val weaponsData: LazyPagingItems<GetPostMidResponse> =
         viewModel.weaponsData.collectAsLazyPagingItems()
 
@@ -94,7 +94,7 @@ fun WeaponsList(viewModel: ExploreViewModel, navController: NavController) {
         items(weaponsData.itemCount) { index ->
             val item = weaponsData[index]
             if (item != null) {
-                ExploreScreen2(item, navController)
+                ExplorePostListComponent(item, navController)
             }
         }
     }

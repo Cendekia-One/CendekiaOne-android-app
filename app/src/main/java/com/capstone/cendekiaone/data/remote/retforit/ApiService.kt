@@ -136,4 +136,18 @@ interface ApiService {
         @Field("account_owner") accountOwner: String,
         @Field("followed_user") followedUser: String,
     ): Call<PostFollowResponse>
+
+    // Get all my post
+    @GET("mypost/{idUser}")
+    suspend fun getAllMyPosts(
+        @Path("idUser") idUser: String,
+        @Query("page") page: Int
+    ): Response<GetPostFollowedResponse>
+
+    // Get all my save
+    @GET("save/{idUser}")
+    suspend fun getAllMySave(
+        @Path("idUser") idUser: String,
+        @Query("page") page: Int
+    ): Response<GetPostFollowedResponse>
 }
