@@ -33,6 +33,10 @@ data class GetPostFollowedData(
     val likes: String,
     @SerializedName("comment")
     val comment: String,
+    @SerializedName("isLike")
+    val isLike: Boolean,
+    @SerializedName("isSaved")
+    val isSaved: Boolean,
 )
 
 data class GetPostFollowedPagination(

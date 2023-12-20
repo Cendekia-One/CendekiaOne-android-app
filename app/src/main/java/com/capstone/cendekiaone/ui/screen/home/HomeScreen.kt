@@ -157,10 +157,10 @@ fun PostFollowedComponent(
     val likeResult by exploreDetailViewModel.likedPost.observeAsState()
     val commentResult by exploreDetailViewModel.commentPost.observeAsState()
 
-    var isSaved by remember { mutableStateOf(false) }
-    var isLiked by remember { mutableStateOf(false) }
+    var isSaved by remember { mutableStateOf(item.isSaved) }
+    var isLiked by remember { mutableStateOf(item.isLike) }
     var likeCount by remember { mutableIntStateOf(item.likes.toInt()) }
-
+    Log.d("PostFollowedComponent", "PostFollowedComponent: $isLiked")
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
     val skipPartiallyExpanded by remember { mutableStateOf(false) }
     val edgeToEdgeEnabled by remember { mutableStateOf(false) }
@@ -278,11 +278,10 @@ fun PostFollowedComponent(
                                 onPostClick(item.idPost)
                                 val savePostId = item.idPost.toString()
                                 exploreDetailViewModel.likePost(savePostId, user.id)
-
-                                Log.d("Home", "User Token Screen: $savePostId")
-
                                 isLiked = !isLiked
+                                Log.d("Home", "User Token Screen: $savePostId")
                                 likeCount += if (isLiked) 1 else -1
+
                             }
                         }
                     },
