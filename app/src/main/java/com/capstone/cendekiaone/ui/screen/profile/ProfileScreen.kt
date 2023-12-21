@@ -565,6 +565,7 @@ fun MyPostListComponent(item: GetPostFollowedData, navController: NavController)
                 navController.navigate(Screen.ExploreDetail.createRoute(item.idPost, item.createBy))
             }
     )
+    Log.d("IDPOSTLIST", "MyPostListComponent: ${item.idPost} & ${item.createBy}")
 }
 
 @Composable

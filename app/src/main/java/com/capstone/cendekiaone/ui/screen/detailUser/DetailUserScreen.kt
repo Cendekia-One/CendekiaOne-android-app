@@ -407,8 +407,11 @@ fun DescriptionDetailUser(
                 .padding(top = 8.dp, bottom = 8.dp),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            var isFollowing by remember {
-                mutableStateOf(otherUserDetails?.isFollowedThisUser ?: false)
+//            var isFollowing = otherUserDetails?.isFollowedThisUser ?: false
+            var isFollowing by remember { mutableStateOf(otherUserDetails?.isFollowedThisUser ?: false) }
+
+            LaunchedEffect(otherUserDetails) {
+                isFollowing = otherUserDetails?.isFollowedThisUser == true
             }
 
             val buttonText = if (isFollowing) {
