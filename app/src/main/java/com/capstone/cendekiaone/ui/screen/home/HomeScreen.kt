@@ -278,6 +278,7 @@ fun PostFollowedComponent(
                                 onPostClick(item.idPost)
                                 val savePostId = item.idPost.toString()
                                 exploreDetailViewModel.likePost(savePostId, user.id)
+
                                 isLiked = !isLiked
                                 Log.d("Home", "User Token Screen: $savePostId")
                                 likeCount += if (isLiked) 1 else -1
