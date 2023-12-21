@@ -349,7 +349,7 @@ fun HeaderProfile(
                     .fillMaxSize()
             ) {
                 itemsIndexed(followerList) { index, follower ->
-                    FollowerItem(index = index + 1, follower = follower)
+                    FollowerItem(index = index + 1, follower = follower, navController)
                 }
             }
         }
@@ -370,7 +370,7 @@ fun HeaderProfile(
                     .fillMaxSize()
             ) {
                 itemsIndexed(followingList) { index, following ->
-                    FollowingItem(index = index + 1, following = following)
+                    FollowingItem(index = index + 1, following = following, navController)
                 }
             }
         }
@@ -378,7 +378,7 @@ fun HeaderProfile(
 }
 
 @Composable
-fun FollowerItem(index: Int, follower: FollowData) {
+fun FollowerItem(index: Int, follower: FollowData, navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -387,20 +387,23 @@ fun FollowerItem(index: Int, follower: FollowData) {
         Text(
             text = "$index. ${follower.followerUsername}",
             modifier = Modifier.align(Alignment.CenterStart)
+                .clickable { navController.navigate(Screen.DetailUser.createRoute(follower.followingId)) }
         )
     }
 }
 
 @Composable
-fun FollowingItem(index: Int, following: FollowingData) {
+fun FollowingItem(index: Int, following: FollowingData, navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+
     ) {
         Text(
             text = "$index. ${following.followingUsername}",
             modifier = Modifier.align(Alignment.CenterStart)
+                .clickable { navController.navigate(Screen.DetailUser.createRoute(following.followingId)) }
         )
     }
 }

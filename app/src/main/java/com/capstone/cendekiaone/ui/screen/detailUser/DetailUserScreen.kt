@@ -105,7 +105,7 @@ fun DetailUserScreen(
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = { navController.navigate(Screen.Explore.route) },
+                        onClick = { navController.popBackStack() },
                         modifier = Modifier
                             .size(40.dp)
                     ) {
