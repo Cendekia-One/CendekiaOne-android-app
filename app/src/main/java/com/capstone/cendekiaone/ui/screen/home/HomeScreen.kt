@@ -248,19 +248,6 @@ fun PostFollowedComponent(
                     }
                 }
             }
-            IconButton(
-                onClick = { },
-                modifier = Modifier
-                    .size(40.dp)
-                    .align(Alignment.CenterVertically)
-            ) {
-                val icon: Painter = painterResource(id = R.drawable.ic_menu_outline)
-                Icon(
-                    painter = icon,
-                    contentDescription = "Icon Menu",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
         }
 
         // Main Post

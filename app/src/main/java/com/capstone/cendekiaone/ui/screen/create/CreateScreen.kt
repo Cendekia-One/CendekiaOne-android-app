@@ -35,7 +35,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ExposedDropdownMenuBox
 import androidx.compose.material.ExposedDropdownMenuDefaults
 import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledIconButton
@@ -62,6 +61,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -85,6 +86,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale.Category
 import java.util.Objects
 
 @Composable
@@ -174,6 +176,7 @@ fun HeaderPost(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainPost(
     createViewModel: CreateViewModel = viewModel(
@@ -330,8 +333,88 @@ fun MainPost(
     }
 
     var description by remember { mutableStateOf("") }
-    var category by remember { mutableStateOf("") }
-    var subCategory by remember { mutableStateOf("") }
+    val categories = listOf(
+        "Humanities",
+        "Social Science",
+        "Natural Science",
+        "Formal Science",
+        "Applied Science",
+        "Personal and Professional Development"
+    )
+
+    val subcategoriesMap = mapOf(
+        "Humanities" to listOf(
+            "Law",
+            "Philosophy",
+            "Religious Studies",
+            "Art",
+            "Music",
+            "Archaeology and History",
+            "Spirituality",
+            "Linguistics, Languages, and Literature"
+        ),
+        "Social Science" to listOf(
+            "Anthropology",
+            "Economics",
+            "Political Science",
+            "Psychology",
+            "Sociology",
+            "Gender Studies"
+        ),
+        "Natural Science" to listOf(
+            "Biology",
+            "Chemistry",
+            "Earth science",
+            "Astronomy",
+            "Physics"
+        ),
+        "Formal Science" to listOf(
+            "Computer Science",
+            "Mathematics",
+            "Software Development",
+            "Data Science",
+            "Artificial Intelligence",
+            "Cryptocurrency"
+        ),
+        "Applied Science" to listOf(
+            "Agriculture",
+            "Architecture",
+            "Business and Entrepreneurship",
+            "Education",
+            "Engineering and technology",
+            "Environmental studies and forestry",
+            "Human physical performance and recreation",
+            "Journalism, media studies and communication",
+            "Medicine and health",
+            "Military sciences",
+            "Public Policy and administration",
+            "Social work",
+            "Transportation",
+            "Climate Change",
+            "Finance",
+            "Marketing",
+            "Social Media",
+            "Design"
+        ),
+        "Personal and Professional Development" to listOf(
+            "Inspiration",
+            "Parenting",
+            "Creativity",
+            "Travel",
+            "Leadership",
+            "Relationships",
+            "Personal Development",
+            "Professional Development"
+        )
+    )
+
+    var expandedCategory by remember { mutableStateOf(false) }
+    var selectedCategoryText by remember { mutableStateOf(categories[0]) }
+
+    var expandedSubcategory by remember { mutableStateOf(false) }
+    var selectedSubcategoryText by remember { mutableStateOf(subcategoriesMap[categories[0]]?.get(0) ?: "") }
+
+    val typography = MaterialTheme.typography
 
     Column(
         modifier = Modifier.padding(horizontal = 8.dp)
@@ -345,20 +428,90 @@ fun MainPost(
         )
 
         Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextFieldComponent(
-            provideText = stringResource(R.string.catergory_post),
-            value = category,
-            onValueChange = { category = it },
-            modifier = Modifier
-        )
+
+        ExposedDropdownMenuBox(
+            expanded = expandedCategory,
+            onExpandedChange = { expandedCategory = it },
+        ) {
+            OutlinedTextField(
+                readOnly = true,
+                value = selectedCategoryText,
+                onValueChange = { },
+                label = { Text("Category") },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(
+                        expanded = expandedCategory
+                    )
+                },
+                colors = ExposedDropdownMenuDefaults.textFieldColors(
+                    backgroundColor = MaterialTheme.colorScheme.background,
+                    focusedIndicatorColor = MaterialTheme.colorScheme.primary
+                ),
+                textStyle = TextStyle(fontFamily = myFont, fontSize = 16.sp),
+                modifier = Modifier.fillMaxWidth()
+            )
+            ExposedDropdownMenu(
+                expanded = expandedCategory,
+                onDismissRequest = {
+                    expandedCategory = false
+                }
+            ) {
+                categories.forEach { category ->
+                    DropdownMenuItem(
+                        onClick = {
+                            selectedCategoryText = category
+                            selectedSubcategoryText = subcategoriesMap[category]?.get(0) ?: ""
+                            expandedCategory = false
+                            expandedSubcategory = false
+                        }
+                    ) {
+                        Text(text = category, fontFamily = myFont)
+                    }
+                }
+            }
+        }
 
         Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextFieldComponent(
-            provideText = stringResource(R.string.subcatergory_post),
-            value = subCategory,
-            onValueChange = { subCategory = it },
-            modifier = Modifier
-        )
+        // Subcategory dropdown
+        ExposedDropdownMenuBox(
+            expanded = expandedSubcategory,
+            onExpandedChange = { expandedSubcategory = it },
+        ) {
+            OutlinedTextField(
+                readOnly = true,
+                value = selectedSubcategoryText,
+                onValueChange = { },
+                label = { Text("Subcategory") },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(
+                        expanded = expandedSubcategory
+                    )
+                },
+                colors = ExposedDropdownMenuDefaults.textFieldColors(
+                    backgroundColor = MaterialTheme.colorScheme.background,
+                    focusedIndicatorColor = MaterialTheme.colorScheme.primary
+                ),
+                textStyle = TextStyle(fontFamily = myFont, fontSize = 16.sp),
+                modifier = Modifier.fillMaxWidth()
+            )
+            ExposedDropdownMenu(
+                expanded = expandedSubcategory,
+                onDismissRequest = {
+                    expandedSubcategory = false
+                }
+            ) {
+                subcategoriesMap[selectedCategoryText]?.forEach { subcategory ->
+                    DropdownMenuItem(
+                        onClick = {
+                            selectedSubcategoryText = subcategory
+                            expandedSubcategory = false
+                        }
+                    ) {
+                        Text(text = subcategory, style = typography.bodyMedium.copy(fontFamily = myFont))
+                    }
+                }
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
         ButtonComponent(
@@ -369,7 +522,7 @@ fun MainPost(
                 if (user != null && user.isLogin) {
                     Log.d("CreateScreen", "User ID Screen: ${user.id}")
 
-                    createViewModel.post(user.id, description, getFile, description, category, subCategory)
+                    createViewModel.post(user.id, description, getFile, description, selectedCategoryText, selectedSubcategoryText)
                 }
             }
         }
@@ -411,47 +564,114 @@ fun File.toBitmap(): ImageBitmap {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun EditableExposedDropdownMenuSample() {
-    val options = listOf("Option 1", "Option 2", "Option 3", "Option 4", "Option 5")
-    var expanded by remember { mutableStateOf(false) }
-    var selectedOptionText by remember { mutableStateOf("") }
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = it },
-    ) {
-        OutlinedTextField(
-            value = selectedOptionText,
-            onValueChange = { selectedOptionText = it },
-            label = { Text("Category", fontFamily = myFont,) },
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(
-                    expanded = expanded
-                )
-            },
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                cursorColor = MaterialTheme.colorScheme.primary
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-        // filter options based on text field value
-        val filteringOptions =
-            options.filter { it.contains(selectedOptionText, ignoreCase = true) }
-        if (filteringOptions.isNotEmpty()) {
+fun CategoryDropdownMenu() {
+    val categories = listOf(
+        "Humanities",
+        "Social Science",
+        "Natural Science",
+        "Formal Science",
+        "Applied Science",
+        "Personal and Professional Development"
+    )
+
+    val subcategoriesMap = mapOf(
+        "Humanities" to listOf("A", "B"),
+        "Social Science" to listOf("C", "D"),
+        "Natural Science" to listOf("E", "F"),
+        "Formal Science" to listOf("G", "H"),
+        "Applied Science" to listOf("I", "J"),
+        "Personal and Professional Development" to listOf("K", "L")
+    )
+
+    var expandedCategory by remember { mutableStateOf(false) }
+    var selectedCategoryText by remember { mutableStateOf(categories[0]) }
+
+    var expandedSubcategory by remember { mutableStateOf(false) }
+    var selectedSubcategoryText by remember { mutableStateOf(subcategoriesMap[categories[0]]?.get(0) ?: "") }
+
+    val typography = MaterialTheme.typography
+
+    Column {
+        // Category dropdown
+        ExposedDropdownMenuBox(
+            expanded = expandedCategory,
+            onExpandedChange = { expandedCategory = it },
+        ) {
+            OutlinedTextField(
+                readOnly = true,
+                value = selectedCategoryText,
+                onValueChange = { },
+                label = { Text("Category") },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(
+                        expanded = expandedCategory
+                    )
+                },
+                colors = ExposedDropdownMenuDefaults.textFieldColors(
+                    backgroundColor = MaterialTheme.colorScheme.background,
+                    focusedIndicatorColor = MaterialTheme.colorScheme.primary
+                ),
+                textStyle = TextStyle(fontFamily = myFont, fontSize = 16.sp),
+                modifier = Modifier.fillMaxWidth()
+            )
             ExposedDropdownMenu(
-                expanded = expanded,
+                expanded = expandedCategory,
                 onDismissRequest = {
-                    expanded = false
+                    expandedCategory = false
                 }
             ) {
-                filteringOptions.forEach { selectionOption ->
+                categories.forEach { category ->
                     DropdownMenuItem(
                         onClick = {
-                            selectedOptionText = selectionOption
-                            expanded = false
+                            selectedCategoryText = category
+                            selectedSubcategoryText = subcategoriesMap[category]?.get(0) ?: ""
+                            expandedCategory = false
+                            expandedSubcategory = false
                         }
                     ) {
-                        Text(text = selectionOption)
+                        Text(text = category, fontFamily = myFont)
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+        // Subcategory dropdown
+        ExposedDropdownMenuBox(
+            expanded = expandedSubcategory,
+            onExpandedChange = { expandedSubcategory = it },
+        ) {
+            OutlinedTextField(
+                readOnly = true,
+                value = selectedSubcategoryText,
+                onValueChange = { },
+                label = { Text("Subcategory") },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(
+                        expanded = expandedSubcategory
+                    )
+                },
+                colors = ExposedDropdownMenuDefaults.textFieldColors(
+                    backgroundColor = MaterialTheme.colorScheme.background,
+                    focusedIndicatorColor = MaterialTheme.colorScheme.primary
+                ),
+                textStyle = TextStyle(fontFamily = myFont, fontSize = 16.sp),
+                modifier = Modifier.fillMaxWidth()
+            )
+            ExposedDropdownMenu(
+                expanded = expandedSubcategory,
+                onDismissRequest = {
+                    expandedSubcategory = false
+                }
+            ) {
+                subcategoriesMap[selectedCategoryText]?.forEach { subcategory ->
+                    DropdownMenuItem(
+                        onClick = {
+                            selectedSubcategoryText = subcategory
+                            expandedSubcategory = false
+                        }
+                    ) {
+                        Text(text = subcategory, style = typography.bodyMedium.copy(fontFamily = myFont))
                     }
                 }
             }

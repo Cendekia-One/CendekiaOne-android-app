@@ -16,6 +16,8 @@ data class FollowData(
     val followingId: Int,
     @SerializedName("follower_name")
     val followerName: String,
+    @SerializedName("profile_picture")
+    val profilePicture: String,
     @SerializedName("follower_username")
     val followerUsername: String,
     @SerializedName("account_owner_name")
@@ -38,6 +40,8 @@ data class FollowingData(
     val followingId: Int,
     @SerializedName("following_name")
     val followingName: String,
+    @SerializedName("profile_picture")
+    val profilePicture: String,
     @SerializedName("following_username")
     val followingUsername: String,
     @SerializedName("account_owner_name")
