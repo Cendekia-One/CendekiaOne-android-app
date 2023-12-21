@@ -424,7 +424,6 @@ fun MyPostList(
     ),
     navController: NavController
 ) {
-
     LaunchedEffect(profileViewModel) {
         userRepository.getUser().observeForever { user ->
             if (user != null && user.isLogin) {

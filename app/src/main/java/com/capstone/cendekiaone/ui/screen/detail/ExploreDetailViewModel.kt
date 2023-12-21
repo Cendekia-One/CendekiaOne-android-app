@@ -61,8 +61,8 @@ class ExploreDetailViewModel(
             override fun onResponse(call: Call<PostSavedResponse>, response: Response<PostSavedResponse>) {
                 _isLoading.value = false
                 val responseBody = response.body()
-                if (response.isSuccessful && responseBody?.message == "post saved") {
-                    _savePost.value = SaveResult.Success("Post Saved")
+                if (response.isSuccessful) {
+                    _savePost.value = responseBody?.message?.let { SaveResult.Success(it) }
                 } else {
                     _savePost.value = SaveResult.Error("Post Already Saved")
                 }
