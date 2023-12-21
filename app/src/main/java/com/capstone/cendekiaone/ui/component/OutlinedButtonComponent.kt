@@ -38,7 +38,8 @@ fun OutlinedButtonComponent(
         Text(provideText,
             fontFamily = myFont,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis)
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 

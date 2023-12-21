@@ -77,7 +77,6 @@ fun ExplorePostListComponent(item: GetPostMidResponse, navController: NavControl
                 shape = RoundedCornerShape(16.dp)
             )
             .clickable {
-                //TODO
                 navController.navigate(Screen.ExploreDetail.createRoute(item.idPost, item.createBy))
             }
     )
@@ -166,6 +165,7 @@ fun SearchScreen(
                             modifier = Modifier
                                 .clickable {
                                     // Handle click on the search result item
+                                    // TODO
                                     navController.navigate(Screen.DetailUser.createRoute(user.id))
                                 }
                                 .fillMaxWidth()
@@ -195,7 +195,6 @@ fun SearchScreen(
                             ),
                             modifier = Modifier
                                 .clickable {
-                                    //TODO
                                     navController.navigate(Screen.DetailUser.createRoute(userData.id))
                                 }
                                 .fillMaxWidth()

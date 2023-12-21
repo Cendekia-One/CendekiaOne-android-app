@@ -50,7 +50,7 @@ fun PostComponent(
     ) {
         HeaderPost(
             username = "CendikiaOne",
-            category = "Geology"
+            category = "Revolutionary Social Media"
         )
         MainPost()
         BottomPost()
@@ -76,7 +76,7 @@ fun HeaderPost(
                 .align(Alignment.CenterVertically)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.placeholder),
+                painter = painterResource(id = R.drawable.ic_logo),
                 contentDescription = "Image Profile",
                 modifier = Modifier
                     .size(40.dp)
@@ -125,7 +125,7 @@ fun HeaderPost(
 @Composable
 fun MainPost() {
     Image(
-        painter = painterResource(id = R.drawable.placeholder),
+        painter = painterResource(id = R.drawable.img_post),
         contentDescription = "Image Profile",
         modifier = Modifier
             .fillMaxWidth()
@@ -138,118 +138,6 @@ fun BottomPost(
     modifier: Modifier = Modifier
 ) {
     Column {
-        Row(
-            modifier = modifier
-                .height(54.dp)
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            IconButton(
-                onClick = { },
-                modifier = Modifier
-                    .size(40.dp)
-                    .align(Alignment.CenterVertically)
-            ) {
-                val icon: Painter = painterResource(id = R.drawable.ic_like_outline)
-                Icon(
-                    painter = icon,
-                    contentDescription = "Icon Like",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            IconButton(
-                onClick = { },
-                modifier = Modifier
-                    .size(40.dp)
-                    .align(Alignment.CenterVertically)
-            ) {
-                val icon: Painter = painterResource(id = R.drawable.ic_comment_outline)
-                Icon(
-                    painter = icon,
-                    contentDescription = "Icon Comment",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            IconButton(
-                onClick = { },
-                modifier = Modifier
-                    .size(40.dp)
-                    .align(Alignment.CenterVertically)
-            ) {
-                val icon: Painter = painterResource(id = R.drawable.ic_share_outline)
-                Icon(
-                    painter = icon,
-                    contentDescription = "Icon Share",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            IconButton(
-                onClick = { },
-                modifier = Modifier
-                    .size(40.dp)
-                    .align(Alignment.CenterVertically)
-            ) {
-                val icon: Painter = painterResource(id = R.drawable.ic_magic_outline)
-                Icon(
-                    painter = icon,
-                    contentDescription = "Icon Brief",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
-
-            IconButton(
-                onClick = { },
-                modifier = Modifier
-                    .size(40.dp)
-                    .align(Alignment.CenterVertically)
-            ) {
-                val icon: Painter = painterResource(id = R.drawable.ic_save_outline)
-                Icon(
-                    painter = icon,
-                    contentDescription = "Icon Save",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Text(
-                text = stringResource(R.string.many_like),
-                style = TextStyle(
-                    textAlign = TextAlign.Center,
-                    fontFamily = myFont,
-                ),
-                modifier = Modifier.padding(start = 16.dp).align(Alignment.CenterVertically)
-            )
-            val icon: Painter = painterResource(id = R.drawable.ic_verified)
-            Icon(
-                painter = icon,
-                contentDescription = "Icon Share",
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(start = 16.dp)
-            )
-            Text(
-                text = stringResource(R.string.verified),
-                style = TextStyle(
-                    textAlign = TextAlign.Center,
-                    fontFamily = myFont,
-                    color = MaterialTheme.colorScheme.primary,
-                ),
-                modifier = Modifier.padding(start = 4.dp).align(Alignment.CenterVertically)
-            )
-        }
         Text(
             text = stringResource(R.string.description_post),
             style = TextStyle(

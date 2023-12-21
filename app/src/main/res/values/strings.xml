@@ -18,7 +18,8 @@
     <string name="menu_create">Create</string>
     <string name="search">Search</string>
     <string name="bio_post">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi.</string>
-    <string name="description_post">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi.</string>
+    <string name="description_post">
+CendekiaOne is a social media app addressing the disinterest in traditional education and mindless scrolling habits. It offers interactive educational content, a curated feed, and features like an anti-hoax system. With AI-generated executive summaries, the app aims to make digital platforms more productive and spark genuine interest in learning.</string>
     <string name="many_like">1029 Likes</string>
     <string name="validation_cek">Validation Cek</string>
     <string name="summary_cek">Summary Cek</string>
@@ -40,12 +41,12 @@
     <string name="text_placeholder_name">name</string>
     <string name="text_placeholder_bio">bio</string>
     <string name="toast_choose_from_gallery">choose from gallery</string>
-    <string name="catergory_post">Category (e.g Culinary)</string>
+    <string name="catergory_post">Category (e.g Natural Science)</string>
     <string name="enter_username">Enter your username</string>
     <string name="enter_bio">Enter you bio</string>
     <string name="menu_search">Search</string>
     <string name="menu_brief">Brief</string>
-    <string name="subcatergory_post">Sub Category (e.g Street Food)</string>
+    <string name="subcatergory_post">Sub Category (e.g Astronomy)</string>
     <string name="menu_explore_detail">Detail Explore</string>
     <string name="add_comment">Add a comment</string>
     <string name="follow">Follow</string>

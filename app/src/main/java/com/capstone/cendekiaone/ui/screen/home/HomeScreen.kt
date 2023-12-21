@@ -65,6 +65,7 @@ import com.capstone.cendekiaone.R
 import com.capstone.cendekiaone.data.helper.LocalViewModelFactory
 import com.capstone.cendekiaone.data.helper.UserRepository
 import com.capstone.cendekiaone.data.remote.response.GetPostFollowedData
+import com.capstone.cendekiaone.ui.component.PostComponent
 import com.capstone.cendekiaone.ui.component.TopAppComponent
 import com.capstone.cendekiaone.ui.screen.detail.CommentList
 import com.capstone.cendekiaone.ui.screen.detail.ExploreDetailViewModel
@@ -115,7 +116,7 @@ fun HomeScreen(
                 },
             )
         }
-    ) {innerPadding ->
+    ) { innerPadding ->
         LazyColumn(
             contentPadding = innerPadding,
             modifier = modifier
@@ -130,6 +131,12 @@ fun HomeScreen(
                     })
                 } else {
                     Text(text = "You Are Not Following Anyone")
+                }
+            }
+            // If the item count is zero, display a message
+            if (commentData.itemCount == 0) {
+                item {
+                    PostComponent()
                 }
             }
         }

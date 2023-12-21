@@ -4,6 +4,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -69,6 +70,7 @@ import com.capstone.cendekiaone.data.helper.LocalViewModelFactory
 import com.capstone.cendekiaone.data.helper.UserRepository
 import com.capstone.cendekiaone.data.remote.response.GetCommentData
 import com.capstone.cendekiaone.data.remote.retforit.ApiService
+import com.capstone.cendekiaone.ui.navigation.Screen
 import com.capstone.cendekiaone.ui.screen.profile.ProfileViewModel
 import com.capstone.cendekiaone.ui.theme.myFont
 import kotlinx.coroutines.launch
@@ -167,12 +169,9 @@ fun PostComponent(
         }
     }
 
-    // TODO
     var expanded by remember { mutableStateOf(false) }
     val createByWho = postDetails?.createBy
     val myUsername = userDetails?.username
-    Log.d("DETAIL", "USERNAME: $createByWho")
-    Log.d("DETAIL", "MYUSERNAME: $myUsername")
 
     var isSaved by remember { mutableStateOf(false) }
     var isLiked by remember { mutableStateOf(false) }
@@ -215,10 +214,14 @@ fun PostComponent(
                         model = postDetails?.profileCreator ?: R.drawable.placeholder
                     ),
                     contentDescription = "Image Profile",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(40.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
+                        .clip(CircleShape)
+                        .clickable {
+                                   //TODO
+//                            navController.navigate(Screen.DetailUser.createRoute(3))
+                        },
                 )
 
                 Spacer(modifier = Modifier.width(16.dp))
@@ -274,7 +277,6 @@ fun PostComponent(
                 DropdownMenuItem(
                     text = { Text("Delete") },
                     onClick = {
-                        // TODO
                         if (createByWho == myUsername) {
                             exploreDetailViewModel.deletePost(postId.toString())
                             exploreDetailViewModel.deletePost.value =
@@ -518,8 +520,8 @@ fun PostComponent(
                         userRepository.getUser().observeForever { user ->
                             if (user != null && user.isLogin) {
                                 val savePostId = postId.toString()
-                                exploreDetailViewModel.commentPost(savePostId, user.id, commentBody)
                                 exploreDetailViewModel.setPostId(savePostId)
+                                exploreDetailViewModel.commentPost(savePostId, user.id, commentBody)
                             }
                         }
                     },
@@ -602,7 +604,6 @@ fun PostComponent(
         }
     }
 
-    // delete result //TODO
     deletResult?.let { result ->
         when (result) {
             is ExploreDetailViewModel.DeleteResult.Success -> {
@@ -658,7 +659,7 @@ fun CommentComponent(item: GetCommentData) {
             modifier = Modifier.padding(start = 16.dp)
         ) {
             Text(text = item.username, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
-            Text(text = item.commentBody)
+            Text(text = item.commentBody, textAlign = TextAlign.Justify)
         }
     }
 }

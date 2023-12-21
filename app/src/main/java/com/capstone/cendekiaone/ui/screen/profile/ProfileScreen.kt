@@ -489,14 +489,14 @@ fun MySaveList(
         }
     }
 
-    val myPostDataList: LazyPagingItems<GetPostFollowedData> =
+    val mySaveDataList: LazyPagingItems<GetPostFollowedData> =
         profileViewModel.mySaveData.collectAsLazyPagingItems()
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(3)
     ) {
-        items(myPostDataList.itemCount) { index ->
-            val item = myPostDataList[index]
+        items(mySaveDataList.itemCount) { index ->
+            val item = mySaveDataList[index]
             if (item != null) {
                 MyPostListComponent(item, navController)
             }
