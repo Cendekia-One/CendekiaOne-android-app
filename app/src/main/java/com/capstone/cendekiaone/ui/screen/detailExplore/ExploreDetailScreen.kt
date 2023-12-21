@@ -1,4 +1,4 @@
-package com.capstone.cendekiaone.ui.screen.detail
+package com.capstone.cendekiaone.ui.screen.detailExplore
 
 import android.util.Log
 import android.widget.Toast
@@ -149,8 +149,15 @@ fun PostComponent(
     val deletResult by exploreDetailViewModel.deletePost.observeAsState()
 
     LaunchedEffect(exploreDetailViewModel) {
-        launch {
-            exploreDetailViewModel.loadPostDetails(postId.toString())
+        userRepository.getUser().observeForever { user ->
+            if (user != null && user.isLogin) {
+                Log.d("ProfileScreen", "User Token Screen: ${user.token}")
+                Log.d("ProfileScreen", "User ID Screen: ${user.id}")
+
+                launch {
+                    exploreDetailViewModel.loadPostDetails(postId.toString(), user.id)
+                }
+            }
         }
     }
 
@@ -170,6 +177,8 @@ fun PostComponent(
     }
 
     var expanded by remember { mutableStateOf(false) }
+
+    // TODO
     val createByWho = postDetails?.createBy
     val myUsername = userDetails?.username
 
@@ -219,8 +228,9 @@ fun PostComponent(
                         .size(40.dp)
                         .clip(CircleShape)
                         .clickable {
-                                   //TODO
-//                            navController.navigate(Screen.DetailUser.createRoute(3))
+                            val createById = postDetails?.createById
+                            val route = createById?.let { Screen.DetailUser.createRoute(it) }
+                            route?.let { navController.navigate(it) }
                         },
                 )
 
@@ -277,6 +287,7 @@ fun PostComponent(
                 DropdownMenuItem(
                     text = { Text("Delete") },
                     onClick = {
+                        // TODO
                         if (createByWho == myUsername) {
                             exploreDetailViewModel.deletePost(postId.toString())
                             exploreDetailViewModel.deletePost.value =

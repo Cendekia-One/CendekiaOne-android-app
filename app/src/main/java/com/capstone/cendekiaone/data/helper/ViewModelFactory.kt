@@ -15,11 +15,12 @@ import com.capstone.cendekiaone.ui.screen.login.LoginViewModel
 import com.capstone.cendekiaone.ui.screen.register.RegisterViewModel
 import androidx.datastore.preferences.core.Preferences
 import com.capstone.cendekiaone.ui.screen.create.CreateViewModel
-import com.capstone.cendekiaone.ui.screen.detail.ExploreDetailViewModel
+import com.capstone.cendekiaone.ui.screen.detailExplore.ExploreDetailViewModel
 import com.capstone.cendekiaone.ui.screen.home.HomeViewModel
 import com.capstone.cendekiaone.ui.screen.profile.EditProfileViewModel
 import com.capstone.cendekiaone.ui.screen.profile.ProfileViewModel
 import com.capstone.cendekiaone.ui.screen.explore.SearchViewModel
+import com.capstone.cendekiaone.ui.screen.profile.FollowViewModel
 
 
 // Create a DataStore property in your Compose application
@@ -61,7 +62,9 @@ class LocalViewModelFactory private constructor(
             modelClass.isAssignableFrom(HomeViewModel::class.java) -> {
                 HomeViewModel(apiService) as T
             }
-
+            modelClass.isAssignableFrom(FollowViewModel::class.java) -> {
+                FollowViewModel(apiService) as T
+            }
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
     }

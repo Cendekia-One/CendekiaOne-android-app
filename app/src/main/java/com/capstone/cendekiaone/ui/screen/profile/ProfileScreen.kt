@@ -10,32 +10,44 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.BottomAppBarDefaults.windowInsets
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,6 +72,8 @@ import coil.compose.rememberAsyncImagePainter
 import com.capstone.cendekiaone.R
 import com.capstone.cendekiaone.data.helper.LocalViewModelFactory
 import com.capstone.cendekiaone.data.helper.UserRepository
+import com.capstone.cendekiaone.data.remote.response.FollowData
+import com.capstone.cendekiaone.data.remote.response.FollowingData
 import com.capstone.cendekiaone.data.remote.response.GetPostFollowedData
 import com.capstone.cendekiaone.ui.component.AlertDialogComponent
 import com.capstone.cendekiaone.ui.component.ButtonComponent
@@ -140,7 +154,7 @@ fun ProfileScreen(
                 .padding(horizontal = 16.dp)
         ) {
             Column {
-                HeaderProfile()
+                HeaderProfile(navController = navController)
                 DescriptionProfile(
                     navController
                 )
@@ -179,15 +193,37 @@ fun ProfileScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HeaderProfile(
     modifier: Modifier = Modifier,
+    navController: NavController,
     profileViewModel: ProfileViewModel = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
+    followViewModel: FollowViewModel = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
+    userRepository: UserRepository = viewModel(
         factory = LocalViewModelFactory.provide()
     ),
 ) {
     // Observe user details from the ViewModel
     val userDetails by profileViewModel.userDetails.observeAsState()
+
+    var openBottomSheet by rememberSaveable { mutableStateOf(false) }
+    val skipPartiallyExpanded by remember { mutableStateOf(false) }
+    val edgeToEdgeEnabled by remember { mutableStateOf(false) }
+    val bottomSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = skipPartiallyExpanded
+    )
+
+    var openBottomSheet2 by rememberSaveable { mutableStateOf(false) }
+    val skipPartiallyExpanded2 by remember { mutableStateOf(false) }
+    val edgeToEdgeEnabled2 by remember { mutableStateOf(false) }
+    val bottomSheetState2 = rememberModalBottomSheetState(
+        skipPartiallyExpanded = skipPartiallyExpanded2
+    )
 
     Row(
         modifier = modifier
@@ -238,7 +274,11 @@ fun HeaderProfile(
                     fontFamily = myFont,
                     fontWeight = FontWeight.SemiBold
                 ),
-                modifier = Modifier.width(70.dp)
+                modifier = Modifier
+                    .width(70.dp)
+                    .clickable {
+                        openBottomSheet = !openBottomSheet
+                    }
             )
             Text(
                 text = "Follower",
@@ -246,7 +286,8 @@ fun HeaderProfile(
                     textAlign = TextAlign.Center,
                     fontFamily = myFont,
                 ),
-                modifier = Modifier.width(70.dp)
+                modifier = Modifier
+                    .width(70.dp)
             )
         }
         Column(
@@ -260,7 +301,11 @@ fun HeaderProfile(
                     fontFamily = myFont,
                     fontWeight = FontWeight.SemiBold
                 ),
-                modifier = Modifier.width(70.dp)
+                modifier = Modifier
+                    .width(70.dp)
+                    .clickable {
+                        openBottomSheet2 = !openBottomSheet2
+                    }
             )
             Text(
                 text = "Following",
@@ -271,6 +316,92 @@ fun HeaderProfile(
                 modifier = Modifier.width(70.dp)
             )
         }
+    }
+
+    val followerList by followViewModel.followerList.observeAsState(emptyList())
+    val followingList by followViewModel.followingList.observeAsState(emptyList())
+
+    LaunchedEffect(followViewModel) {
+        userRepository.getUser().observeForever { user ->
+            if (user != null && user.isLogin) {
+                Log.d("Follower", "User Token Screen: ${user.token}")
+                Log.d("Follower", "User ID Screen: ${user.id}")
+
+                launch {
+                    followViewModel.getAllFollowers(user.id)
+                    followViewModel.getAllFollowing(user.id)
+                }
+            }
+        }
+    }
+
+    if (openBottomSheet) {
+        val windowInsets = if (edgeToEdgeEnabled)
+            WindowInsets(0) else BottomSheetDefaults.windowInsets
+
+        ModalBottomSheet(
+            onDismissRequest = { openBottomSheet = false },
+            sheetState = bottomSheetState,
+            windowInsets = windowInsets
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                itemsIndexed(followerList) { index, follower ->
+                    FollowerItem(index = index + 1, follower = follower)
+                }
+            }
+        }
+    }
+
+    // TODO
+    if (openBottomSheet2) {
+        val windowInsets2 = if (edgeToEdgeEnabled2)
+            WindowInsets(0) else BottomSheetDefaults.windowInsets
+
+        ModalBottomSheet(
+            onDismissRequest = { openBottomSheet2 = false },
+            sheetState = bottomSheetState2,
+            windowInsets = windowInsets2
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                itemsIndexed(followingList) { index, following ->
+                    FollowingItem(index = index + 1, following = following)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun FollowerItem(index: Int, follower: FollowData) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "$index. ${follower.followerUsername}",
+            modifier = Modifier.align(Alignment.CenterStart)
+        )
+    }
+}
+
+@Composable
+fun FollowingItem(index: Int, following: FollowingData) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "$index. ${following.followingUsername}",
+            modifier = Modifier.align(Alignment.CenterStart)
+        )
     }
 }
 

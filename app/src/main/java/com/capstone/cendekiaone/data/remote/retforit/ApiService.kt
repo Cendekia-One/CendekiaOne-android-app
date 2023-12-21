@@ -2,6 +2,8 @@ package com.capstone.cendekiaone.data.remote.retforit
 
 import com.capstone.cendekiaone.data.remote.response.PostCommentResponse
 import com.capstone.cendekiaone.data.remote.response.DataResponse
+import com.capstone.cendekiaone.data.remote.response.FollowResponse
+import com.capstone.cendekiaone.data.remote.response.FollowingResponse
 import com.capstone.cendekiaone.data.remote.response.GetAllUserResponse
 import com.capstone.cendekiaone.data.remote.response.GetCommentResponse
 import com.capstone.cendekiaone.data.remote.response.GetPostFollowedResponse
@@ -79,8 +81,11 @@ interface ApiService {
     suspend fun getAllPosts(@Query("page") page: Int): Response<GetPostResponse>
 
     // Get post by id
-    @GET("post/{id_post}")
-    suspend fun getDetailPosts(@Path("id_post") userId: String): Response<PostDetailResponse>
+    @GET("post/{id_post}/{id_user}")
+    suspend fun getDetailPosts(
+        @Path("id_post") postId: String,
+        @Path("id_user") userId: String
+    ): Response<PostDetailResponse>
 
     // Post save post
     @FormUrlEncoded
@@ -156,4 +161,16 @@ interface ApiService {
     fun deletePost(
         @Path("idPost") idPost: String,
     ): Call<DataResponse>
+
+    // Get all follower
+    @GET("followers/{idUser}")
+    fun getAllFollower(
+        @Path("idUser") idUser: String,
+    ): Call<FollowResponse>
+
+    // Get all following
+    @GET("followings/{idUser}")
+    fun getAllFollowings(
+        @Path("idUser") idUser: String,
+    ): Call<FollowingResponse>
 }

@@ -1,4 +1,4 @@
-package com.capstone.cendekiaone.ui.screen.detail
+package com.capstone.cendekiaone.ui.screen.detailExplore
 
 import android.content.ContentValues
 import android.util.Log
@@ -15,7 +15,6 @@ import com.capstone.cendekiaone.data.remote.response.PostDetailData
 import com.capstone.cendekiaone.data.remote.response.PostSavedResponse
 import com.capstone.cendekiaone.data.remote.retforit.ApiConfig
 import com.capstone.cendekiaone.data.remote.retforit.ApiService
-import com.capstone.cendekiaone.ui.screen.explore.ExplorePagingSource
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,13 +25,13 @@ class ExploreDetailViewModel(
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    private val _postDetails = MutableLiveData<PostDetailData?>()
-    val postDetails: LiveData<PostDetailData?> = _postDetails
+    private val _postDetails = MutableLiveData<PostDetailData>()
+    val postDetails: LiveData<PostDetailData> = _postDetails
 
-    suspend fun loadPostDetails(id: String) {
+    suspend fun loadPostDetails(idPost: String, idUser: String) {
         _isLoading.value = true
         try {
-            val response = apiService.getDetailPosts(id)
+            val response = apiService.getDetailPosts(idPost, idUser)
             if (response.isSuccessful) {
                 _postDetails.postValue(response.body()?.data)
             } else {

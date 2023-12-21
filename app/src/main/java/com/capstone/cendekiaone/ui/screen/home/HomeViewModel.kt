@@ -7,7 +7,6 @@ import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.capstone.cendekiaone.data.remote.retforit.ApiConfig
 import com.capstone.cendekiaone.data.remote.retforit.ApiService
-import com.capstone.cendekiaone.ui.screen.detail.CommentPagingSource
 
 class HomeViewModel(
     val apiService: ApiService,

@@ -17,6 +17,8 @@ data class GetPostFollowedData(
     val idPost: Int,
     @SerializedName("createBy")
     val createBy: String,
+    @SerializedName("createById")
+    val createById: Int,
     @SerializedName("profileCreator")
     val profileCreator: String,
     @SerializedName("postPicture")

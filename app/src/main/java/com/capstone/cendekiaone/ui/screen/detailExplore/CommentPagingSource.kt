@@ -1,9 +1,8 @@
-package com.capstone.cendekiaone.ui.screen.detail
+package com.capstone.cendekiaone.ui.screen.detailExplore
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.capstone.cendekiaone.data.remote.response.GetCommentData
-import com.capstone.cendekiaone.data.remote.response.GetPostMidResponse
 import com.capstone.cendekiaone.data.remote.retforit.ApiService
 import retrofit2.HttpException
 import java.io.IOException

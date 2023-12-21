@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -67,8 +68,9 @@ import com.capstone.cendekiaone.data.helper.UserRepository
 import com.capstone.cendekiaone.data.remote.response.GetPostFollowedData
 import com.capstone.cendekiaone.ui.component.PostComponent
 import com.capstone.cendekiaone.ui.component.TopAppComponent
-import com.capstone.cendekiaone.ui.screen.detail.CommentList
-import com.capstone.cendekiaone.ui.screen.detail.ExploreDetailViewModel
+import com.capstone.cendekiaone.ui.navigation.Screen
+import com.capstone.cendekiaone.ui.screen.detailExplore.CommentList
+import com.capstone.cendekiaone.ui.screen.detailExplore.ExploreDetailViewModel
 import com.capstone.cendekiaone.ui.theme.myFont
 import kotlinx.coroutines.launch
 
@@ -125,7 +127,7 @@ fun HomeScreen(
             items(commentData.itemCount) { index ->
                 val item = commentData[index]
                 if (item != null) {
-                    PostFollowedComponent(item, modifier, onPostClick = { idPost ->
+                    PostFollowedComponent(item, modifier, navController ,onPostClick = { idPost ->
                         // Handle the click event for the specific postId
                         idPost.toString()
                     })
@@ -151,6 +153,7 @@ fun HomeScreen(
 fun PostFollowedComponent(
     item: GetPostFollowedData,
     modifier: Modifier,
+    navController: NavController,
     onPostClick: (Int) -> Unit,
     userRepository: UserRepository = viewModel(
         factory = LocalViewModelFactory.provide()
@@ -203,10 +206,15 @@ fun PostFollowedComponent(
                         item.profileCreator
                     ),
                     contentDescription = "Image Profile",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(40.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
+                        .clip(CircleShape)
+                        .clickable {
+                            val createById = item.createById
+                            val route = createById.let { Screen.DetailUser.createRoute(it) }
+                            route.let { navController.navigate(it) }
+                        }
                 )
 
                 Spacer(modifier = Modifier.width(16.dp))

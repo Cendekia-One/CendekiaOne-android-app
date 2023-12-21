@@ -17,7 +17,7 @@ import com.capstone.cendekiaone.ui.screen.camera.CameraScreen
 import com.capstone.cendekiaone.ui.screen.chat.ChatScreen
 import com.capstone.cendekiaone.ui.screen.create.CreateScreen
 import com.capstone.cendekiaone.ui.screen.create.UploadImageScreen
-import com.capstone.cendekiaone.ui.screen.detail.ExploreDetailScreen
+import com.capstone.cendekiaone.ui.screen.detailExplore.ExploreDetailScreen
 import com.capstone.cendekiaone.ui.screen.detailUser.DetailUserScreen
 import com.capstone.cendekiaone.ui.screen.explore.ExploreScreen
 import com.capstone.cendekiaone.ui.screen.home.HomeScreen
