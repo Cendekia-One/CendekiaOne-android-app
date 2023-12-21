@@ -161,7 +161,8 @@ fun PostComponent(
         }
     }
 
-    val userDetails by profileViewModel.userDetails.observeAsState()
+    val userDetails by profileViewModel.myUserDetails.observeAsState()
+    val userOtherDetails by profileViewModel.otherUserDetails.observeAsState()
 
     LaunchedEffect(profileViewModel) {
         userRepository.getUser().observeForever { user ->
@@ -170,7 +171,7 @@ fun PostComponent(
                 Log.d("ProfileScreen", "User ID Screen: ${user.id}")
 
                 launch {
-                    profileViewModel.loadUserDetails(user.id)
+                    profileViewModel.loadOtherUserDetails(postDetails?.createById.toString() ,user.id)
                 }
             }
         }

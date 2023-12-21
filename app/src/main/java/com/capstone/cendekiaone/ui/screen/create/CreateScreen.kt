@@ -121,7 +121,7 @@ fun HeaderPost(
     ),
 ) {
     // Observe user details from the ViewModel
-    val userDetails by profileViewModel.userDetails.observeAsState()
+    val userDetails by profileViewModel.myUserDetails.observeAsState()
 
     // Load user details when the screen is created
     LaunchedEffect(profileViewModel) {
@@ -131,7 +131,7 @@ fun HeaderPost(
                 Log.d("ProfileScreen", "User ID Screen: ${user.id}")
 
                 launch {
-                    profileViewModel.loadUserDetails(user.id)
+                    profileViewModel.loadMyUserDetails(user.id)
                 }
             }
         }

@@ -14,7 +14,8 @@ import com.capstone.cendekiaone.data.remote.response.PostFollowResponse
 import com.capstone.cendekiaone.data.remote.response.PostSavedResponse
 import com.capstone.cendekiaone.data.remote.response.SearchResponse
 import com.capstone.cendekiaone.data.remote.response.TopResponsePost
-import com.capstone.cendekiaone.data.remote.response.UserDetail
+import com.capstone.cendekiaone.data.remote.response.UserMyDetail
+import com.capstone.cendekiaone.data.remote.response.UserOtherDetail
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -40,9 +41,13 @@ interface ApiService {
         @Field("password") password: String
     ): Call<DataResponse>
 
-    // User detail
-    @GET("user/{id_user}")
-    suspend fun userDetail(@Path("id_user") userId: String): Response<UserDetail>
+    // Get my detail user
+    @GET("myprofile/{id_user}")
+    suspend fun myDetailUser(@Path("id_user") userId: String): Response<UserMyDetail>
+
+    // Get other detail user
+    @GET("user/{id_user}/{my_id}")
+    suspend fun otherDetailUser(@Path("id_user") userId: String, @Path("my_id") myId: String): Response<UserOtherDetail>
 
     // Edit profile
     @Multipart

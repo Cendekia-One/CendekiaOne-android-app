@@ -32,15 +32,16 @@ data class LoginResult(
     val username: String
 )
 
-data class UserDetail(
+// Get my detail user
+data class UserMyDetail(
     @field:SerializedName("status")
     val status: String,
 
     @field:SerializedName("data")
-    val data: DataUser,
+    val data: DataMyUser,
 )
 
-data class DataUser(
+data class DataMyUser(
     @field:SerializedName("id")
     val id: String,
 
@@ -64,6 +65,44 @@ data class DataUser(
 
     @field:SerializedName("profile_picture")
     val profilePicture: String,
+)
+
+// Get detail user
+data class UserOtherDetail(
+    @field:SerializedName("status")
+    val status: String,
+
+    @field:SerializedName("data")
+    val data: DataOtherUser,
+)
+
+data class DataOtherUser(
+    @field:SerializedName("id")
+    val id: String,
+
+    @field:SerializedName("name")
+    val name: String,
+
+    @field:SerializedName("username")
+    val username: String,
+
+    @field:SerializedName("bio")
+    val bio: String,
+
+    @field:SerializedName("follower")
+    val follower: String,
+
+    @field:SerializedName("following")
+    val following: String,
+
+    @field:SerializedName("post")
+    val post: String,
+
+    @field:SerializedName("profile_picture")
+    val profilePicture: String,
+
+    @field:SerializedName("isFollowedThisUser")
+    val isFollowedThisUser: Boolean,
 )
 
 // Post

@@ -103,7 +103,7 @@ fun EditProfile(
     val editResult by editProfileViewModel.editResult.observeAsState()
 
     // Observe user details from the ViewModel
-    val userDetails by profileViewModel.userDetails.observeAsState()
+    val userDetails by profileViewModel.myUserDetails.observeAsState()
 
     LaunchedEffect(profileViewModel) {
         userRepository.getUser().observeForever { user ->
@@ -112,7 +112,7 @@ fun EditProfile(
                 Log.d("EditProfileScreen", "User ID Screen: ${user.id}")
 
                 launch {
-                    profileViewModel.loadUserDetails(user.id)
+                    profileViewModel.loadMyUserDetails(user.id)
                 }
             }
         }

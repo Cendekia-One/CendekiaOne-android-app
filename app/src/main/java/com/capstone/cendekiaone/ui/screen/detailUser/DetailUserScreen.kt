@@ -1,5 +1,6 @@
 package com.capstone.cendekiaone.ui.screen.detailUser
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -9,32 +10,40 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,6 +72,9 @@ import com.capstone.cendekiaone.ui.component.ButtonComponent
 import com.capstone.cendekiaone.ui.component.OutlinedButtonComponent
 import com.capstone.cendekiaone.ui.navigation.Screen
 import com.capstone.cendekiaone.ui.screen.explore.SearchViewModel
+import com.capstone.cendekiaone.ui.screen.profile.FollowViewModel
+import com.capstone.cendekiaone.ui.screen.profile.FollowerItem
+import com.capstone.cendekiaone.ui.screen.profile.FollowingItem
 import com.capstone.cendekiaone.ui.screen.profile.ProfileViewModel
 import com.capstone.cendekiaone.ui.screen.profile.ShowToast
 import com.capstone.cendekiaone.ui.theme.Shapes
@@ -73,6 +85,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun DetailUserScreen(
     navController: NavController = rememberNavController(),
+    userRepository: UserRepository = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
     profileViewModel: ProfileViewModel = viewModel(
         factory = LocalViewModelFactory.provide()
     ),
@@ -80,15 +95,23 @@ fun DetailUserScreen(
     modifier: Modifier
 ) {
     // Observe user details from the ViewModel
-    val userDetails by profileViewModel.userDetails.observeAsState()
+    val userDetails by profileViewModel.myUserDetails.observeAsState()
+    val otherUserDetails by profileViewModel.otherUserDetails.observeAsState()
 
     // Observe loading state from the ViewModel
     val isLoading by profileViewModel.isLoading.observeAsState(initial = false)
 
+    Log.d("DETAIL", "User ID Screen: ${userId}")
+
     // Load user details when the screen is created
     LaunchedEffect(profileViewModel) {
-        launch {
-            profileViewModel.loadUserDetails(userId.toString())
+        userRepository.getUser().observeForever { user ->
+            if (user != null && user.isLogin) {
+
+                launch {
+                    profileViewModel.loadOtherUserDetails(userId.toString() ,user.id)
+                }
+            }
         }
     }
 
@@ -98,7 +121,7 @@ fun DetailUserScreen(
             TopAppBar(
                 title = {
                     Text(
-                        userDetails?.username ?: "",
+                        otherUserDetails?.username ?: "",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -126,7 +149,7 @@ fun DetailUserScreen(
                 .padding(horizontal = 16.dp)
         ) {
             Column {
-                HeaderDetailUser()
+                HeaderDetailUser(navController = navController)
                 DescriptionDetailUser(
                     navController, userId
                 )
@@ -149,15 +172,38 @@ fun DetailUserScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HeaderDetailUser(
     modifier: Modifier = Modifier,
+    navController: NavController,
     profileViewModel: ProfileViewModel = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
+    followViewModel: FollowViewModel = viewModel(
+        factory = LocalViewModelFactory.provide()
+    ),
+    userRepository: UserRepository = viewModel(
         factory = LocalViewModelFactory.provide()
     ),
 ) {
     // Observe user details from the ViewModel
-    val userDetails by profileViewModel.userDetails.observeAsState()
+    val userDetails by profileViewModel.myUserDetails.observeAsState()
+    val otherUserDetails by profileViewModel.otherUserDetails.observeAsState()
+
+    var openBottomSheet by rememberSaveable { mutableStateOf(false) }
+    val skipPartiallyExpanded by remember { mutableStateOf(false) }
+    val edgeToEdgeEnabled by remember { mutableStateOf(false) }
+    val bottomSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = skipPartiallyExpanded
+    )
+
+    var openBottomSheet2 by rememberSaveable { mutableStateOf(false) }
+    val skipPartiallyExpanded2 by remember { mutableStateOf(false) }
+    val edgeToEdgeEnabled2 by remember { mutableStateOf(false) }
+    val bottomSheetState2 = rememberModalBottomSheetState(
+        skipPartiallyExpanded = skipPartiallyExpanded2
+    )
 
     Row(
         modifier = modifier
@@ -167,7 +213,7 @@ fun HeaderDetailUser(
         Image(
             contentScale = ContentScale.Crop,
             painter = rememberAsyncImagePainter(
-                model = userDetails?.profilePicture ?: R.drawable.placeholder
+                model = otherUserDetails?.profilePicture ?: R.drawable.placeholder
             ),
             contentDescription = "Image Profile",
             modifier = Modifier
@@ -179,7 +225,7 @@ fun HeaderDetailUser(
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {
             Text(
-                text = userDetails?.post ?: "-",
+                text = otherUserDetails?.post ?: "-",
                 style = TextStyle(
                     fontSize = 16.sp,
                     textAlign = TextAlign.Center,
@@ -201,7 +247,7 @@ fun HeaderDetailUser(
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {
             Text(
-                text = userDetails?.follower ?: "-",
+                text = otherUserDetails?.follower ?: "-",
                 style = TextStyle(
                     fontSize = 16.sp,
                     textAlign = TextAlign.Center,
@@ -216,21 +262,25 @@ fun HeaderDetailUser(
                     textAlign = TextAlign.Center,
                     fontFamily = myFont,
                 ),
-                modifier = Modifier.width(70.dp)
+                modifier = Modifier.width(70.dp).clickable {
+                    openBottomSheet2 = !openBottomSheet2
+                }
             )
         }
         Column(
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {
             Text(
-                text = userDetails?.following ?: "-",
+                text = otherUserDetails?.following ?: "-",
                 style = TextStyle(
                     fontSize = 16.sp,
                     textAlign = TextAlign.Center,
                     fontFamily = myFont,
                     fontWeight = FontWeight.SemiBold
                 ),
-                modifier = Modifier.width(70.dp)
+                modifier = Modifier.width(70.dp).clickable {
+                    openBottomSheet2 = !openBottomSheet2
+                }
             )
             Text(
                 text = "Following",
@@ -240,6 +290,64 @@ fun HeaderDetailUser(
                 ),
                 modifier = Modifier.width(70.dp)
             )
+        }
+    }
+
+    val followerList by followViewModel.followerList.observeAsState(emptyList())
+    val followingList by followViewModel.followingList.observeAsState(emptyList())
+
+    LaunchedEffect(followViewModel) {
+        userRepository.getUser().observeForever { user ->
+            if (user != null && user.isLogin) {
+                Log.d("Follower", "User Token Screen: ${user.token}")
+                Log.d("Follower", "User ID Screen: ${user.id}")
+
+                launch {
+                    followViewModel.getAllFollowers(user.id)
+                    followViewModel.getAllFollowing(user.id)
+                }
+            }
+        }
+    }
+
+    if (openBottomSheet) {
+        val windowInsets = if (edgeToEdgeEnabled)
+            WindowInsets(0) else BottomSheetDefaults.windowInsets
+
+        ModalBottomSheet(
+            onDismissRequest = { openBottomSheet = false },
+            sheetState = bottomSheetState,
+            windowInsets = windowInsets
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                itemsIndexed(followerList) { index, follower ->
+                    FollowerItem(follower = follower, navController)
+                }
+            }
+        }
+    }
+
+    // TODO
+    if (openBottomSheet2) {
+        val windowInsets2 = if (edgeToEdgeEnabled2)
+            WindowInsets(0) else BottomSheetDefaults.windowInsets
+
+        ModalBottomSheet(
+            onDismissRequest = { openBottomSheet2 = false },
+            sheetState = bottomSheetState2,
+            windowInsets = windowInsets2
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                itemsIndexed(followingList) { index, following ->
+                    FollowingItem(following = following, navController)
+                }
+            }
         }
     }
 }
@@ -259,7 +367,8 @@ fun DescriptionDetailUser(
     ),
 ) {
     // Observe user details from the ViewModel
-    val userDetails by profileViewModel.userDetails.observeAsState()
+    val userDetails by profileViewModel.myUserDetails.observeAsState()
+    val otherUserDetails by profileViewModel.otherUserDetails.observeAsState()
     val userFollow by searchViewModel.followUser.observeAsState()
 
     var isFollowing by remember { mutableStateOf(false) }
@@ -268,7 +377,7 @@ fun DescriptionDetailUser(
         modifier = Modifier.padding(top = 16.dp)
     ) {
         Text(
-            text = userDetails?.name ?: "",
+            text = otherUserDetails?.name ?: "",
             style = TextStyle(
                 textAlign = TextAlign.Center,
                 fontFamily = myFont,
@@ -276,7 +385,7 @@ fun DescriptionDetailUser(
             ),
         )
         Text(
-            text = userDetails?.bio ?: "-",
+            text = otherUserDetails?.bio ?: "-",
             style = TextStyle(
                 textAlign = TextAlign.Justify,
                 fontFamily = myFont,

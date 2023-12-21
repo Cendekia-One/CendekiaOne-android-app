@@ -20,20 +20,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomAppBarDefaults.windowInsets
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -95,7 +91,7 @@ fun ProfileScreen(
     ),
 ) {
     // Observe user details from the ViewModel
-    val userDetails by profileViewModel.userDetails.observeAsState()
+    val userDetails by profileViewModel.myUserDetails.observeAsState()
 
     // Observe loading state from the ViewModel
     val isLoading by profileViewModel.isLoading.observeAsState(initial = false)
@@ -108,7 +104,7 @@ fun ProfileScreen(
                 Log.d("ProfileScreen", "User ID Screen: ${user.id}")
 
                 launch {
-                    profileViewModel.loadUserDetails(user.id)
+                    profileViewModel.loadMyUserDetails(user.id)
                 }
             }
         }
@@ -209,7 +205,7 @@ fun HeaderProfile(
     ),
 ) {
     // Observe user details from the ViewModel
-    val userDetails by profileViewModel.userDetails.observeAsState()
+    val userDetails by profileViewModel.myUserDetails.observeAsState()
 
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
     val skipPartiallyExpanded by remember { mutableStateOf(false) }
@@ -349,7 +345,7 @@ fun HeaderProfile(
                     .fillMaxSize()
             ) {
                 itemsIndexed(followerList) { index, follower ->
-                    FollowerItem(index = index + 1, follower = follower, navController)
+                    FollowerItem(follower = follower, navController)
                 }
             }
         }
@@ -370,7 +366,7 @@ fun HeaderProfile(
                     .fillMaxSize()
             ) {
                 itemsIndexed(followingList) { index, following ->
-                    FollowingItem(index = index + 1, following = following, navController)
+                    FollowingItem(following = following, navController)
                 }
             }
         }
@@ -378,33 +374,52 @@ fun HeaderProfile(
 }
 
 @Composable
-fun FollowerItem(index: Int, follower: FollowData, navController: NavController) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "$index. ${follower.followerUsername}",
-            modifier = Modifier.align(Alignment.CenterStart)
-                .clickable { navController.navigate(Screen.DetailUser.createRoute(follower.followingId)) }
+fun FollowerItem(follower: FollowData, navController: NavController) {
+    Row {
+        Image(
+            painter = rememberAsyncImagePainter(follower.profilePicture),
+            contentDescription = "Comment Image",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
         )
+        Column(
+            modifier = Modifier.padding(start = 16.dp)
+        ) {
+            Text(
+                text = follower.followerUsername,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .clickable { navController.navigate(Screen.DetailUser.createRoute(follower.followingId)) }
+            )
+        }
     }
 }
 
 @Composable
-fun FollowingItem(index: Int, following: FollowingData, navController: NavController) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-
-    ) {
-        Text(
-            text = "$index. ${following.followingUsername}",
-            modifier = Modifier.align(Alignment.CenterStart)
-                .clickable { navController.navigate(Screen.DetailUser.createRoute(following.followingId)) }
+fun FollowingItem(following: FollowingData, navController: NavController) {
+    Row {
+        Image(
+            painter = rememberAsyncImagePainter(following.profilePicture),
+            contentDescription = "Comment Image",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
         )
+        Column(
+            modifier = Modifier.padding(start = 16.dp)
+        ) {
+            Text(
+                text = following.followingUsername,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .clickable { navController.navigate(Screen.DetailUser.createRoute(following.followingId)) }
+            )
+        }
     }
 }
 
@@ -416,7 +431,7 @@ fun DescriptionProfile(
     ),
 ) {
     // Observe user details from the ViewModel
-    val userDetails by profileViewModel.userDetails.observeAsState()
+    val userDetails by profileViewModel.myUserDetails.observeAsState()
 
     Column(
         modifier = Modifier.padding(top = 16.dp)
@@ -474,7 +489,7 @@ fun TabLayout(
     navController: NavController,
     modifier: Modifier
 ) {
-    val tabIndex= profileViewModel.tabIndex
+    val tabIndex = profileViewModel.tabIndex
 
     val tabs = listOf("Posts", "Saved")
 
@@ -524,7 +539,11 @@ fun MyPostPage(
     ),
     navController: NavController
 ) {
-    MyPostList(ProfileViewModel(apiService = profileViewModel.apiService), userRepository, navController)
+    MyPostList(
+        ProfileViewModel(apiService = profileViewModel.apiService),
+        userRepository,
+        navController
+    )
 }
 
 @Composable
@@ -596,7 +615,11 @@ fun MySavePage(
     ),
     navController: NavController
 ) {
-    MySaveList(ProfileViewModel(apiService = profileViewModel.apiService), userRepository, navController)
+    MySaveList(
+        ProfileViewModel(apiService = profileViewModel.apiService),
+        userRepository,
+        navController
+    )
 }
 
 @Composable

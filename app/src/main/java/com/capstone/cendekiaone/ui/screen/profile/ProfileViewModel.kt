@@ -12,28 +12,27 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
-import com.capstone.cendekiaone.data.remote.response.DataUser
+import com.capstone.cendekiaone.data.remote.response.DataMyUser
+import com.capstone.cendekiaone.data.remote.response.DataOtherUser
 import com.capstone.cendekiaone.data.remote.retforit.ApiConfig
 import com.capstone.cendekiaone.data.remote.retforit.ApiService
-import com.capstone.cendekiaone.ui.screen.home.HomePagingSource
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(val apiService: ApiService) : ViewModel() {
 
-    // LiveData to observe loading state
+    // Get my detail user
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    // LiveData to observe user details
-    private val _userDetails = MutableLiveData<DataUser?>()
-    val userDetails: LiveData<DataUser?> = _userDetails
+    private val _myUserDetails = MutableLiveData<DataMyUser?>()
+    val myUserDetails: LiveData<DataMyUser?> = _myUserDetails
 
-    suspend fun loadUserDetails(id: String) {
+    suspend fun loadMyUserDetails(id: String) {
         _isLoading.value = true
         try {
-            val response = apiService.userDetail(id)
+            val response = apiService.myDetailUser(id)
             if (response.isSuccessful) {
-                _userDetails.value = response.body()?.data
+                _myUserDetails.value = response.body()?.data
             } else {
                 Log.e(TAG, "onFailure: ${response.message()}")
             }
@@ -43,6 +42,27 @@ class ProfileViewModel(val apiService: ApiService) : ViewModel() {
             _isLoading.value = false
         }
     }
+
+    // Get other detail user
+    private val _otherUserDetails = MutableLiveData<DataOtherUser?>()
+    val otherUserDetails: LiveData<DataOtherUser?> = _otherUserDetails
+
+    suspend fun loadOtherUserDetails(idUser: String, myUser: String) {
+        _isLoading.value = true
+        try {
+            val response = apiService.otherDetailUser(idUser, myUser)
+            if (response.isSuccessful) {
+                _otherUserDetails.value = response.body()?.data
+            } else {
+                Log.e(TAG, "onFailure: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception: ${e.message.toString()}")
+        } finally {
+            _isLoading.value = false
+        }
+    }
+
 
     // Get all my posts
     var tabIndex by mutableStateOf(0)
