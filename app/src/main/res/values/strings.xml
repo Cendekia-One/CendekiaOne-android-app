@@ -53,4 +53,5 @@ CendekiaOne is a social media app addressing the disinterest in traditional educ
     <string name="following">Following</string>
     <string name="menu_post">Detail Post</string>
     <string name="list_follower">List Follower</string>
+    <string name="unfollow">Unfollow</string>
 </resources>

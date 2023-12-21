@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -254,7 +255,9 @@ fun HeaderDetailUser(
                     fontFamily = myFont,
                     fontWeight = FontWeight.SemiBold
                 ),
-                modifier = Modifier.width(70.dp)
+                modifier = Modifier.width(70.dp).clickable {
+                    openBottomSheet2 = !openBottomSheet2
+                }
             )
             Text(
                 text = "Follower",
@@ -262,9 +265,7 @@ fun HeaderDetailUser(
                     textAlign = TextAlign.Center,
                     fontFamily = myFont,
                 ),
-                modifier = Modifier.width(70.dp).clickable {
-                    openBottomSheet2 = !openBottomSheet2
-                }
+                modifier = Modifier.width(70.dp)
             )
         }
         Column(
@@ -371,7 +372,15 @@ fun DescriptionDetailUser(
     val otherUserDetails by profileViewModel.otherUserDetails.observeAsState()
     val userFollow by searchViewModel.followUser.observeAsState()
 
-    var isFollowing by remember { mutableStateOf(false) }
+    LaunchedEffect(profileViewModel) {
+        userRepository.getUser().observeForever { user ->
+            if (user != null && user.isLogin) {
+                launch {
+                    profileViewModel.loadOtherUserDetails(userId.toString() ,user.id)
+                }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier.padding(top = 16.dp)
@@ -398,9 +407,13 @@ fun DescriptionDetailUser(
                 .padding(top = 8.dp, bottom = 8.dp),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
+            var isFollowing by remember {
+                mutableStateOf(otherUserDetails?.isFollowedThisUser ?: false)
+            }
+
             val buttonText = if (isFollowing) {
                 // User is already following, display unfollow button
-                stringResource(R.string.following)
+                stringResource(R.string.unfollow)
             } else {
                 // User is not following, display follow button
                 stringResource(R.string.follow)
@@ -408,8 +421,12 @@ fun DescriptionDetailUser(
 
             if (isFollowing) {
                 // User is already following, display unfollow button
-                OutlinedButtonComponent(
+                ButtonComponent(
                     provideText = buttonText,
+                    colors = ButtonDefaults.filledTonalButtonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.background
+                    ),
                     onClick = {
                         // TODO: Implement unfollow logic
                         userRepository.getUser().observeForever { user ->
