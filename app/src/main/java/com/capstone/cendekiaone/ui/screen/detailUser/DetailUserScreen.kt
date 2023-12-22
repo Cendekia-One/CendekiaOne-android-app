@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -36,6 +37,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -382,6 +384,32 @@ fun DescriptionDetailUser(
         }
     }
 
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                // Dismiss the dialog when the user clicks outside the dialog or presses the back button
+                showDialog = false
+            },
+            title = {
+                Text(text = "Under Development")
+            },
+            text = {
+                Text(text = "This feature is currently under development.")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDialog = false
+                    }
+                ) {
+                    Text("OK")
+                }
+            }
+        )
+    }
+
     Column(
         modifier = Modifier.padding(top = 16.dp)
     ) {
@@ -465,7 +493,7 @@ fun DescriptionDetailUser(
             }
             OutlinedButtonComponent(
                 provideText = stringResource(R.string.share_profile),
-                onClick = { },
+                onClick = { showDialog = true },
                 modifier = Modifier
                     .weight(1f)
                     .padding(start = 4.dp),
