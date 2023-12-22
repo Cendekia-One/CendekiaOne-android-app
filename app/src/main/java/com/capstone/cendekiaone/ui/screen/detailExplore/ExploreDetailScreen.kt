@@ -441,7 +441,7 @@ fun PostComponent(
                 Spacer(modifier = Modifier.weight(1f))
 
                 IconButton(
-                    onClick = { },
+                    onClick = { showDialog = true },
                     modifier = Modifier
                         .size(40.dp)
                         .align(Alignment.CenterVertically)
