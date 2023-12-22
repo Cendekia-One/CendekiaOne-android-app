@@ -66,7 +66,7 @@ fun CendekiaOneApp(
                 ExploreScreen(navController = navController)
             }
             composable(Screen.Brief.route) {
-                BriefScreen()
+                BriefScreen(navController = navController)
             }
             composable(Screen.Camera.route) {
                 CameraScreen()

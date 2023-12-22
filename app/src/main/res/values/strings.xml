@@ -54,4 +54,6 @@ CendekiaOne is a social media app addressing the disinterest in traditional educ
     <string name="menu_post">Detail Post</string>
     <string name="list_follower">List Follower</string>
     <string name="unfollow">Unfollow</string>
+    <string name="fake_description_post">\nBakteri, sebagai mikroorganisme prokariotik, mendominasi kehidupan mikroba di berbagai lingkungan, sementara planet, sebagai benda langit yang mengorbit bintang, termasuk Bumi, adalah tempat satu-satunya yang diketahui mendukung kehidupan dalam tata surya kita.</string>
+    <string name="fake2_description_post">Planet adalah objek langit yang mengorbit bintang, memiliki ciri-ciri fisik khas seperti permukaan yang beragam dan atmosfer. Bakteri, organisme mikroskopis, merupakan bentuk kehidupan paling sederhana. Judul \"Alien under the Ice\" mungkin merujuk pada kehidupan yang mungkin ada di bawah lapisan es suatu planet atau lingkungan yang ekstrem.</string>
 </resources>
